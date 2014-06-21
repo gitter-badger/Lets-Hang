@@ -1,0 +1,16 @@
+{
+    "name": "Peeps",
+    "version": "0.0.1",
+    "private": true,
+    "dependencies": {
+        "express": "3.3.3",
+        "express-hbs": "*",
+        "mongojs": "*",
+        "path": "*",
+        "socket.io": "*",
+        "socket.io-client": "*",
+        "google-maps": "*",
+        "passport": "*",
+        "bcrypt-nodejs": "*"
+    }
+}
