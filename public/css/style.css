@@ -1,0 +1,21 @@
+html, body, .container{
+	width: 100%;
+	min-height: 100%;
+}
+.jumbotron{
+	width: 105%;
+	margin-top: -22px;
+	margin-left: -2%;
+}
+.brand-title{
+	margin-left: 43%;
+}
+.brand-subtitle{
+	margin-left: 26%;
+}
+.login-register-btns{
+	margin-left: 44%;
+}
+.blurb-row > .col-md-4{
+	text-align: center;
+}

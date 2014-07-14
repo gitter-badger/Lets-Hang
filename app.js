@@ -4,9 +4,11 @@ var app = express();
 
 var mongojs = require('mongojs');
 
-var db = mongojs('');
+var db = mongojs('54.213.12.222:27017/peeps');
 
-var maps = require('google-maps');
+var userCollection = db.collection('users');
+
+//var maps = require('google-maps');
 
 var passport = require('passport');
 
@@ -44,3 +46,52 @@ io.configure(function (){
   });
 });
 
+//*********************************************************
+//************************ROUTING**************************
+//*********************************************************
+app.get('/', function(req,res){
+  res.render('index.hbs', {title:'peeps - Let Your Friends Know Where You Wanna Hang'});
+});
+app.get('/about', function(req,res){
+  res.render('about.hbs', {title:'peeps - about'});
+});
+app.get('/login', function(req,res){
+  res.render('login.hbs', {title:'peeps-login'});
+});
+app.get('/register', function(req,res){
+  res.render('register.hbs', {title:'peeps-register'});
+});
+app.post('/login-submit', passport.authenticate('local', {
+  successRedirect:'/main',
+  failureRedirect:'/login'
+}));
+app.post('/register-submit', function(req,res){
+  var user = {
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    email: req.body.email,
+    password: req.body.password
+  };
+  var acntExists = {}; 
+  userCollection.find(user, function(err, docs){
+    if(err!==null){
+      console.log(err);
+    }
+    else{
+      acntExists=docs;
+      return docs;
+    }
+  });
+  if(acntExists === null){
+    userCollection.save(user);
+    res.send({status:'success', newUser: user});
+  }
+  else{
+    console.log('account already exist');
+    res.send({status:'account exists'});
+  }
+});
+app.post('/main', function(req,res){
+  var user = userCollection.find(req.body.user);
+  res.render('main.hbs', {title: 'peeps - main'});
+});

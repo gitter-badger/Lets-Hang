@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>peeps - Home</title>
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+		<link rel="stylesheet" href="css/style.css">
+		<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key="></script>
+		<script src="js/routes.js"></script>
+    <script src="js/map.js"></script>
+	</head>
+	<body>
+		<header class="navbar navbar-static-top bs-docs-nav" id="top" role="banner">
+  			<div class="container">
+    			<div class="navbar-header">
+      				<button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+        				<span class="sr-only">Toggle navigation</span>
+        				<span class="icon-bar"></span>
+				        <span class="icon-bar"></span>
+				        <span class="icon-bar"></span>
+      				</button>
+      				<a href="/" class="navbar-brand">peeps</a>
+    			</div>
+    			<nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+      				<ul class="nav navbar-nav">
+        				<li>
+          				<button id="activities" class="btn btn-link">Activities</button>
+        				</li>
+                <li>
+                  <button id="messages" class="btn btn-link">Messages</button>
+                </li>
+                <li>
+                  <button id="location" class="btn btn-link">Location</button>
+                </li>
+      				</ul>
+    			</nav>
+  			</div>
+		</header>
+    <div class="container">
+      <canvas id="map=canvas"></canvas>
+    </div>
+  </body>
+</html>

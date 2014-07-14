@@ -7,8 +7,8 @@
         "express-hbs": "*",
         "mongojs": "*",
         "path": "*",
-        "socket.io": "*",
-        "socket.io-client": "*",
+        "socket.io": "0.9",
+        "socket.io-client": "0.9",
         "google-maps": "*",
         "passport": "*",
         "bcrypt-nodejs": "*"
