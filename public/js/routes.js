@@ -1,3 +1,4 @@
+"use strict";
 $(document).ready(function (){
 	$('#login-home').click(function (){
 		window.location.replace('/login');
@@ -8,6 +9,7 @@ $(document).ready(function (){
 	$('#register-submit').click(function (e){
 		e.preventDefault();
 		var regForm = $('#register-form').serialize();
+		console.log(regForm);
 		$.ajax({
 			url: '/register-submit',
 			type: 'POST',
@@ -19,6 +21,26 @@ $(document).ready(function (){
 				}
 				else{
 					localStorage.setItem('user',data.newUser);
+					window.location.replace('/main');
+				}
+			}
+		});
+	});
+	$('#login-submit').click(function (e){
+		e.preventDefault();
+		var logForm = $('#login-form').serialize();
+		console.log(logForm);
+		$.ajax({
+			url: '/login-submit',
+			type: 'POST',
+			data: loginForm,
+			success: function(data){
+				console.log(message);
+				if(data.status!='succss'){
+					$('.container').append('<h3>email or password incorrect</h3>');
+				}
+				else{
+					localStorage.setItem('user',data.user);
 					window.location.replace('/main');
 				}
 			}
