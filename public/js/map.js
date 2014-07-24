@@ -1,3 +1,4 @@
+"use strict";
 function initialize() {
   var mapOptions = {
     center: new google.maps.LatLng(-34.397, 150.644),
