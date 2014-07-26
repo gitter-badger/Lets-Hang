@@ -28,15 +28,20 @@ $(document).ready(function (){
 	});
 	$('#login-submit').click(function (e){
 		e.preventDefault();
-		var logForm = $('#login-form').serialize();
+		var logForm = {
+			emailAddr: $('#login-email').val(),
+			password: $('#login-password').val()
+		};
+		alert('click');
+		alert(logForm)
 		console.log(logForm);
 		$.ajax({
 			url: '/login-submit',
 			type: 'POST',
-			data: loginForm,
+			data: logForm,
 			success: function(data){
-				console.log(message);
-				if(data.status!='succss'){
+				console.log(data);
+				if(data.status!='success'){
 					$('.container').append('<h3>email or password incorrect</h3>');
 				}
 				else{

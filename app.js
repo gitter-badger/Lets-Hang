@@ -62,27 +62,27 @@ app.get('/register', function(req,res){
   res.render('register.hbs', {title:'peeps-register'});
 });
 app.post('/login-submit', function(req, res){
-  var user ={
-    email: req.body.email.
-    password: req.body.password
-  };
+  var user = req.body;
+  console.log(req.body);
+  console.log(user);
   var acntBool = false;
-  userCollection.find(user, function(err, docs){
+  userCollection.findOne(user, function(err, docs){
     if(err!=null){
       console.log(err);
     }
     else{
       console.log(docs);
       acntBool=true;
+      console.log(acntBool);
+      if(acntBool){
+        res.send({status:'success', newUser: user});
+      }
+      else{
+        res.send({status:'incorrect email or password'});
+      }
       return docs;
     }
   });
-  if(acntBool){
-    res.send({status:'success', newUser: user});
-  }
-  else{
-    res.send({status:'incorrect email or password'});
-  }
 }
 /*passport.authenticate('local-login', {
   successRedirect:'/main',
@@ -115,9 +115,42 @@ app.post('/register-submit', function(req,res){
     res.send({status:'account exists'});
   }
 });
-app.post('/main', function(req,res){
+app.get('/main', function(req,res){
   var user = userCollection.find(req.body.user);
   res.render('main.hbs', {title: 'peeps - main'});
+});
+app.get('/main/activities', function(req,res){
+  var data = activitiesCollection.find({'user':req.body.user}, function(err,docs){
+    if(err){
+      console.log(err);
+    }
+    else{
+      return docs
+    };
+  });
+  res.send({'data':data});
+});
+app.get('/main/messages', function(req,res){
+  var data = messageCollection.find({'user':req.body.user}, function(err,docs){
+    if(err){
+      console.log(err);
+    }
+    else{
+      return docs;
+    }
+  });
+  res.send({'data':data});
+});
+app.get('/main/locations', function(req,res){
+  var data = locationCollection.find({'user':req.body.user}, function(err, docs){
+    if(err){
+      console.log(err);
+    }
+    else{
+      return docs;
+    }
+  });
+  res.send({'data':data});
 });
 //*********************************************************
 //*********************AUTHENTICATION**********************
