@@ -48,5 +48,10 @@ li > .btn-link{
 	margin: 0 0 0 -11.5%;
 }
 #map-canvas{
-	height: 80%;
+	height: 100%;
+	width: 100%;
+}
+.unhidden{
+	display: block !important;
+	width: 50px;
 }

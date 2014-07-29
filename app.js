@@ -8,6 +8,12 @@ var db = mongojs('54.191.16.144:27017/peeps');
 
 var userCollection = db.collection('users');
 
+var activitiesCollection = db.collection('activities');
+
+var messageCollection = db.collection('messages');
+
+var locationCollection = db.collection('locations');
+
 //var maps = require('google-maps');
 
 var passport = require('passport');
@@ -120,15 +126,18 @@ app.get('/main', function(req,res){
   res.render('main.hbs', {title: 'peeps - main'});
 });
 app.get('/main/activities', function(req,res){
-  var data = activitiesCollection.find({'user':req.body.user}, function(err,docs){
+  var data = null;
+  activitiesCollection.find({'user':req.body.user}, function(err,docs){
     if(err){
       console.log(err);
     }
     else{
+      console.log(docs);
+      data = docs;
+      res.json(data);
       return docs
     };
   });
-  res.send({'data':data});
 });
 app.get('/main/messages', function(req,res){
   var data = messageCollection.find({'user':req.body.user}, function(err,docs){
@@ -139,7 +148,7 @@ app.get('/main/messages', function(req,res){
       return docs;
     }
   });
-  res.send({'data':data});
+  res.json(data);
 });
 app.get('/main/locations', function(req,res){
   var data = locationCollection.find({'user':req.body.user}, function(err, docs){
@@ -150,7 +159,7 @@ app.get('/main/locations', function(req,res){
       return docs;
     }
   });
-  res.send({'data':data});
+  res.json(data);
 });
 //*********************************************************
 //*********************AUTHENTICATION**********************

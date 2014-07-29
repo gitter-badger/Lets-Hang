@@ -51,4 +51,29 @@ $(document).ready(function (){
 			}
 		});
 	});
+	if($('#activities').length>0){
+		$.ajax({
+			url: '/main/activities',
+			type: 'GET',
+			success: function(data){
+				console.log(data);
+				console.log(data[0].name);
+				if(data!==null){
+					for(var i =0; i<data.length; i++){
+						var listNode = $('<li></li>');
+						console.log(listNode);
+						listNode[0].innerHTML=data[i].name;
+						console.log(listNode[0].innerHTML);
+						console.log(listNode[0].outerHTML);
+						$('#activities + .hidden-list').append(listNode[0].outerHTML);
+						console.log($('#activities + .hidden-list')[0].outerHTML);
+					}
+				}
+			}
+		});
+		$('#activities').click(function(e){
+			e.preventDefault();
+			$('.hidden-list').toggleClass('unhidden');
+		});
+	}
 });
