@@ -63,10 +63,7 @@ $(document).ready(function (){
 				if(data!==null){
 					for(var i=0; i<data.length; i++){
 						var listNode = $('<li></li>');
-						console.log(listNode);
 						listNode[0].innerHTML=data[i].name;
-						console.log(listNode[0].innerHTML);
-						console.log(listNode[0].outerHTML);
 						$('#activities + .hidden-list').append(listNode[0].outerHTML);
 						console.log($('#activities + .hidden-list')[0].outerHTML);
 					}
@@ -83,16 +80,16 @@ $(document).ready(function (){
 			url: '/main/messages',
 			type: 'GET',
 			data: {sender: localStorage.getItem('user')},
-			succes: function(data){
+			success: function(data){
 				console.log(JSON.stringify(data));
 				if(data!==null){
 					for(var i=0; i<data.length; i++){
 						var listNode = $('<li></li>');
 						var contain = $('<ul></ul>');
 						var content = $('<li></li>');
-						content[0].innerHTML = data[i].activity;
+						content[0].innerHTML = data[i].content;
 						contain[0].innerHTML = content[0].outerHTML;
-						listNode[0].innerHTML = contain[0].outerHTML;
+						listNode[0].innerHTML = data[i].activity + contain[0].outerHTML;
 						$('#messages + .hidden-list').append(listNode[0].outerHTML);
 						console.log($('#messages + .hidden-list')[0].outerHTML);
 					}
@@ -116,7 +113,12 @@ $(document).ready(function (){
 						var listNode = $('<li></li>');
 						var contain = $('<ul></ul>');
 						var content = $('<li></li>');
-						content[0].innerHTML = data[i].invited;
+						if(data[i].lastActivity!==null){
+							content[0].innerHTML = data[i].lastActivity;
+						}
+						else{
+							content[0].innerHTML = "no activity";
+						}
 						contain[0].innerHTML = content[0].outerHTML;
 						listNode[0].innerHTML = data[i].name+contain[0].outerHTML;
 						$('#locations + .hidden-list').append(listNode[0].outerHTML);
