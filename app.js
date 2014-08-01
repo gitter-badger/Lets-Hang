@@ -4,7 +4,7 @@ var app = express();
 
 var mongojs = require('mongojs');
 
-var db = mongojs('54.191.16.144:27017/peeps');
+var db = mongojs('54.191.16.144:27017/peeps'); //54.191.16.144
 
 var userCollection = db.collection('users');
 
@@ -99,7 +99,9 @@ app.post('/register-submit', function(req,res){
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     email: req.body.email,
-    password: req.body.password
+    password: req.body.password,
+    signUpDate: new Date(),
+    lastLogin: new Date()
   };
   var acntExists = {}; 
   userCollection.find(user, function(err, docs){
@@ -122,44 +124,52 @@ app.post('/register-submit', function(req,res){
   }
 });
 app.get('/main', function(req,res){
-  var user = userCollection.find(req.body.user);
   res.render('main.hbs', {title: 'peeps - main'});
 });
 app.get('/main/activities', function(req,res){
   var data = null;
-  activitiesCollection.find({'user':req.body.user}, function(err,docs){
+  console.log(req.body.user);
+  activitiesCollection.find(req.body.user, function(err,docs){
     if(err){
       console.log(err);
     }
     else{
       console.log(docs);
       data = docs;
-      res.json(data);
+      res.send(data);
       return docs
     };
   });
 });
 app.get('/main/messages', function(req,res){
-  var data = messageCollection.find({'user':req.body.user}, function(err,docs){
+  var data = null;
+  console.log(req.body.user); 
+  messageCollection.find(req.body.user, function(err,docs){
     if(err){
       console.log(err);
     }
     else{
+      console.log(docs);
+      data = docs;
+      res.send(data);
       return docs;
     }
   });
-  res.json(data);
 });
 app.get('/main/locations', function(req,res){
-  var data = locationCollection.find({'user':req.body.user}, function(err, docs){
+  var data = null;
+  console.log(req.body.user);
+  locationCollection.find(req.body.user, function(err, docs){
     if(err){
       console.log(err);
     }
     else{
+      console.log(docs);
+      data = docs;
+      res.send(data);
       return docs;
     }
   });
-  res.json(data);
 });
 //*********************************************************
 //*********************AUTHENTICATION**********************
