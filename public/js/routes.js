@@ -100,6 +100,10 @@ $(document).ready(function (){
 			e.preventDefault();
 			$('#messages + .hidden-list').toggleClass('unhidden');
 		});
+		$('#messages + .hidden-list li').click(function(e){
+			console.log(e.target);
+			messageInit(e.target, localStorage.getItem('user'));
+		});
 	}
 	if($('#locations').length>0){
 		$.ajax({
