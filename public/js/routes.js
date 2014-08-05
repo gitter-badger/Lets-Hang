@@ -73,6 +73,12 @@ $(document).ready(function (){
 		$('#activities').click(function(e){
 			e.preventDefault();
 			$('#activities + .hidden-list').toggleClass('unhidden');
+			if($('#messages + .hidden-list.unhidden').length>0){
+				$('#messages + .hidden-list').toggleClass('unhidden');
+			}
+			if($('#locations + .hidden-list.unhidden').length>0){
+				$('#locations + .hidden-list').toggleClass('unhidden');
+			}
 		});
 	}
 	if($('#messages').length>0){
@@ -99,6 +105,12 @@ $(document).ready(function (){
 		$('#messages').click(function(e){
 			e.preventDefault();
 			$('#messages + .hidden-list').toggleClass('unhidden');
+			if($('#activities + .hidden-list.unhidden').length>0){
+				$('#activities + .hidden-list').toggleClass('unhidden');
+			}
+			if($('#locations + .hidden-list.unhidden').length>0){
+				$('#locations + .hidden-list').toggleClass('unhidden');
+			}
 		});
 		$('#messages + .hidden-list li').click(function(e){
 			console.log(e.target);
@@ -134,6 +146,18 @@ $(document).ready(function (){
 		$('#locations').click(function(e){
 			e.preventDefault();
 			$('#locations + .hidden-list').toggleClass('unhidden');
+			if($('#activities + .hidden-list.unhidden').length>0){
+				$('#activities + .hidden-list').toggleClass('unhidden');
+			}
+			if($('#messages + .hidden-list.unhidden').length>0){
+				$('#messages + .hidden-list').toggleClass('unhidden');
+			}
+		});
+	}
+	if($('#logout').length>0){
+		$('#logout').click(function(e){
+			localStorage.setItem('user',null);
+			window.location.replace('/');
 		});
 	}
 });

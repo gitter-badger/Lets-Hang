@@ -1,6 +1,6 @@
 html, body, .container{
 	width: 100%;
-	min-height: 100%;
+	height: 100%;
 }
 body{
 	background-color: #428BCA;
@@ -52,6 +52,44 @@ li > .btn-link{
 	width: 100%;
 }
 .unhidden{
+	position: absolute;
+	list-style: none;
+	list-style-type: none;
 	display: block !important;
-	width: 50px;
+	background-color: #FFF;
+	width: 200px;
+	overflow-x: hidden;
+}
+.unhidden *{
+	width: auto;
+	height: auto;
+	margin-left: -40px;
+	color: #428BCA;
+}
+.unhidden > li{
+	border-bottom: 1px solid #aaa;
+	border-left: 1px solid #aaa;
+	border-right: 1px solid #aaa;
+	margin-top: 10px;
+	min-height: 36px;
+}
+.unhidden > li:hover, .unhidden > li:hover li{
+	background-color: #424477;
+	color: #FFF;
+	cursor: pointer;
+}
+.unhidden > li > *{
+	margin-left: 5px;
+	font-size: 11px;
+}
+#activities, #messages, #locations{
+	outline: none !important;
+}
+#logout{
+	position: absolute;
+	right: 0;
+	top: 8px;
+}
+.container{
+	height: 100%;
 }

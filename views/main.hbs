@@ -6,7 +6,7 @@
 		<link rel="stylesheet" href="css/style.css">
 		<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
 		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBfIApUobHr1J1OYNpBIy9D1AL5cfZadgs"></script>
+    <script src="js/gMaps.js"></script>
     <!--<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.15/angular.min.js"></script>
     <script src="js/ang.js"></script>-->
 		<script src="js/routes.js"></script>
@@ -43,10 +43,11 @@
                 </li>
       				</ul>
     			</nav>
+          <button id="logout" class="btn btn-link">logout</button>
   			</div>
 		</header>
     <div class="container">
-      <div id="map-canvas"></div>
+      <div id="map-canvas" style="width:100%; height:100%;"></div>
     </div>
   </body>
 </html>
