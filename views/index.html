@@ -6,11 +6,7 @@
 		<link rel="stylesheet" href="css/style.css">
 		<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
 		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-    <script src="js/gMaps.js"></script>
-    <!--<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.15/angular.min.js"></script>
-    <script src="js/ang.js"></script>-->
 		<script src="js/routes.js"></script>
-    <script src="js/map.js"></script>
 	</head>
 	<body>
 		<header class="navbar navbar-static-top bs-docs-nav" id="top" role="banner">
@@ -26,28 +22,41 @@
     			</div>
     			<nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
       				<ul class="nav navbar-nav">
-        				<li>
-          				<button id="activities" class="btn btn-link">Activities</button>
-                  <ul class="hidden-list">
-                  </ul>
+        				<li class="active">
+          					<a href="../about">About</a>
         				</li>
-                <li>
-                  <button id="messages" class="btn btn-link">Messages</button>
-                  <ul class="hidden-list">
-                  </ul>
-                </li>
-                <li>
-                  <button id="locations" class="btn btn-link">Locations</button>
-                  <ul class="hidden-list">
-                  </ul>
-                </li>
       				</ul>
     			</nav>
-          <button id="logout" class="btn btn-link">logout</button>
   			</div>
 		</header>
-    <div class="container">
-      <div id="map-canvas" style="width:100%; height:100%;"></div>
-    </div>
-  </body>
+      	<div class="container">
+      		<div class="row">
+      			<div class="col-md-12">
+      				<div class="jumbotron">
+      					<div class="brand-title">
+							<h1>peeps</h1>
+      					</div>
+      					<div class="brand-subtitle">
+      						<h3>Let Yor Friends Know What You Wanna Do And Where</h3>
+      					</div>
+      					<div class="login-register-btns">
+      						<button class="btn btn-primary" id="login-home">Login</button>
+      						<button class="btn btn-default" id="register-home">Register</button>
+      					</div>
+      				</div>
+      			</div>
+      		</div>
+      		<div class="row blurb-row">
+      			<div class="col-md-4">
+      				<h3>Blurb1</h3>
+      			</div>
+      			<div class="col-md-4">
+      				<h3>Blurb2</h3>
+      			</div>
+      			<div class="col-md-4">
+      				<h3>Blurb3</h3>
+      			</div>
+      		</div>
+		</div>
+	</body>
 </html>
