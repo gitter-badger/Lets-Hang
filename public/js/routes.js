@@ -51,7 +51,6 @@ $(document).ready(function (){
 			}
 		});
 	});
-	console.log(localStorage.getItem('user'));
 	if($('#activities').length>0){
 		$.ajax({
 			url: '/main/activities',
