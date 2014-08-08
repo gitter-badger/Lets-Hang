@@ -11,6 +11,7 @@
     <script src="js/ang.js"></script>-->
 		<script src="js/routes.js"></script>
     <script src="js/map.js"></script>
+    <script src="js/newActivity.js"></script>
 	</head>
 	<body>
 		<header class="navbar navbar-static-top bs-docs-nav" id="top" role="banner">
@@ -49,11 +50,18 @@
     <div class="container">
       <div id="map-canvas" style="width:100%; height:100%;"></div>
       <div id="newActOverlay">
+        <h2>New Activity</h2>
         <form id="newActForm" class="input-group">
-          <input id="newActName" class="form-control">
-          <input id="newActLoct" class="form-control">
-          
+          <input id="newActName" class="form-control" type="text" placeholder="Activity Name">
+          <input id="newActLoct" class="form-control" type="text" placeholder="Location">
+          <input id="startDate" class="form-control" type="date">
+          <input id="addDate" class="btn btn-link" type="button" value="More Than One Day">
+          <input id="startTime" class="form-control" type="time">
+          <input id="addEnd" class="btn btn-link" type="button" value="Add End Time">
+          <input id="newActInv" class="btn btn-primary" type="button" value="invite">
+          <input id="newActSub" class="btn btn-success" value="create">
         </form>
+        <button id="overlayShowHide" class="btn btn-default"><i class="glyphicon glyphicon-chevron-up"></i></button>
       </div>
     </div>
   </body>

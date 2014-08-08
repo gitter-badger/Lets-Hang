@@ -95,9 +95,48 @@ li > .btn-link{
 }
 #newActOverlay{
 	width: 300px;
-	height: 300px;
+	padding-left:4px;
 	position: absolute;
 	top: 0%;
 	right: 0%;
 	background-color: #eeeeee;
+}
+#newActOverlay.collapse{
+	overflow: hidden;
+	display: block !important;
+	height:90px;
+}
+#newActOverlay.collapse *{
+	margin-top: -50px;
+}
+#newActOverlay.collapse #overlayShowHide{
+	margin-top: 50px;
+}
+#newActOverlay > h2{
+	margin-top: 60px;
+	margin-left: 67px;
+}
+#newActForm{
+	margin-top: 5px;
+}
+#newActForm input[type^=date]{
+	width: 140px;
+}
+#newActForm input[type^=time]{
+	width: 140px;
+}
+#newActInv, #newActSub{
+	width: 90%;
+	margin-left: 5%;
+}
+#newActForm > *{
+	margin-bottom: 10px;
+}
+#newActForm p{
+	font-size: 10px;
+}
+#overlayShowHide{
+	background-color: #eee;
+	border-color: #eee !important;
+	width: 100%;
 }
