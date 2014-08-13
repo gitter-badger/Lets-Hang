@@ -74,8 +74,8 @@ li > .btn-link{
 	min-height: 36px;
 }
 .unhidden > li:hover, .unhidden > li:hover li{
-	background-color: #424477;
-	color: #FFF;
+	background-color: #EEEEEE;
+	color: #000;
 	cursor: pointer;
 }
 .unhidden > li > *{
@@ -139,4 +139,19 @@ li > .btn-link{
 	background-color: #eee;
 	border-color: #eee !important;
 	width: 100%;
+}
+.modal-body button{
+	width: 100%;
+}
+#fbInvBtn{
+	background-color: #3b5998;
+}
+#twInvBtn{
+	background-color: #55acee;
+}
+#gInvBtn{
+	background-color: #D73D32;
+}
+#liInvBtn{
+	background-color: #287BBB;
 }

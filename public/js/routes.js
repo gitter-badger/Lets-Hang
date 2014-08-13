@@ -15,7 +15,6 @@ $(document).ready(function (){
 			type: 'POST',
 			data: regForm,
 			success: function(data){
-				console.log(data);
 				if(data.status!='success'){
 					$('.container').append('<h3>account already exists</h3>');
 				}
@@ -40,7 +39,6 @@ $(document).ready(function (){
 			type: 'POST',
 			data: logForm,
 			success: function(data){
-				console.log(data);
 				if(data.status!='success'){
 					$('.container').append('<h3>email or password incorrect</h3>');
 				}
@@ -57,14 +55,11 @@ $(document).ready(function (){
 			type: 'GET',
 			data: {name: localStorage.getItem('user')},
 			success: function(data){
-				console.log(JSON.stringify(data));
-				console.log(data[0].name);
 				if(data!==null){
 					for(var i=0; i<data.length; i++){
 						var listNode = $('<li></li>');
 						listNode[0].innerHTML=data[i].name;
 						$('#activities + .hidden-list').append(listNode[0].outerHTML);
-						console.log($('#activities + .hidden-list')[0].outerHTML);
 					}
 				}
 			}
@@ -86,7 +81,6 @@ $(document).ready(function (){
 			type: 'GET',
 			data: {sender: localStorage.getItem('user')},
 			success: function(data){
-				console.log(JSON.stringify(data));
 				if(data!==null){
 					for(var i=0; i<data.length; i++){
 						var listNode = $('<li></li>');
@@ -96,7 +90,6 @@ $(document).ready(function (){
 						contain[0].innerHTML = content[0].outerHTML;
 						listNode[0].innerHTML = data[i].activity + contain[0].outerHTML;
 						$('#messages + .hidden-list').append(listNode[0].outerHTML);
-						console.log($('#messages + .hidden-list')[0].outerHTML);
 					}
 				}
 			}
@@ -112,7 +105,6 @@ $(document).ready(function (){
 			}
 		});
 		$('#messages + .hidden-list li').click(function(e){
-			console.log(e.target);
 			messageInit(e.target, localStorage.getItem('user'));
 		});
 	}
@@ -122,7 +114,6 @@ $(document).ready(function (){
 			type: 'GET',
 			data: {user:localStorage.getItem('user')},
 			success: function(data){
-				console.log(JSON.stringify(data));
 				if(data!=null){
 					for(var i=0; i<data.length; i++){
 						var listNode = $('<li></li>');
@@ -137,7 +128,6 @@ $(document).ready(function (){
 						contain[0].innerHTML = content[0].outerHTML;
 						listNode[0].innerHTML = data[i].name+contain[0].outerHTML;
 						$('#locations + .hidden-list').append(listNode[0].outerHTML);
-						console.log($('#locations + .hidden-list')[0].outerHTML);
 					}
 				}
 			}
