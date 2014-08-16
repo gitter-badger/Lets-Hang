@@ -1,4 +1,7 @@
-peeps
-=====
+Lets Hang
+=========
 
-peeps - Let Your Friends Know What You Wanna Do and Where
+Lets Hang - Let Your Friends Know What You Wanna Do and Where
+
+Uses Node.js in the main site.
+Uses Django and Ember.js for calendar 
