@@ -74,8 +74,8 @@ li > .btn-link{
 	min-height: 36px;
 }
 .unhidden > li:hover, .unhidden > li:hover li{
-	background-color: #424477;
-	color: #FFF;
+	background-color: #EEEEEE;
+	color: #000;
 	cursor: pointer;
 }
 .unhidden > li > *{
@@ -92,4 +92,66 @@ li > .btn-link{
 }
 .container{
 	height: 100%;
+}
+#newActOverlay{
+	width: 300px;
+	padding-left:4px;
+	position: absolute;
+	top: 0%;
+	right: 0%;
+	background-color: #eeeeee;
+}
+#newActOverlay.collapse{
+	overflow: hidden;
+	display: block !important;
+	height:90px;
+}
+#newActOverlay.collapse *{
+	margin-top: -50px;
+}
+#newActOverlay.collapse #overlayShowHide{
+	margin-top: 50px;
+}
+#newActOverlay > h2{
+	margin-top: 60px;
+	margin-left: 67px;
+}
+#newActForm{
+	margin-top: 5px;
+}
+#newActForm input[type^=date]{
+	width: 140px;
+}
+#newActForm input[type^=time]{
+	width: 140px;
+}
+#newActInv, #newActSub{
+	width: 90%;
+	margin-left: 5%;
+}
+#newActForm > *{
+	margin-bottom: 10px;
+}
+#newActForm p{
+	font-size: 10px;
+}
+#overlayShowHide{
+	background-color: #eee;
+	border-color: #eee !important;
+	width: 100%;
+}
+.modal-body button{
+	width: 100%;
+}
+#fbInvBtn{
+	background-color: #3b5998;
+}
+#twInvBtn{
+	background-color: #55acee;
+}
+#gInvBtn{
+	background-color: #D73D32;
+}
+#liInvBtn{
+	background-color: #287BBB;
 }

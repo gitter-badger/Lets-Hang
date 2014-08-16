@@ -69,19 +69,15 @@ app.get('/register', function(req,res){
 });
 app.post('/login-submit', function(req, res){
   var user = req.body;
-  console.log(req.body);
-  console.log(user);
   var acntBool = false;
   userCollection.findOne(user, function(err, docs){
     if(err!=null){
       console.log(err);
     }
     else{
-      console.log(docs);
       acntBool=true;
-      console.log(acntBool);
       if(acntBool){
-        res.send({status:'success', newUser: user});
+        res.send({status:'success', newUser: docs.name});
       }
       else{
         res.send({status:'incorrect email or password'});
@@ -109,7 +105,6 @@ app.post('/register-submit', function(req,res){
       console.log(err);
     }
     else{
-      console.log(docs);
       acntExists=docs;
       return docs;
     }
@@ -119,7 +114,6 @@ app.post('/register-submit', function(req,res){
     res.send({status:'success', newUser: user});
   }
   else{
-    console.log('account already exist');
     res.send({status:'account exists'});
   }
 });
@@ -128,13 +122,11 @@ app.get('/main', function(req,res){
 });
 app.get('/main/activities', function(req,res){
   var data = null;
-  console.log(req.body.user);
   activitiesCollection.find(req.body.user, function(err,docs){
     if(err){
       console.log(err);
     }
     else{
-      console.log(docs);
       data = docs;
       res.send(data);
       return docs
@@ -142,14 +134,12 @@ app.get('/main/activities', function(req,res){
   });
 });
 app.get('/main/messages', function(req,res){
-  var data = null;
-  console.log(req.body.user); 
+  var data = null; 
   messageCollection.find(req.body.user, function(err,docs){
     if(err){
       console.log(err);
     }
     else{
-      console.log(docs);
       data = docs;
       res.send(data);
       return docs;
@@ -164,12 +154,35 @@ app.get('/main/locations', function(req,res){
       console.log(err);
     }
     else{
-      console.log(docs);
       data = docs;
       res.send(data);
       return docs;
     }
   });
+});
+app.post('/main/invite', function(req,res){
+  var data = {list: new Array()};
+  console.log(req.body+' req.body');
+  activitiesCollection.find({creator:req.body.name}, function(err, docs){
+    if(err){
+      console.log(err);
+    }
+    if(docs !== null){
+      console.log(JSON.stringify(docs)+' activities');
+      for(var i = 0; i<docs.length; i++){
+        console.log(JSON.stringify(docs[i].invited)+' docs[i].invited');
+        for(var j = 0; j<docs[i].invited.length; j++){
+          data.list.push(docs[i].invited[j]);
+          console.log(data.list[i]+' data.list[i]');
+        }
+      }
+      res.send(data.list);
+    }
+  });
+  console.log(data.list+' data.list');
+  /*if(data.list.length>=1){
+    
+  }*/
 });
 //*********************************************************
 //*************************SOCKETS*************************
