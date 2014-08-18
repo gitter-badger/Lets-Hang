@@ -32,6 +32,8 @@ server.listen(3000);
 
 var path = require('path');
 
+var googleKey = 'AIzaSyBfIApUobHr1J1OYNpBIy9D1AL5cfZadgs';
+
 //*********************************************************
 //************************SETTINGS*************************
 //*********************************************************
@@ -148,7 +150,6 @@ app.get('/main/messages', function(req,res){
 });
 app.get('/main/locations', function(req,res){
   var data = null;
-  console.log(req.body.user);
   locationCollection.find(req.body.user, function(err, docs){
     if(err){
       console.log(err);
@@ -162,19 +163,53 @@ app.get('/main/locations', function(req,res){
 });
 app.post('/main/invite', function(req,res){
   var data = {list: new Array()};
-  console.log(req.body+' req.body');
   activitiesCollection.find({creator:req.body.name}, function(err, docs){
     if(err){
       console.log(err);
     }
     if(docs !== null){
-      console.log(JSON.stringify(docs)+' activities');
       for(var i = 0; i<docs.length; i++){
         data.list.push(docs[i].invited);
       }
       res.send(data.list);
     }
   });
+});
+app.post('/main/create-activity', function(req, res){
+  var data = req.body;
+  var lookLat = null;
+  var lookLong = null;
+  var result = {};
+  console.log(data);
+  var addrOptions = {
+    host: url,
+    port: 80,
+    path: 'https://maps.googleapis.com/maps/api/geocode/json?address='+data.location+'&key='+googleKey,
+    method: 'POST'
+  };
+  http.request(addrOptions, function(res) {
+    console.log('STATUS: ' + res.statusCode);
+    console.log('HEADERS: ' + JSON.stringify(res.headers));
+    res.setEncoding('utf8');
+    res.on('data', function (chunk) {
+      console.log('BODY: ' + chunk);
+    });
+  }).end();
+  var locOptions = {
+    host: url,
+    port: 80,
+    path: 'https://maps.googleapis.com/maps/api/place/radarsearch/json?location='+lookLat+','+lookLong+'&key='+googleKey,
+    method: 'POST'
+  };
+  http.request(locOptions, function(res) {
+    console.log('STATUS: ' + res.statusCode);
+    console.log('HEADERS: ' + JSON.stringify(res.headers));
+    res.setEncoding('utf8');
+    res.on('data', function (chunk) {
+      console.log('BODY: ' + chunk);
+    });
+  }).end();
+  
 });
 //*********************************************************
 //*************************SOCKETS*************************
