@@ -130,7 +130,8 @@ $(document).ready(function(){
 						location: $('#newActLoct').val(),
 						startDate: $('#startDate').val(),
 						startTime: $('#startTime').val(),
-						invited: localStorage.getItem('invited')
+						invited: localStorage.getItem('invited'),
+						user: localStorage.getItem('user')
 					};
 				}
 				else{
@@ -140,7 +141,8 @@ $(document).ready(function(){
 						startDate: $('#startDate').val(),
 						startTime: $('#startTime').val(),
 						endTime: $('#endTime').val(),
-						invited: localStorage.getItem('invited')
+						invited: localStorage.getItem('invited'),
+						user: localStorage.getItem('user')
 					};
 				}
 			}
@@ -152,7 +154,8 @@ $(document).ready(function(){
 						startDate: $('#startDate').val(),
 						endDate: $('#endDate').val(),
 						startTime: $('#startTime').val(),
-						invited: localStorage.getItem('invited')
+						invited: localStorage.getItem('invited'),
+						user: localStorage.getItem('user')
 					};
 				}
 				else{
@@ -163,7 +166,8 @@ $(document).ready(function(){
 						endDate: $('#endDate').val(),
 						startTime: $('#startTime').val(),
 						endTime: $('#endTime').val(),
-						invited: localStorage.getItem('invited')
+						invited: localStorage.getItem('invited'),
+						user: localStorage.getItem('user')
 					};
 				}
 			}
@@ -171,6 +175,7 @@ $(document).ready(function(){
 		else{
 			alert('No one is invited, please invite people before creating an activity');
 		}
+		formData.location.replace(' ', '+');
 		$.ajax({
 			url: '/main/create-activity',
 			type: 'POST',
@@ -183,5 +188,5 @@ $(document).ready(function(){
 	});
 });
 function sendInvite(activity){
-	
+
 }

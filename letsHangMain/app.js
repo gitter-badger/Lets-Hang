@@ -20,6 +20,10 @@ var passport = require('passport');
 
 var bcrypt = require('bcrypt-nodejs');
 
+var restClient = require('node-rest-client').Client;
+
+rClient = restClient();
+
 var hbs= require('express-hbs');
 
 var http = require('http');
@@ -177,39 +181,68 @@ app.post('/main/invite', function(req,res){
 });
 app.post('/main/create-activity', function(req, res){
   var data = req.body;
-  var lookLat = null;
-  var lookLong = null;
-  var result = {};
+  var result = null;
+  if(req.body.endDate!==null){
+    if(req.body.endTime!==null){
+      result = {
+        lat: null,
+        lng: null,
+        name: data.name,
+        creator: data.user,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        invited: data.invited
+      };
+    }
+    else{
+      result = {
+        lat: null,
+        lng: null,
+        name: data.name,
+        creator: data.user,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        startTime: data.startTime,
+        invited: data.invited
+      };
+    }
+  }
+  else{
+    if(req.body.endTime!==null){
+      result = {
+        lat: null,
+        lng: null,
+        name: data.name,
+        creator: data.user,
+        startDate: data.startDate,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        invited: data.invited
+      };
+    }
+    else{
+      result = {
+        lat: null,
+        lng: null,
+        name: data.name,
+        creator: data.user,
+        startDate: data.startDate,
+        startTime: data.startTime,
+        invited: data.invited
+      };
+    }
+  }
   console.log(data);
-  var addrOptions = {
-    host: url,
-    port: 80,
-    path: 'https://maps.googleapis.com/maps/api/geocode/json?address='+data.location+'&key='+googleKey,
-    method: 'POST'
-  };
-  http.request(addrOptions, function(res) {
-    console.log('STATUS: ' + res.statusCode);
-    console.log('HEADERS: ' + JSON.stringify(res.headers));
-    res.setEncoding('utf8');
-    res.on('data', function (chunk) {
-      console.log('BODY: ' + chunk);
-    });
-  }).end();
-  var locOptions = {
-    host: url,
-    port: 80,
-    path: 'https://maps.googleapis.com/maps/api/place/radarsearch/json?location='+lookLat+','+lookLong+'&key='+googleKey,
-    method: 'POST'
-  };
-  http.request(locOptions, function(res) {
-    console.log('STATUS: ' + res.statusCode);
-    console.log('HEADERS: ' + JSON.stringify(res.headers));
-    res.setEncoding('utf8');
-    res.on('data', function (chunk) {
-      console.log('BODY: ' + chunk);
-    });
-  }).end();
-  
+  console.log(result);
+  rClient.get('https://maps.googleapis.com/maps/api/geocode/json?address='+data.location+'&key='+googleKey, function(data, response){
+    result.lat = data.geometry.location.lat;
+    result.lng = data.geometry.location.lng;
+  });
+  activityCollection.save(result);
+  locarionCollectoin.save({_id: 1, name: data.location, Lat: result.lat, Long: result.lng, user:result.user, })
+  res.send(result);  
 });
 //*********************************************************
 //*************************SOCKETS*************************
