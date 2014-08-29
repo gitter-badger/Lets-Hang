@@ -34,7 +34,9 @@ Calendar app stack:
 -mongodb
 
 Coming soon:
+
 www.lets-hang-app.com (expect release mid to late september)
+
 lets hang mobile (Cross platform)
 
 Once released this repo will be made private; however the README will still be public with the creator's contact info, in the event you wish to contact him, which with his permission you may view his code.
