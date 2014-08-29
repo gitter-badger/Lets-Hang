@@ -164,7 +164,7 @@ app.get('/main', function(req,res){
 });
 app.post('/main/locations', function(req, res){
   var lData = null;
-  activitiesCollection.find(req.body.user, function(err, docs){
+  activitiesCollection.findOne({creator:req.body.user}, function(err, docs){
     if(err){
       console.log(err);
     }
