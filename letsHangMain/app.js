@@ -20,6 +20,10 @@ var passport = require('passport');
 
 var bcrypt = require('bcrypt-nodejs');
 
+var restClient = require('node-rest-client').Client;
+
+var rClient = new restClient();
+
 var hbs= require('express-hbs');
 
 var http = require('http');
@@ -31,6 +35,8 @@ var io = require('socket.io').listen(server);
 server.listen(3000);
 
 var path = require('path');
+
+var googleKey = 'AIzaSyBfIApUobHr1J1OYNpBIy9D1AL5cfZadgs';
 
 //*********************************************************
 //************************SETTINGS*************************
@@ -118,57 +124,65 @@ app.post('/register-submit', function(req,res){
   }
 });
 app.get('/main', function(req,res){
-  res.render('main.hbs', {title: 'peeps - main'});
-});
-app.get('/main/activities', function(req,res){
-  var data = null;
+  var aData = null;
   activitiesCollection.find(req.body.user, function(err,docs){
     if(err){
       console.log(err);
     }
     else{
-      data = docs;
-      res.send(data);
-      return docs
+      aData = docs;
+      var mData = null; 
+      messageCollection.find(req.body.user, function(err,docs){
+        if(err){
+          console.log(err);
+        }
+        else{
+          mData = docs;
+          var lData = null;
+          locationCollection.find(req.body.user, function(err,docs){
+            if(err){
+              console.log(err);
+            }
+            else{
+              lData = docs;
+              var dataToSend = {
+                title: 'peeps - main', 
+                activity: aData, 
+                messages: mData, 
+                location: lData
+              };
+              res.render('main.hbs', dataToSend);
+              return docs;
+            }
+          });
+          return docs;
+        }
+      });
+      return docs;
     };
   });
 });
-app.get('/main/messages', function(req,res){
-  var data = null; 
-  messageCollection.find(req.body.user, function(err,docs){
+app.post('/main/locations', function(req, res){
+  var lData = null;
+  activitiesCollection.find(req.body.user, function(err, docs){
     if(err){
       console.log(err);
     }
     else{
-      data = docs;
-      res.send(data);
-      return docs;
-    }
-  });
-});
-app.get('/main/locations', function(req,res){
-  var data = null;
-  console.log(req.body.user);
-  locationCollection.find(req.body.user, function(err, docs){
-    if(err){
-      console.log(err);
-    }
-    else{
-      data = docs;
-      res.send(data);
+      lData = docs;
+      console.log(docs);
+      res.send(lData);
       return docs;
     }
   });
 });
 app.post('/main/invite', function(req,res){
   var data = {list: new Array()};
-  console.log(req.body+' req.body');
   activitiesCollection.find({creator:req.body.name}, function(err, docs){
     if(err){
       console.log(err);
     }
     if(docs !== null){
-      console.log(JSON.stringify(docs)+' activities');
       for(var i = 0; i<docs.length; i++){
         data.list.push(docs[i].invited);
       }
@@ -176,13 +190,115 @@ app.post('/main/invite', function(req,res){
     }
   });
 });
+app.post('/main/create-activity', function(req, res){
+  var recData = req.body;
+  var result = null;
+  if(req.body.endDate!==null){
+    if(req.body.endTime!==null){
+      result = {
+        lat: null,
+        lng: null,
+        name: recData.name,
+        creator: recData.user,
+        startDate: recData.startDate,
+        endDate: recData.endDate,
+        startTime: recData.startTime,
+        endTime: recData.endTime,
+        invited: recData.invited
+      };
+    }
+    else{
+      result = {
+        lat: null,
+        lng: null,
+        name: recData.name,
+        creator: recData.user,
+        startDate: recData.startDate,
+        endDate: recData.endDate,
+        startTime: recData.startTime,
+        invited: recData.invited
+      };
+    }
+  }
+  else{
+    if(req.body.endTime!==null){
+      result = {
+        lat: null,
+        lng: null,
+        name: recData.name,
+        creator: recData.user,
+        startDate: recData.startDate,
+        startTime: recData.startTime,
+        endTime: recData.endTime,
+        invited: recData.invited
+      };
+    }
+    else{
+      result = {
+        lat: null,
+        lng: null,
+        name: recData.name,
+        creator: recData.user,
+        startDate: recData.startDate,
+        startTime: recData.startTime,
+        invited: recData.invited
+      };
+    }
+  }
+  //console.log(recData.location);
+  //console.log('https://maps.googleapis.com/maps/api/geocode/json?address='+recData.location+'&key='+googleKey);
+  rClient.get('https://maps.googleapis.com/maps/api/geocode/json?address='+recData.location+'&key='+googleKey, function(data, response){
+    if(JSON.parse(data).status!='OK'){
+      console.log(JSON.parse(data).status);
+      return;
+    }
+    console.log(JSON.parse(data).results[0].geometry.location);
+    result.lat = JSON.parse(data).results[0].geometry.location.lat;
+    result.lng = JSON.parse(data).results[0].geometry.location.lng;
+    console.log(result);
+    console.log('before');
+    activitiesCollection.save(result);
+    locationCollection.save({_id: 1, name: recData.location, Lat: result.lat, Long: result.lng, user:result.user, })
+    res.send(result);
+  }); 
+});
+var inviteUser;
+var actInv;
+app.post('/main/invite-out', function(req, res){
+  console.log(req.body);
+  userCollection.findOne({name: req.body.user}, function(err, doc){
+    if(err){
+      console.log(err);
+    }
+    else{
+      inviteUser = doc;
+      actInv = {
+        invited: new Array(inviteUser)
+      };
+    }
+  });
+});
 //*********************************************************
 //*************************SOCKETS*************************
 //*********************************************************
-/*io.sockets.on('connection', function(socket){
+io.sockets.on('connection', function(socket){
   console.log('socket.io started');
-
-}):*/
+  if(inviteUser!==null){
+    activitiesCollection.find(actInv, function(err, docs){
+      if(err){
+        console.log(err);
+      }
+      else{
+        socket.emit('findUser');
+        socket.on('foundUser', function(userData){
+          if(userData==actInv[0]){
+            socket.emit('inviteIn', docs);
+          }
+        });
+      }
+    });
+  }
+});
 //*********************************************************
 //*********************AUTHENTICATION**********************
 //*********************************************************

@@ -11,6 +11,7 @@
         "socket.io-client": "0.9",
         "google-maps": "*",
         "passport": "*",
-        "bcrypt-nodejs": "*"
+        "bcrypt-nodejs": "*",
+        "node-rest-client": "1.0"
     }
 }

@@ -3,7 +3,7 @@ html, body, .container{
 	height: 100%;
 }
 body{
-	background-color: #428BCA;
+	background-color: #428B5C;
 }
 .navbar-static-top{
 	background-color: #FFF;
@@ -99,7 +99,7 @@ li > .btn-link{
 	position: absolute;
 	top: 0%;
 	right: 0%;
-	background-color: #eeeeee;
+	background-color: #428B5C;
 }
 #newActOverlay.collapse{
 	overflow: hidden;
@@ -136,9 +136,12 @@ li > .btn-link{
 	font-size: 10px;
 }
 #overlayShowHide{
-	background-color: #eee;
-	border-color: #eee !important;
+	background-color: #428B5C;
+	border-color: #428B5C !important;
 	width: 100%;
+}
+#overlayShowHide:focus{
+	outline: none !important;
 }
 .modal-body button{
 	width: 100%;
@@ -163,4 +166,10 @@ li > .btn-link{
 }
 .inviteThis > *{
 	margin-left: -3.5px;
+}
+.navbar-brand{
+	color: #428B5C;
+}
+.btn-link{
+	color: #428B5C;
 }
