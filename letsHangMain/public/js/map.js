@@ -3,13 +3,13 @@ window.onload = function(){
 	$.ajax({
 		url:'/main/locations',
 		type:'POST',
-		data:{user:localStorage.getItem('user')},
+		data:{user: localStorage.getItem('user')},
 		success:function(data){
 			if(data!==null){
         console.log(data);
 				function initialize() {
   					var mapOptions = {
-    					center: new google.maps.LatLng(data[0].Lat, data[0].Long),
+    					center: new google.maps.LatLng(data.lat, data.lng),
     					zoom: 8
   					};
   					map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
@@ -17,7 +17,7 @@ window.onload = function(){
   					var contentString = '<div id="content">'+
   					'<div id="prevGroup">'+
   					'<h2>Last Activity:</h2>'+
-  					'<h3>'+data[0].lastActivity+'</h3>'+
+  					'<h3>'+data.name+'</h3>'+
   					'</div>'+
   					'</div>';
   					var infowindow = new google.maps.InfoWindow({
@@ -26,7 +26,7 @@ window.onload = function(){
   					var marker = new google.maps.Marker({
       					position: mapOptions.center,
       					map: map,
-      					title: data[0].name+','+data[0].lastActivity
+      					title: data.name
   					});
   					google.maps.event.addListener(marker, 'click', function() {
     					infowindow.open(map,marker);
