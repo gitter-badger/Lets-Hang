@@ -1,4 +1,10 @@
 "use strict";
+function formatLoct(loct){
+	if(loct.indexOf(' ')<=-1){
+		return loct;
+	}
+	return formatLoct(loct.replace(' ','+'));
+}
 $(document).ready(function(){
 	$('#overlayShowHide').click(function(e){
 		e.preventDefault();
@@ -130,7 +136,7 @@ $(document).ready(function(){
 						location: $('#newActLoct').val(),
 						startDate: $('#startDate').val(),
 						startTime: $('#startTime').val(),
-						invited: localStorage.getItem('invited'),
+						invited: localStorage.getItem('invited').arr,
 						user: localStorage.getItem('user')
 					};
 				}
@@ -141,7 +147,7 @@ $(document).ready(function(){
 						startDate: $('#startDate').val(),
 						startTime: $('#startTime').val(),
 						endTime: $('#endTime').val(),
-						invited: localStorage.getItem('invited'),
+						invited: localStorage.getItem('invited').arr,
 						user: localStorage.getItem('user')
 					};
 				}
@@ -154,7 +160,7 @@ $(document).ready(function(){
 						startDate: $('#startDate').val(),
 						endDate: $('#endDate').val(),
 						startTime: $('#startTime').val(),
-						invited: localStorage.getItem('invited'),
+						invited: localStorage.getItem('invited').arr,
 						user: localStorage.getItem('user')
 					};
 				}
@@ -166,7 +172,7 @@ $(document).ready(function(){
 						endDate: $('#endDate').val(),
 						startTime: $('#startTime').val(),
 						endTime: $('#endTime').val(),
-						invited: localStorage.getItem('invited'),
+						invited: localStorage.getItem('invited').arr,
 						user: localStorage.getItem('user')
 					};
 				}
@@ -175,18 +181,59 @@ $(document).ready(function(){
 		else{
 			alert('No one is invited, please invite people before creating an activity');
 		}
-		formData.location.replace(' ', '+');
+		formData.location = formatLoct(formData.location);
+		console.log(formData.location);
 		$.ajax({
 			url: '/main/create-activity',
 			type: 'POST',
 			data: formData,
 			success: function(data){
+				console.log(data);
 				mapNewActivity(data);
-				sendInvite(data);
+				sendInvite(data, 0);
 			}
 		});
 	});
 });
-function sendInvite(activity){
-
+function sendInvite(activity, i){
+	if(i==activity.invited.length-1){
+		$.ajax({
+			url:'/main/invite-out',
+			type:'POST',
+			data:{
+				user: activity.invited[i],
+				outActivity: activity
+			},
+			success: function(data){
+				console.log(data);
+				alert('Your Activity Has Been Create');
+				for(var j = 0; j<$('#newActForm').children().length; j++){
+					if($('#newActForm').children()[j].class=='formControl'){
+						$('#newActForm').children()[j].value=null;
+					}
+				}
+			}
+		});
+		return;
+	}
+	else{
+		$.ajax({
+			url:'/main/invite-out',
+			type:'POST',
+			data:{
+				user: activity.invited[i],
+				outActivity: activity
+			},
+			success: function(data){
+				console.log(data);
+				alert('Your Activity Has Been Create');
+				for(var j = 0; j<$('#newActForm').children().length; j++){
+					if($('#newActForm').children()[j].class=='formControl'){
+						$('#newActForm').children()[j].value=null;
+					}
+				}
+			}
+		});
+		return sendInvite(activity, i+1);
+	}
 }

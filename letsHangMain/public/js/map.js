@@ -1,16 +1,18 @@
+var map;
 window.onload = function(){
 	$.ajax({
 		url:'/main/locations',
-		type:'GET',
+		type:'POST',
 		data:{user:localStorage.getItem('user')},
 		success:function(data){
 			if(data!==null){
+        console.log(data);
 				function initialize() {
   					var mapOptions = {
     					center: new google.maps.LatLng(data[0].Lat, data[0].Long),
     					zoom: 8
   					};
-  					var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+  					map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
   					console.log(marker);
   					var contentString = '<div id="content">'+
   					'<div id="prevGroup">'+
@@ -36,5 +38,25 @@ window.onload = function(){
 	});
 };
 function mapNewActivity(activity){
-  
+  console.log(activity);
+  var contentString = '<div id="content">'+
+  '<div id="prevGroup">'+
+  '<h2>Activity:</h2>'+
+  '<h3>'+activity.name+'</h3>'+
+  '<h3>'+activity.startDate+'</h3>'+
+  '<h3>'+activity.startTime+'</h3>'+
+  '</div>'+
+  '</div>';
+  var newInfowindow = new google.maps.InfoWindow({
+              content: contentString
+  });
+  var newMarker = new google.maps.Marker({
+    position: new google.maps.LatLng(activity.lat, activity.lng),
+    title: activity.name
+  });
+  console.log(newMarker);
+  newMarker.setMap(map);
+  google.maps.event.addListener(newMarker, 'click', function() {
+    newInfowindow.open(map,newMarker);
+  });
 }
