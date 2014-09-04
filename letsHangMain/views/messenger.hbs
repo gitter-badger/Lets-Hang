@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Let's Hang - Main</title>
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="http://localhost:3000/css/style.css">
+		<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+		<script src="http://localhost:3000/socket.io/lib/socket.io.js"></script>
+		<script src="http://localhost:3000/js/messenger.js"></script>
+	</head>
+	<body>
+		<div class="message-box">
+			{{#each messages}}
+				{{#if sender}}
+					<p class="sender">{{content}}</p>
+				{{else}}
+					<p class="reciever">{{content}}</p>
+				{{/if}}
+			{{/each}}
+		</div>
+		<div "send-box">
+			<form id="message-send" class="input-group">
+				<textarea id="message-content"></textarea>
+				<input type="submit" id="send" class="btn btn-success" value="Send"></br>
+			</form>
+		</div>
+	<body>
+</html>

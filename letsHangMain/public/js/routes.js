@@ -31,8 +31,6 @@ $(document).ready(function (){
 			emailAddr: $('#login-email').val(),
 			password: $('#login-password').val()
 		};
-		alert('click');
-		alert(logForm)
 		console.log(logForm);
 		$.ajax({
 			url: '/login-submit',

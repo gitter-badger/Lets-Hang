@@ -14,8 +14,6 @@ var messageCollection = db.collection('messages');
 
 var locationCollection = db.collection('locations');
 
-//var maps = require('google-maps');
-
 var passport = require('passport');
 
 var bcrypt = require('bcrypt-nodejs');
@@ -278,6 +276,44 @@ app.post('/main/invite-out', function(req, res){
     }
   });
 });
+var messUser;
+var messAct;
+app.post('/main/create-message', function(req,res){
+  messUser = req.body.user;
+  messAct = req.body.name;
+  res.send({name:messAct});
+});
+app.get('/message', function(req, res){
+  var sender = messUser;
+  var mActivity = messAct;
+  messageCollection.find({activity: mActivity}, function(err, docs){
+    if(err){
+      console.log(err);
+      return;
+    }
+    var message = new Array();
+    for(var i = 0; i<docs.length; i++){
+      if(docs[i].sender==sender){
+        message.push({
+          sender: true,
+          content: docs[i].content,
+          activity: docs[i].activity,
+          date: docs[i].date
+        });
+      }
+      else{
+        message.push({
+          sender: false,
+          content: docs[i].content,
+          activity: docs[i].activity,
+          date: docs[i].date
+        });
+      }
+    }
+    console.log(message);
+    res.render('messenger.hbs', {messages:message});
+  });
+});
 //*********************************************************
 //*************************SOCKETS*************************
 //*********************************************************
@@ -298,6 +334,10 @@ io.sockets.on('connection', function(socket){
       }
     });
   }
+  socket.on('send', function(msg){
+    messageCollection.save(msg);
+    socket.broadcast.emit('recieve',msg);
+  });
 });
 //*********************************************************
 //*********************AUTHENTICATION**********************

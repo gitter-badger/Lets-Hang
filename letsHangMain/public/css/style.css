@@ -100,6 +100,7 @@ li > .btn-link{
 	top: 0%;
 	right: 0%;
 	background-color: #428B5C;
+	color: #fff;
 }
 #newActOverlay.collapse{
 	overflow: hidden;
@@ -134,6 +135,9 @@ li > .btn-link{
 }
 #newActForm p{
 	font-size: 10px;
+}
+#newActForm .btn-link{
+	color: #fff;
 }
 #overlayShowHide{
 	background-color: #428B5C;
@@ -172,4 +176,56 @@ li > .btn-link{
 }
 .btn-link{
 	color: #428B5C;
+}
+#new-message{
+	width: 125%;
+	color: #FFF;
+}
+#map-canvas{
+	margin-top: 20px;
+}
+#messModal{
+	z-index: 9999;
+}
+.chat-box{
+	width: 185px;
+	height: 264px;
+	position: fixed;
+	bottom: -34px;
+}
+.chat-title{
+	height: 20px;
+	background-color: #fff;
+	color: #428B5C;
+}
+#message-content{
+	height: 65px;
+	resize: none;
+	position: absolute;
+	bottom: -134px;
+}
+#send{
+	position: absolute;
+	bottom: -172px;
+	width: 180px;
+}
+.message-box{
+	height: 90px;
+	width: 180px;
+	position: absolute;
+	overflow: auto;
+	background-color: #0D8;
+}
+.chat-title .btn.btn-link{
+	position: absolute;
+	top: 0px;
+	right: 0px;
+}
+p.reciever{
+	background-color: #FFF;
+	color: #333;
+}
+p.sender{
+	background-color: #444;
+	color: #FFF;
 }
