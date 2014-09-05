@@ -19,8 +19,11 @@ $(document).ready(function(){
 		console.log('send');
 		if($('#message-content').val()!==''){
 			console.log($('#message-content').val());
+			console.log(localStorage.getItem('activity'));
+			var actName = localStorage.getItem('activity');
 			var msg = {
 				sender: messenger.user,
+				name: actName,
 				content: $('#message-content').val(),
 				date: new Date()
 			}

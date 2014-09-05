@@ -12,7 +12,7 @@ $('body').ready(function(){
 			console.log(inv);
 		});
 	}
-	var inviteLine = new inviteIn(localStorage.getItem('user'));
+	//var inviteLine = new inviteIn(localStorage.getItem('user'));
 	$('#new-message').click(function(e){
 		function activitySelect(){
 			var result;
@@ -71,16 +71,23 @@ $('body').ready(function(){
 					'<iframe src="/message" height="200px" width="185px"></iframe>'+
 					'</div>'+
 					'</div>');
-				if(typeof $('div.chat-box')[0]!="string"){
+				if(typeof $('div.chat-box')[0]!="object"){
+					console.log(typeof $('div.chat-box')[0]);
 					$('body').append(chatBox[0]);
 					localStorage.setItem('activity', data.name);
 					$('#messModal').modal('hide');
 				}
 				else{
-					console.log(typeof $('div.chat-box')[0]);
 					$('#messModal').append('<p>Chat for That activity is already open');
 				}
 			}
 		});
+	});
+	$('.chat-title .btn.btn-link').click(function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		var chatBox = $(e.target).parent().parent();
+		var iFrame = $(chatBox[0].class+' .message-holder iframe')[0].src='about:blank';
+		iFrame.remove();
 	});
 });

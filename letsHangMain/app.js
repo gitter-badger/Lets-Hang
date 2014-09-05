@@ -292,22 +292,28 @@ app.get('/message', function(req, res){
       return;
     }
     var message = new Array();
+    console.log(docs.length);
     for(var i = 0; i<docs.length; i++){
       if(docs[i].sender==sender){
-        message.push({
+        message[i]={
           sender: true,
           content: docs[i].content,
           activity: docs[i].activity,
           date: docs[i].date
-        });
+        };
       }
       else{
-        message.push({
+        message[i]={
           sender: false,
           content: docs[i].content,
           activity: docs[i].activity,
           date: docs[i].date
-        });
+        };
+      }
+      if(i==docs.length-1){
+        console.log(message);
+        res.render('messenger.hbs', {messages:message});
+        return;
       }
     }
     console.log(message);
