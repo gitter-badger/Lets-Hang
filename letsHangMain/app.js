@@ -123,26 +123,26 @@ app.post('/register-submit', function(req,res){
 });
 app.get('/main', function(req,res){
   var aData = null;
-  activitiesCollection.find(req.body.user, function(err,docs){
+  activitiesCollection.find(req.body.user, function(err,aDocs){
     if(err){
       console.log(err);
     }
     else{
-      aData = docs;
+      aData = aDocs;
       var mData = null; 
-      messageCollection.find(req.body.user, function(err,docs){
+      messageCollection.find(req.body.user, function(err,mDocs){
         if(err){
           console.log(err);
         }
         else{
-          mData = docs;
+          mData = mDocs;
           var lData = null;
-          locationCollection.find(req.body.user, function(err,docs){
+          locationCollection.find(req.body.user, function(err,lDocs){
             if(err){
               console.log(err);
             }
             else{
-              lData = docs;
+              lData = lDocs;
               var dataToSend = {
                 title: 'peeps - main', 
                 activity: aData, 
@@ -150,13 +150,13 @@ app.get('/main', function(req,res){
                 location: lData
               };
               res.render('main.hbs', dataToSend);
-              return docs;
+              return lDocs;
             }
           });
-          return docs;
+          return mDocs;
         }
       });
-      return docs;
+      return aDocs;
     };
   });
 });

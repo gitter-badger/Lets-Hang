@@ -83,11 +83,17 @@ $('body').ready(function(){
 			}
 		});
 	});
-	$('.chat-title .btn.btn-link').click(function(e){
+	$('body').on('click mousedown touchstart pointerDown', '.chat-title .btn.btn-link', function(e){
 		e.preventDefault();
 		e.stopPropagation();
+		console.log('exit');
+		console.log(e.target);
 		var chatBox = $(e.target).parent().parent();
-		var iFrame = $(chatBox[0].class+' .message-holder iframe')[0].src='about:blank';
-		iFrame.remove();
+		console.log(chatBox);
+		var iFrame = chatBox.children('.message-holder iframe');
+		console.log(chatBox.children('.message-holder iframe'));
+		iFrame.src='about:blank';
+		console.log(iFrame);
+		chatBox.remove();
 	});
 });
