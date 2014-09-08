@@ -1,58 +1,99 @@
-"use strict";
-function messageInit(target, user, title){
-	this.user = user;
-	this.targetUsers = target;
-	this.title = title;
-	this.socket = io();
-	this.allUsers = function(){
-		this.targetUsers[this.targetUsers.length]=this.user;
-		return this.targetUsers;
+$('body').ready(function(){
+	function inviteIn(user){
+		this.user = user;
+		this.socket = io.connect('http://localhost:3000');
+		this.socket.on('findUser', function(data){
+			if(this.user!==null){
+				this.socket.emit('foundUser', this.user);
+			}
+		});
+		this.socket.on('inviteIn', function(inv){
+			console.log('invited');
+			console.log(inv);
+		});
 	}
-	this.socket.emit('messageInit', {date:new Date(), users: this.allUsers});
-	this.send.prototype = function(msg){
-		this.socket.emit('send', msg);
-	}
-	this.socket.on('recieve', function(msg){
-		$('.'+this.title).append('<p>'+msg+'</p>');
-	});
-}
-function inviteIn(user){
-	this.user = user;
-	this.socket = io();
-	this.socket.on('findUser', function(data){
-		if(this.user!==null){
-			socket.emit('foundUser', this.user);
+	//var inviteLine = new inviteIn(localStorage.getItem('user'));
+	$('#new-message').click(function(e){
+		function activitySelect(){
+			var result;
+			var lParent = $('#activities + .hidden-list').children();
+			for(var i = 0; i<lParent.length; i++){
+				result += '<option value="'+lParent[i].innerText+'">'+lParent[i].innerText+'</option>';
+			}
+			return result;
 		}
+		var modal = $('<div class="modal fade" id="messModal">'+
+            '<div class="modal-dialog">'+
+            '<div class="modal-content">'+
+            '<div class="modal-header">'+
+            '<button type="button" class="close" data-dismiss="modal">'+
+            '<span aria-hidden="true">&times;</span>'+
+            '<span class="sr-only">Close</span>'+
+            '</button>'+
+            '<h4 class="modal-title">Create New Group Message</h4>'+
+            '</div>'+
+            '<div class="modal-body">'+
+            '<select id="chat-act-select">'+
+            '<option selected="selected" value="Select Which Activity To Chat About">'+
+            activitySelect()+
+            '</select>'+
+            '</div>'+
+            '<div class="modal-footer">'+
+            '<button type="button" id="close" class="btn btn-default" data-dismiss="modal">Close</button>'+
+            '<button type="button" id="startChat" class="btn btn-primary">Start Chat</button>'+
+            '</div>'+
+            '</div>'+
+            '</div>'+
+            '</div>');
+		$('body').append(modal[0]);
+		modal.modal('show');
 	});
-	this.socket.on('inviteIn', function(inv){
-		console.log('invited');
-		console.log(inv);
+	$('body').on('click mousedown touchstart pointerDown','#startChat' , function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		console.log('click');
+		$.ajax({
+			url:'/main/create-message',
+			type:'POST',
+			data: {
+				name: $('#chat-act-select option:selected').val(),
+				user: localStorage.getItem('user')
+			},
+			success: function(data){
+				var chatBox = $('<div class="chat-box">'+
+					'<div class="chat-title">'+
+					'<h4>'+
+					data.name+
+					'</h4>'+
+					'<button class="btn btn-link">&times;</button>'+
+					'</div>'+
+					'<div id="message-holder">'+
+					'<iframe src="/message" height="200px" width="185px"></iframe>'+
+					'</div>'+
+					'</div>');
+				if(typeof $('div.chat-box')[0]!="object"){
+					console.log(typeof $('div.chat-box')[0]);
+					$('body').append(chatBox[0]);
+					localStorage.setItem('activity', data.name);
+					$('#messModal').modal('hide');
+				}
+				else{
+					$('#messModal').append('<p>Chat for That activity is already open');
+				}
+			}
+		});
 	});
-}
-
-$(document).ready(function(){
-	var inviteLine = new inviteIn(localStorage.getItem('user'));
-	$('#new-message').click(function(){
-		$(body).append('<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">'
-      		+'<div class="modal-dialog">'
-        	+'<div class="modal-content">'
-          	+'<div class="modal-header">'
-            +'<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>'
-            +'<h4 class="modal-title">Which Activity to Chat About?</h4>'
-          	+'</div>'
-          	+'<div class="modal-body">'
-          	+'<select>'
-          	+'<option>'
-          	+'</option>'
-          	+'</select>'
-          	+'</div>'
-          	+'<div class="modal-footer">'
-            +'<button type="button" id="close" class="btn btn-default" data-dismiss="modal">Close</button>'
-            +'<button type="button" id="save" class="btn btn-primary">Save changes</button>'
-          	+'</div>'
-        	+'</div><!-- /.modal-content -->'
-      		+'</div><!-- /.modal-dialog -->'
-    		+'</div>');
-		var newMessageRoom = new messageInit()
+	$('body').on('click mousedown touchstart pointerDown', '.chat-title .btn.btn-link', function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		console.log('exit');
+		console.log(e.target);
+		var chatBox = $(e.target).parent().parent();
+		console.log(chatBox);
+		var iFrame = chatBox.children('.message-holder iframe');
+		console.log(chatBox.children('.message-holder iframe'));
+		iFrame.src='about:blank';
+		console.log(iFrame);
+		chatBox.remove();
 	});
 });

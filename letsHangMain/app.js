@@ -14,8 +14,6 @@ var messageCollection = db.collection('messages');
 
 var locationCollection = db.collection('locations');
 
-//var maps = require('google-maps');
-
 var passport = require('passport');
 
 var bcrypt = require('bcrypt-nodejs');
@@ -125,26 +123,26 @@ app.post('/register-submit', function(req,res){
 });
 app.get('/main', function(req,res){
   var aData = null;
-  activitiesCollection.find(req.body.user, function(err,docs){
+  activitiesCollection.find(req.body.user, function(err,aDocs){
     if(err){
       console.log(err);
     }
     else{
-      aData = docs;
+      aData = aDocs;
       var mData = null; 
-      messageCollection.find(req.body.user, function(err,docs){
+      messageCollection.find(req.body.user, function(err,mDocs){
         if(err){
           console.log(err);
         }
         else{
-          mData = docs;
+          mData = mDocs;
           var lData = null;
-          locationCollection.find(req.body.user, function(err,docs){
+          locationCollection.find(req.body.user, function(err,lDocs){
             if(err){
               console.log(err);
             }
             else{
-              lData = docs;
+              lData = lDocs;
               var dataToSend = {
                 title: 'peeps - main', 
                 activity: aData, 
@@ -152,13 +150,13 @@ app.get('/main', function(req,res){
                 location: lData
               };
               res.render('main.hbs', dataToSend);
-              return docs;
+              return lDocs;
             }
           });
-          return docs;
+          return mDocs;
         }
       });
-      return docs;
+      return aDocs;
     };
   });
 });
@@ -278,6 +276,50 @@ app.post('/main/invite-out', function(req, res){
     }
   });
 });
+var messUser;
+var messAct;
+app.post('/main/create-message', function(req,res){
+  messUser = req.body.user;
+  messAct = req.body.name;
+  res.send({name:messAct});
+});
+app.get('/message', function(req, res){
+  var sender = messUser;
+  var mActivity = messAct;
+  messageCollection.find({activity: mActivity}, function(err, docs){
+    if(err){
+      console.log(err);
+      return;
+    }
+    var message = new Array();
+    console.log(docs.length);
+    for(var i = 0; i<docs.length; i++){
+      if(docs[i].sender==sender){
+        message[i]={
+          sender: true,
+          content: docs[i].content,
+          activity: docs[i].activity,
+          date: docs[i].date
+        };
+      }
+      else{
+        message[i]={
+          sender: false,
+          content: docs[i].content,
+          activity: docs[i].activity,
+          date: docs[i].date
+        };
+      }
+      if(i==docs.length-1){
+        console.log(message);
+        res.render('messenger.hbs', {messages:message});
+        return;
+      }
+    }
+    console.log(message);
+    res.render('messenger.hbs', {messages:message});
+  });
+});
 //*********************************************************
 //*************************SOCKETS*************************
 //*********************************************************
@@ -298,6 +340,10 @@ io.sockets.on('connection', function(socket){
       }
     });
   }
+  socket.on('send', function(msg){
+    messageCollection.save(msg);
+    socket.broadcast.emit('recieve',msg);
+  });
 });
 //*********************************************************
 //*********************AUTHENTICATION**********************
