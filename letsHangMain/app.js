@@ -73,14 +73,12 @@ app.get('/register', function(req,res){
 });
 app.post('/login-submit', function(req, res){
   var user = req.body;
-  var acntBool = false;
   userCollection.findOne(user, function(err, docs){
     if(err!=null){
       console.log(err);
     }
     else{
-      acntBool=true;
-      if(acntBool){
+      if(brcypt.compareSync(user.password, docs.password)){
         res.send({status:'success', newUser: docs.name});
       }
       else{
@@ -89,17 +87,13 @@ app.post('/login-submit', function(req, res){
       return docs;
     }
   });
-}
-/*passport.authenticate('local-login', {
-  successRedirect:'/main',
-  failureRedirect:'/login'
-})*/);
+});
 app.post('/register-submit', function(req,res){
   var user = {
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     email: req.body.email,
-    password: req.body.password,
+    password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(8), null),
     signUpDate: new Date(),
     lastLogin: new Date()
   };
