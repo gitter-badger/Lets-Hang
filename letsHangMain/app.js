@@ -1,3 +1,7 @@
+//*********************************************************
+//************************GLOBALS*************************
+//*********************************************************
+
 var express = require('express');
 
 var app = express();
@@ -14,7 +18,9 @@ var messageCollection = db.collection('messages');
 
 var locationCollection = db.collection('locations');
 
-var passport = require('passport');
+var credCollection = db.collection('creds');
+
+var authom = require('authom');
 
 var bcrypt = require('bcrypt-nodejs');
 
@@ -36,9 +42,17 @@ var path = require('path');
 
 var googleKey = 'AIzaSyBfIApUobHr1J1OYNpBIy9D1AL5cfZadgs';
 
+var facebookCreds = {
+  service: 'facebook',
+  id: null,
+  secret: null,
+  scope: []
+};
+
 //*********************************************************
 //************************SETTINGS*************************
 //*********************************************************
+
 app.configure(function () {
   app.set('views', __dirname + '/views');
   app.set('view engine', 'hbs');
@@ -59,6 +73,7 @@ io.configure(function (){
 //*********************************************************
 //************************ROUTING**************************
 //*********************************************************
+
 app.get('/', function(req,res){
   res.render('index.hbs', {title:'peeps - Let Your Friends Know Where You Wanna Hang'});
 });
@@ -237,8 +252,6 @@ app.post('/main/create-activity', function(req, res){
       };
     }
   }
-  //console.log(recData.location);
-  //console.log('https://maps.googleapis.com/maps/api/geocode/json?address='+recData.location+'&key='+googleKey);
   rClient.get('https://maps.googleapis.com/maps/api/geocode/json?address='+recData.location+'&key='+googleKey, function(data, response){
     if(JSON.parse(data).status!='OK'){
       console.log(JSON.parse(data).status);
@@ -314,9 +327,11 @@ app.get('/message', function(req, res){
     res.render('messenger.hbs', {messages:message});
   });
 });
+
 //*********************************************************
 //*************************SOCKETS*************************
 //*********************************************************
+
 io.sockets.on('connection', function(socket){
   console.log('socket.io started');
   if(inviteUser!==null){
@@ -339,72 +354,8 @@ io.sockets.on('connection', function(socket){
     socket.broadcast.emit('recieve',msg);
   });
 });
+
 //*********************************************************
 //*********************AUTHENTICATION**********************
 //*********************************************************
-//var LocalStrategy   = require('passport-local').Strategy;
-//serialize
-/*passport.serializeUser(function(user, done) {
-  done(null, user.id);
-});*/
-// used to deserialize the user
-/*passport.deserializeUser(function(id, done) {
-    User.findById(id, function(err, user) {
-    done(err, user);
-  });
-});*/
-//login
-/*passport.use('local-login', new LocalStrategy({
-    usernameField: 'email',
-    passwordField: 'password',
-    passReqToCallBack: true
-  },
-  function(req, email, password, done){
-    userCollection.findOne({'email':email}, function(err, docs){
-      if(err){
-        console.log(err);
-        return done(err);
-      }
-      if(!docs){
-        return  done(null, false, {message: 'no user with that email'});
-      }
-        return done(null, false, {message: 'password invalid'});
-      }
-      else{
-        return done(null, docs);
-      }
-    });
-}));*/
-//register
-/*passport.use('local-signup', new LocalStrategy({
-    usernameField: 'email',
-    passwordField: 'password',
-    passReqToCallBack: true,
-  },
-  function(req, email, password, done){
-    process.nextTick(function (){
-      userCollection.findOne({'email':email}, function (err, docs){
-        if(err){
-          console.log(err);
-          return done(err);
-        }
-        if(docs){
-          console.log('account exists');
-          return done(null, false, {message: 'email is already registered'});
-        }
-        else{
-          var newUser = {
-            this.email: email,
-            this.password: this.generateHash(password);
-          };
-          userCollection.save(newUser, function (err){
-            if(err){
-              throw err;
-            }
-            return done(null, newUser);
-          });
-        }
-      });
-    });
-  }
-}));*/
+

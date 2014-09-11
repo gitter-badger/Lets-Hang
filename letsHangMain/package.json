@@ -10,7 +10,7 @@
         "socket.io": "0.9",
         "socket.io-client": "0.9",
         "google-maps": "*",
-        "passport": "*",
+        "authom": "0.4.31",
         "bcrypt-nodejs": "*",
         "node-rest-client": "1.0"
     }
