@@ -42,13 +42,6 @@ var path = require('path');
 
 var googleKey = 'AIzaSyBfIApUobHr1J1OYNpBIy9D1AL5cfZadgs';
 
-var facebookCreds = {
-  service: 'facebook',
-  id: null,
-  secret: null,
-  scope: []
-};
-
 //*********************************************************
 //************************SETTINGS*************************
 //*********************************************************
@@ -327,6 +320,15 @@ app.get('/message', function(req, res){
     res.render('messenger.hbs', {messages:message});
   });
 });
+app.post('/add/facebook', function(req, res){
+  facebookAuthReq(req.user);
+});
+app.post('/add/twitter', function(req, res){
+  twitterAuthReq(req.user);
+});
+app.post('/add/google', function(req, res){
+  googleAuthReq(req.user);
+});
 
 //*********************************************************
 //*************************SOCKETS*************************
@@ -359,3 +361,72 @@ io.sockets.on('connection', function(socket){
 //*********************AUTHENTICATION**********************
 //*********************************************************
 
+function facebookAuthReq(user){
+  var facebookCreds = {
+    service: 'facebook',
+    id: null,
+    secret: null,
+    scope: []
+  };
+  var facebookKey;
+  console.log('facebook auth');
+  credCollection.findOne({name: facebookCreds.service}, function(err, doc){
+    if(err){
+      console.log(err);
+      return;
+    }
+    facebookCreds.id = doc.clientID;
+    facebookCreds.secret = doc.clientSecret;
+    facebookKey = authom.createServer(facebookCreds);
+    facebookKey.on("auth", function(req, res, data){
+      console.log('req: '+req+'\n res: '+res+'\n data: '+data);
+      //userCollection.update(user, {facebookID: });
+    });
+  });
+}
+function twitterAuthReq(user){
+  var twitterCreds = {
+    service: 'twitter',
+    id: null,
+    secret: null,
+    scope: []
+  };
+  var twitterKey;
+  console.log('twitter auth');
+  credCollection.findOne({name: twitterCreds.service}, function(err, doc){
+    if(err){
+      console.log(err);
+      return;
+    }
+    twitterCreds.id = doc.clientID;
+    twitterCreds.secret = doc.clientSecret;
+    twitterKey = authom.createServer(twitterCreds);
+    twitterKey.on("auth", function(req, res, data){
+      console.log('req: '+req+'\n res: '+res+'\n data: '+data);
+      //userCollection.update(user, {facebookID: });
+    });
+  });
+}
+function googleAuthReq(user){
+  var googleCreds = {
+    service: 'google',
+    id: null,
+    secret: null,
+    scope: []
+  };
+  var googleKey;
+  console.log('google auth');
+  credCollection.findOne({name: googleCreds.service}, function(err, doc){
+    if(err){
+      console.log(err);
+      return;
+    }
+    googleCreds.id = doc.clientID;
+    googleCreds.secret = doc.clientSecret;
+    googleKey = authom.createServer(googleCreds);
+    googleKey.on("auth", function(req, res, data){
+      console.log('req: '+req+'\n res: '+res+'\n data: '+data);
+      //userCollection.update(user, {facebookID: });
+    });
+  });
+}

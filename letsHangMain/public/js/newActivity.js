@@ -194,6 +194,30 @@ $(document).ready(function(){
 			}
 		});
 	});
+	$('#fbInvBtn').bind('mousedown touchstart pointerdown', function(e){
+		e.preventDefault();
+		$.ajax({
+			url:'/add/facebook',
+			type:'POST',
+			data:{name: localStorage.getItem('user')}
+		});
+	});
+	$('#twInvBtn').bind('mousedown touchstart pointerdown', function(e){
+		e.preventDefault();
+		$.ajax({
+			url:'/add/twitter',
+			type:'POST',
+			data:{name: localStorage.getItem('user')}
+		});
+	});
+	$('#gInvBtn').bind('mousedown touchstart pointerdown', function(e){
+		e.preventDefault();
+		$.ajax({
+			url:'/add/google',
+			type:'POST',
+			data:{name: localStorage.getItem('user')}
+		});
+	});
 });
 function sendInvite(activity, i){
 	if(i==activity.invited.length-1){
