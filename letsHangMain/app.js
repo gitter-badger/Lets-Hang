@@ -36,7 +36,9 @@ var server = http.createServer(app);
 
 var io = require('socket.io').listen(server);
 
-server.listen(3000);
+//server.listen(3000);
+
+server.listen(80);
 
 var path = require('path');
 
@@ -81,32 +83,33 @@ app.get('/register', function(req,res){
 });
 app.post('/login-submit', function(req, res){
   var user = req.body;
-  userCollection.findOne(user, function(err, docs){
+  console.log(user.emailAddr);
+  userCollection.findOne({emailAddr: user.emailAddr}, function(err, doc){
     if(err!=null){
       console.log(err);
     }
     else{
-      if(brcypt.compareSync(user.password, docs.password)){
-        res.send({status:'success', newUser: docs.name});
+      if(bcrypt.compareSync(user.password, doc.password)){
+        res.send({status:'success', newUser: {name:doc.name,email:doc.email}});
       }
       else{
         res.send({status:'incorrect email or password'});
       }
-      return docs;
+      return doc;
     }
   });
 });
 app.post('/register-submit', function(req,res){
   var user = {
-    firstName: req.body.firstName,
+    name: req.body.firstName,
     lastName: req.body.lastName,
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(8), null),
     signUpDate: new Date(),
     lastLogin: new Date()
   };
-  var acntExists = {}; 
-  userCollection.find(user, function(err, docs){
+  var acntExists = null; 
+  userCollection.find({email:user.email}, function(err, docs){
     if(err!==null){
       console.log(err);
     }
@@ -117,49 +120,65 @@ app.post('/register-submit', function(req,res){
   });
   if(acntExists === null){
     userCollection.save(user);
-    res.send({status:'success', newUser: user});
+    res.send({status:'success', newUser: {name: user.name, emailAddr: user.email}});
   }
   else{
     res.send({status:'account exists'});
   }
 });
 app.get('/main', function(req,res){
-  var aData = null;
-  activitiesCollection.find(req.body.user, function(err,aDocs){
+  var uData = null;
+  userCollection.findOne({email: req.body.email}, function(err,uDoc){
     if(err){
       console.log(err);
     }
     else{
-      aData = aDocs;
-      var mData = null; 
-      messageCollection.find(req.body.user, function(err,mDocs){
-        if(err){
-          console.log(err);
-        }
-        else{
-          mData = mDocs;
-          var lData = null;
-          locationCollection.find(req.body.user, function(err,lDocs){
-            if(err){
-              console.log(err);
-            }
-            else{
-              lData = lDocs;
-              var dataToSend = {
-                title: 'peeps - main', 
-                activity: aData, 
-                messages: mData, 
-                location: lData
-              };
-              res.render('main.hbs', dataToSend);
-              return lDocs;
-            }
-          });
-          return mDocs;
-        }
-      });
-      return aDocs;
-    };
+      uData = uDoc;
+      var aData = null;
+      if(uDoc != null){ 
+        activitiesCollection.find(uDoc.name, function(err, aDocs){
+          if(err){
+            console.log(err);
+          }
+          else{
+            aData = aDocs;
+            var mData = null;
+            messageCollection.find(uDoc.name, function(err,mDocs){
+              if(err){
+                console.log(err);
+              }
+              else{
+                mData = mDocs;
+                var lData = null;
+                locationCollection.find(uDoc.name, function(err,lDocs){
+                  if(err){
+                    console.log(err);
+                  }
+                  else{
+                    lData = lDocs;
+                    var dataToSend = {
+                      title: 'peeps - main', 
+                      activity: aData, 
+                      messages: mData, 
+                      location: lData,
+                      user: uData
+                    }
+                    res.render('main.hbs', dataToSend);
+                    return lDocs;
+                  }
+                });
+                return mDocs;
+              }
+            });
+            return aDocs;
+          }
+        });
+      }
+      else{
+        res.render('main.hbs');
+      }
+      return uDoc;
+    }
   });
 });
 app.post('/main/locations', function(req, res){
@@ -170,7 +189,6 @@ app.post('/main/locations', function(req, res){
     }
     else{
       lData = docs;
-      console.log(docs);
       res.send(lData);
       return docs;
     }
@@ -250,11 +268,8 @@ app.post('/main/create-activity', function(req, res){
       console.log(JSON.parse(data).status);
       return;
     }
-    console.log(JSON.parse(data).results[0].geometry.location);
     result.lat = JSON.parse(data).results[0].geometry.location.lat;
     result.lng = JSON.parse(data).results[0].geometry.location.lng;
-    console.log(result);
-    console.log('before');
     activitiesCollection.save(result);
     locationCollection.save({_id: 1, name: recData.location, Lat: result.lat, Long: result.lng, user:result.user, })
     res.send(result);
@@ -263,7 +278,6 @@ app.post('/main/create-activity', function(req, res){
 var inviteUser;
 var actInv;
 app.post('/main/invite-out', function(req, res){
-  console.log(req.body);
   userCollection.findOne({name: req.body.user}, function(err, doc){
     if(err){
       console.log(err);
@@ -292,7 +306,6 @@ app.get('/message', function(req, res){
       return;
     }
     var message = new Array();
-    console.log(docs.length);
     for(var i = 0; i<docs.length; i++){
       if(docs[i].sender==sender){
         message[i]={
@@ -311,24 +324,14 @@ app.get('/message', function(req, res){
         };
       }
       if(i==docs.length-1){
-        console.log(message);
         res.render('messenger.hbs', {messages:message});
         return;
       }
     }
-    console.log(message);
     res.render('messenger.hbs', {messages:message});
   });
 });
-app.post('/add/facebook', function(req, res){
-  facebookAuthReq(req.user);
-});
-app.post('/add/twitter', function(req, res){
-  twitterAuthReq(req.user);
-});
-app.post('/add/google', function(req, res){
-  googleAuthReq(req.user);
-});
+app.get('/add/:service', authom.app);
 
 //*********************************************************
 //*************************SOCKETS*************************
@@ -361,12 +364,46 @@ io.sockets.on('connection', function(socket){
 //*********************AUTHENTICATION**********************
 //*********************************************************
 
-function facebookAuthReq(user){
+credCollection.find(function(err, docs){
+  for(var i = 0; i<docs.length; i++){
+    switch(docs[i].name){
+      case 'facebook':
+        authom.createServer({
+          service: 'facebook',
+          id: docs[i].clientID,
+          secret: docs[i].clientSecret,
+          scope: []
+        });
+        break;
+      case 'twitter':
+        authom.createServer({ 
+          service: 'twitter',
+          id: docs[i].clientID,
+          secret: docs[i].clientSecret
+        });
+        break;
+      case 'google':
+        authom.createServer({ 
+          service: 'google',
+          id: docs[i].clientID,
+          secret: docs[i].clientSecret,
+          scope: ""
+        });
+        break;
+    }
+  }
+});
+
+authom.on('auth', function(req, res, data){
+  console.log('req: '+req+'\nres: '+res+'\n data: '+data);
+});
+/*function facebookAuthReq(user){
   var facebookCreds = {
     service: 'facebook',
     id: null,
     secret: null,
-    scope: []
+    scope: [],
+    fields: ["name"]
   };
   var facebookKey;
   console.log('facebook auth');
@@ -378,7 +415,9 @@ function facebookAuthReq(user){
     facebookCreds.id = doc.clientID;
     facebookCreds.secret = doc.clientSecret;
     facebookKey = authom.createServer(facebookCreds);
+    console.log(facebookKey);
     facebookKey.on("auth", function(req, res, data){
+      console.log('auth');
       console.log('req: '+req+'\n res: '+res+'\n data: '+data);
       //userCollection.update(user, {facebookID: });
     });
@@ -388,8 +427,7 @@ function twitterAuthReq(user){
   var twitterCreds = {
     service: 'twitter',
     id: null,
-    secret: null,
-    scope: []
+    secret: null
   };
   var twitterKey;
   console.log('twitter auth');
@@ -412,7 +450,7 @@ function googleAuthReq(user){
     service: 'google',
     id: null,
     secret: null,
-    scope: []
+    scope: ""
   };
   var googleKey;
   console.log('google auth');
@@ -429,4 +467,4 @@ function googleAuthReq(user){
       //userCollection.update(user, {facebookID: });
     });
   });
-}
+}*/

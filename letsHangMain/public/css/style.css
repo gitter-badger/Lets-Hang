@@ -17,10 +17,10 @@ body{
 	margin-left: 39%;
 }
 .brand-subtitle{
-	margin-left: 23%;
+	margin-left: 27%;
 }
 .login-register-btns{
-	margin-left: 40%;
+	margin-left: 45%;
 }
 .blurb-row > .col-md-4 > h3{
 	margin-left: 30%;
@@ -87,7 +87,7 @@ li > .btn-link{
 }
 #logout{
 	position: absolute;
-	right: 0;
+	right: 38px;
 	top: 8px;
 }
 .container{
@@ -228,4 +228,31 @@ p.reciever{
 p.sender{
 	background-color: #444;
 	color: #FFF;
+}
+#settings-cog{
+	position: absolute;
+	right: 23px;
+	top: 19px;
+	color: #428B5C;
+}
+#fbUBtn{
+	background-color: #3b5998;
+}
+#twUBtn{
+	background-color: #55acee;
+}
+#gUBtn{
+	background-color: #D73D32;
+}
+#liUBtn{
+	background-color: #287BBB;
+}
+#register-form{
+	position: absolute;
+	left: 50%;
+	width: 212px;
+	margin-left: -106px;
+}
+#register-form *{
+	margin-bottom: 10px;
 }

@@ -1,0 +1,28 @@
+<div class="modal fade" id="settModal" tabindex="-1" role="dialog" aria-labelledby="settModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title">User Settings</h4>
+      </div>
+      <div class="modal-body">
+        {{#unless user.facebookID}}
+          <button id="fbUBtn" class="btn"><i class="fa fa-facebook"></i> Connect With Facebook</button>
+        {{/unless}}
+        {{#unless user.twitterID}}
+          <button id="twUBtn" class="btn"><i class="fa fa-twitter"></i> Connect With Twitter</button>
+        {{/unless}}
+        {{#unless user.googleID}}
+          <button id="gUBtn" class="btn"><i class="fa fa-google-plus"></i> Connect With Google plus</button>
+        {{/unless}}
+        {{#unless user.linkedInID}}
+          <button id="liUBtn" class="btn"><i class="fa fa-linkedin"></i> Connect With Linked In</button>
+        {{/unless}}
+        <a href="/changePassword">Change Password</a>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="close" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>

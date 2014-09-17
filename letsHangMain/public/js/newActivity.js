@@ -194,27 +194,30 @@ $(document).ready(function(){
 			}
 		});
 	});
-	$('#fbInvBtn').bind('mousedown touchstart pointerdown', function(e){
+	$('#fbUBtn').bind('mousedown touchstart pointerdown', function(e){
 		e.preventDefault();
+		console.log('facebook');
 		$.ajax({
 			url:'/add/facebook',
-			type:'POST',
+			type:'GET',
 			data:{name: localStorage.getItem('user')}
 		});
 	});
-	$('#twInvBtn').bind('mousedown touchstart pointerdown', function(e){
+	$('#twUBtn').bind('mousedown touchstart pointerdown', function(e){
 		e.preventDefault();
+		console.log('twitter');
 		$.ajax({
 			url:'/add/twitter',
-			type:'POST',
+			type:'get',
 			data:{name: localStorage.getItem('user')}
 		});
 	});
-	$('#gInvBtn').bind('mousedown touchstart pointerdown', function(e){
+	$('#gUBtn').bind('mousedown touchstart pointerdown', function(e){
 		e.preventDefault();
+		console.log('google');
 		$.ajax({
 			url:'/add/google',
-			type:'POST',
+			type:'GET',
 			data:{name: localStorage.getItem('user')}
 		});
 	});
