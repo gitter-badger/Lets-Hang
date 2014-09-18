@@ -7,34 +7,62 @@ window.onload = function(){
 		success:function(data){
 			if(data!==null){
         console.log(data);
-				function initialize() {
-  					var mapOptions = {
-    					center: new google.maps.LatLng(data.lat, data.lng),
-    					zoom: 8
-  					};
-  					map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-  					console.log(marker);
-  					var contentString = '<div id="content">'+
-  					'<div id="prevGroup">'+
-  					'<h2>Last Activity:</h2>'+
-  					'<h3>'+data.name+'</h3>'+
-  					'</div>'+
-  					'</div>';
-  					var infowindow = new google.maps.InfoWindow({
-  						content: contentString
-  					});
-  					var marker = new google.maps.Marker({
-      					position: mapOptions.center,
-      					map: map,
-      					title: data.name
-  					});
-  					google.maps.event.addListener(marker, 'click', function() {
-    					infowindow.open(map,marker);
-  					});
-				}
-				google.maps.event.addDomListener(window, 'load', initialize());
-			}
-		}
+			  function initialize() {
+  				var mapOptions = {
+    				center: new google.maps.LatLng(data.lat, data.lng),
+    				zoom: 8
+  				};
+  				map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+  				console.log(marker);
+  				var contentString = '<div id="content">'+
+  				'<div id="prevGroup">'+
+  				'<h2>Last Activity:</h2>'+
+  				'<h3>'+data.name+'</h3>'+
+  				'</div>'+
+  				'</div>';
+  				var infowindow = new google.maps.InfoWindow({
+  					content: contentString
+  				});
+  				var marker = new google.maps.Marker({
+      				position: mapOptions.center,
+      				map: map,
+      				title: data.name
+  				});
+  				google.maps.event.addListener(marker, 'click', function() {
+    				infowindow.open(map,marker);
+  				});
+			  }
+		    google.maps.event.addDomListener(window, 'load', initialize());
+		  }
+		  else{
+        function initialize() {
+          var mapOptions = {
+            center: new google.maps.LatLng(0, 0),
+            zoom: 8
+          };
+          map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+          console.log(marker);
+          var contentString = '<div id="content">'+
+          '<div id="prevGroup">'+
+          '<h2>Need to Create an Event</h2>'+
+          '<h3>Get Started Over there &raquo;</h3>'+
+          '</div>'+
+          '</div>';
+          var infowindow = new google.maps.InfoWindow({
+            content: contentString
+          });
+          var marker = new google.maps.Marker({
+            position: mapOptions.center,
+            map: map,
+            title: 'Need an Event'
+          });
+          google.maps.event.addListener(marker, 'click', function() {
+            infowindow.open(map,marker);
+          });
+        }
+        google.maps.event.addDomListener(window, 'load', initialize());
+      }
+    }
 	});
 };
 function mapNewActivity(activity){

@@ -1,22 +1,20 @@
+//*********************************************************
+//************************GLOBALS*************************
+//*********************************************************
+
 var express = require('express');
 
 var app = express();
 
-var mongojs = require('mongojs');
+var mongoose = require('mongoose');
 
-var db = mongojs('54.191.16.144:27017/peeps'); //54.191.16.144
+var dbConfig = require('./models/config.js');
 
-var userCollection = db.collection('users');
+mongoose.connect(dbConfig);
 
-var activitiesCollection = db.collection('activities');
+var credCollection = db.collection('creds');
 
-var messageCollection = db.collection('messages');
-
-var locationCollection = db.collection('locations');
-
-var passport = require('passport');
-
-var bcrypt = require('bcrypt-nodejs');
+var passport = require('authom');
 
 var restClient = require('node-rest-client').Client;
 
@@ -30,15 +28,20 @@ var server = http.createServer(app);
 
 var io = require('socket.io').listen(server);
 
-server.listen(3000);
+//server.listen(3000);
+
+server.listen(80);
 
 var path = require('path');
+
+require('./auth/auth')(passport);
 
 var googleKey = 'AIzaSyBfIApUobHr1J1OYNpBIy9D1AL5cfZadgs';
 
 //*********************************************************
 //************************SETTINGS*************************
 //*********************************************************
+
 app.configure(function () {
   app.set('views', __dirname + '/views');
   app.set('view engine', 'hbs');
@@ -48,6 +51,11 @@ app.configure(function () {
   app.use(express.static(path.join(__dirname, 'public')));
   app.use(express.json());       // to support JSON-encoded bodies
   app.use(express.urlencoded()); // to support URL-encoded bodies
+  app.use(morgan('dev'));
+  app.use(cookieParser());
+  app.use(bodyParser());
+  app.use(session({secret:'B1_1ubbadoo!?'}));
+  app.use(passport.initialize());
 });
 
 io.configure(function (){
@@ -59,6 +67,7 @@ io.configure(function (){
 //*********************************************************
 //************************ROUTING**************************
 //*********************************************************
+
 app.get('/', function(req,res){
   res.render('index.hbs', {title:'peeps - Let Your Friends Know Where You Wanna Hang'});
 });
@@ -71,87 +80,67 @@ app.get('/login', function(req,res){
 app.get('/register', function(req,res){
   res.render('register.hbs', {title:'peeps-register'});
 });
-app.post('/login-submit', function(req, res){
-  var user = req.body;
-  userCollection.findOne(user, function(err, docs){
-    if(err!=null){
-      console.log(err);
-    }
-    else{
-      if(brcypt.compareSync(user.password, docs.password)){
-        res.send({status:'success', newUser: docs.name});
-      }
-      else{
-        res.send({status:'incorrect email or password'});
-      }
-      return docs;
-    }
-  });
-});
-app.post('/register-submit', function(req,res){
-  var user = {
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    email: req.body.email,
-    password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(8), null),
-    signUpDate: new Date(),
-    lastLogin: new Date()
-  };
-  var acntExists = {}; 
-  userCollection.find(user, function(err, docs){
-    if(err!==null){
-      console.log(err);
-    }
-    else{
-      acntExists=docs;
-      return docs;
-    }
-  });
-  if(acntExists === null){
-    userCollection.save(user);
-    res.send({status:'success', newUser: user});
-  }
-  else{
-    res.send({status:'account exists'});
-  }
-});
+app.post('/login-submit', passport.authenticate({
+  successRedirect: '/main',
+  failureRedirect: 'login'
+}));
+app.post('/register-submit', passport.authenticate({
+  successRedirect: '/main',
+  failureRedirect: '/register'
+}));
 app.get('/main', function(req,res){
-  var aData = null;
-  activitiesCollection.find(req.body.user, function(err,aDocs){
+  var uData = null;
+  userCollection.findOne({email: req.body.email}, function(err,uDoc){
     if(err){
       console.log(err);
     }
     else{
-      aData = aDocs;
-      var mData = null; 
-      messageCollection.find(req.body.user, function(err,mDocs){
-        if(err){
-          console.log(err);
-        }
-        else{
-          mData = mDocs;
-          var lData = null;
-          locationCollection.find(req.body.user, function(err,lDocs){
-            if(err){
-              console.log(err);
-            }
-            else{
-              lData = lDocs;
-              var dataToSend = {
-                title: 'peeps - main', 
-                activity: aData, 
-                messages: mData, 
-                location: lData
-              };
-              res.render('main.hbs', dataToSend);
-              return lDocs;
-            }
-          });
-          return mDocs;
-        }
-      });
-      return aDocs;
-    };
+      uData = uDoc;
+      var aData = null;
+      if(uDoc !== null){ 
+        activitiesCollection.find(uDoc.name, function(err, aDocs){
+          if(err){
+            console.log(err);
+          }
+          else{
+            aData = aDocs;
+            var mData = null;
+            messageCollection.find(uDoc.name, function(err,mDocs){
+              if(err){
+                console.log(err);
+              }
+              else{
+                mData = mDocs;
+                var lData = null;
+                locationCollection.find(uDoc.name, function(err,lDocs){
+                  if(err){
+                    console.log(err);
+                  }
+                  else{
+                    lData = lDocs;
+                    var dataToSend = {
+                      title: 'peeps - main', 
+                      activity: aData, 
+                      messages: mData, 
+                      location: lData,
+                      user: uData
+                    }
+                    res.render('main.hbs', dataToSend);
+                    return lDocs;
+                  }
+                });
+                return mDocs;
+              }
+            });
+            return aDocs;
+          }
+        });
+      }
+      else{
+        res.render('main.hbs');
+      }
+      return uDoc;
+    }
   });
 });
 app.post('/main/locations', function(req, res){
@@ -162,7 +151,6 @@ app.post('/main/locations', function(req, res){
     }
     else{
       lData = docs;
-      console.log(docs);
       res.send(lData);
       return docs;
     }
@@ -179,6 +167,9 @@ app.post('/main/invite', function(req,res){
         data.list.push(docs[i].invited);
       }
       res.send(data.list);
+    }
+    else{
+      res.send({});
     }
   });
 });
@@ -237,18 +228,13 @@ app.post('/main/create-activity', function(req, res){
       };
     }
   }
-  //console.log(recData.location);
-  //console.log('https://maps.googleapis.com/maps/api/geocode/json?address='+recData.location+'&key='+googleKey);
   rClient.get('https://maps.googleapis.com/maps/api/geocode/json?address='+recData.location+'&key='+googleKey, function(data, response){
     if(JSON.parse(data).status!='OK'){
       console.log(JSON.parse(data).status);
       return;
     }
-    console.log(JSON.parse(data).results[0].geometry.location);
     result.lat = JSON.parse(data).results[0].geometry.location.lat;
     result.lng = JSON.parse(data).results[0].geometry.location.lng;
-    console.log(result);
-    console.log('before');
     activitiesCollection.save(result);
     locationCollection.save({_id: 1, name: recData.location, Lat: result.lat, Long: result.lng, user:result.user, })
     res.send(result);
@@ -257,7 +243,6 @@ app.post('/main/create-activity', function(req, res){
 var inviteUser;
 var actInv;
 app.post('/main/invite-out', function(req, res){
-  console.log(req.body);
   userCollection.findOne({name: req.body.user}, function(err, doc){
     if(err){
       console.log(err);
@@ -286,7 +271,6 @@ app.get('/message', function(req, res){
       return;
     }
     var message = new Array();
-    console.log(docs.length);
     for(var i = 0; i<docs.length; i++){
       if(docs[i].sender==sender){
         message[i]={
@@ -305,18 +289,37 @@ app.get('/message', function(req, res){
         };
       }
       if(i==docs.length-1){
-        console.log(message);
         res.render('messenger.hbs', {messages:message});
         return;
       }
     }
-    console.log(message);
     res.render('messenger.hbs', {messages:message});
   });
 });
+app.get('/auth/facebook', passport.authenticate('facebook', {scope: 'email'}));
+app.get('/auth/twitter', passport.authenticate('twitter'));
+app.get('/auth/google', passport.authenticate('google', {scope:['profile', 'email']}));
+app.get('/add/:service', authom.app);
+app.get('/auth/facebook/callback',
+  passport.authenticate('facebook', {
+    successRedirect: '/main',
+    failureRedirect: '/'
+  }));
+app.get('/auth/twitter/callback',
+  passport.authenticate('twitter', {
+    successRedirect: '/main',
+    failureRedirect: '/'
+  }));
+app.get('/auth/google/callback',
+  passport.authenticate('google', {
+    successRedirect: '/main',
+    failureRedirect: '/'
+  }));
+
 //*********************************************************
 //*************************SOCKETS*************************
 //*********************************************************
+
 io.sockets.on('connection', function(socket){
   console.log('socket.io started');
   if(inviteUser!==null){
@@ -339,72 +342,13 @@ io.sockets.on('connection', function(socket){
     socket.broadcast.emit('recieve',msg);
   });
 });
+
 //*********************************************************
 //*********************AUTHENTICATION**********************
 //*********************************************************
-//var LocalStrategy   = require('passport-local').Strategy;
-//serialize
-/*passport.serializeUser(function(user, done) {
-  done(null, user.id);
-});*/
-// used to deserialize the user
-/*passport.deserializeUser(function(id, done) {
-    User.findById(id, function(err, user) {
-    done(err, user);
-  });
-});*/
-//login
-/*passport.use('local-login', new LocalStrategy({
-    usernameField: 'email',
-    passwordField: 'password',
-    passReqToCallBack: true
-  },
-  function(req, email, password, done){
-    userCollection.findOne({'email':email}, function(err, docs){
-      if(err){
-        console.log(err);
-        return done(err);
-      }
-      if(!docs){
-        return  done(null, false, {message: 'no user with that email'});
-      }
-        return done(null, false, {message: 'password invalid'});
-      }
-      else{
-        return done(null, docs);
-      }
-    });
-}));*/
-//register
-/*passport.use('local-signup', new LocalStrategy({
-    usernameField: 'email',
-    passwordField: 'password',
-    passReqToCallBack: true,
-  },
-  function(req, email, password, done){
-    process.nextTick(function (){
-      userCollection.findOne({'email':email}, function (err, docs){
-        if(err){
-          console.log(err);
-          return done(err);
-        }
-        if(docs){
-          console.log('account exists');
-          return done(null, false, {message: 'email is already registered'});
-        }
-        else{
-          var newUser = {
-            this.email: email,
-            this.password: this.generateHash(password);
-          };
-          userCollection.save(newUser, function (err){
-            if(err){
-              throw err;
-            }
-            return done(null, newUser);
-          });
-        }
-      });
-    });
+function isLoggedIn(req, res, next){
+  if(req.isAuthenticated()){
+    return next();
   }
-}));*/
+  res.redirect('/');
+}

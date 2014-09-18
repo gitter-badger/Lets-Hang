@@ -194,6 +194,33 @@ $(document).ready(function(){
 			}
 		});
 	});
+	$('#fbUBtn').bind('mousedown touchstart pointerdown', function(e){
+		e.preventDefault();
+		console.log('facebook');
+		$.ajax({
+			url:'/add/facebook',
+			type:'GET',
+			data:{name: localStorage.getItem('user')}
+		});
+	});
+	$('#twUBtn').bind('mousedown touchstart pointerdown', function(e){
+		e.preventDefault();
+		console.log('twitter');
+		$.ajax({
+			url:'/add/twitter',
+			type:'get',
+			data:{name: localStorage.getItem('user')}
+		});
+	});
+	$('#gUBtn').bind('mousedown touchstart pointerdown', function(e){
+		e.preventDefault();
+		console.log('google');
+		$.ajax({
+			url:'/add/google',
+			type:'GET',
+			data:{name: localStorage.getItem('user')}
+		});
+	});
 });
 function sendInvite(activity, i){
 	if(i==activity.invited.length-1){

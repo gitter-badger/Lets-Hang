@@ -5,17 +5,34 @@
     <meta name="viewport" content="width=device-width, user-scalable=no">
 		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
-		<link rel="stylesheet" href="http://localhost:3000/css/style.css">
-		<script src="http://localhost:3000/js/lib/jquery-2.1.1.min.js"></script>
-		<script src="http://localhost:3000/js/lib/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="http://localhost/css/style.css">
+		<script src="http://localhost/js/lib/jquery-2.1.1.min.js"></script>
+		<script src="http://localhost/js/lib/bootstrap.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBfIApUobHr1J1OYNpBIy9D1AL5cfZadgs"></script>
-    <script src="http://localhost:3000/socket.io/lib/socket.io.js"></script>
-		<script src="http://localhost:3000/js/routes.js"></script>
-    <script src="http://localhost:3000/js/map.js"></script>
-    <script src="http://localhost:3000/js/newActivity.js"></script>
-    <script src="http://localhost:3000/js/message.js"></script>
+    <script src="http://localhost/socket.io/lib/socket.io.js"></script>
+		<script src="http://localhost/js/routes.js"></script>
+    <script src="http://localhost/js/map.js"></script>
+    <script src="http://localhost/js/newActivity.js"></script>
+    <script src="http://localhost/js/message.js"></script>
+    <!--<script src="http://localhost:3000/js/facebookAuth.js"></script>-->
 	</head>
 	<body>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '1472358699701713',
+          xfbml      : true,
+          version    : 'v2.1'
+        });
+      };
+      (function(d, s, id){
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+    </script>
 		<header class="navbar navbar-static-top bs-docs-nav" id="top" role="banner">
   			<div class="container">
     			<div class="navbar-header">
@@ -56,6 +73,7 @@
                 </li>
       				</ul>
     			</nav>
+          <i id="settings-cog" class="glyphicon glyphicon-cog" data-toggle="modal" data-target="#settModal"></i>
           <button id="logout" class="btn btn-link">logout</button>
   			</div>
 		</header>
@@ -77,5 +95,6 @@
       </div>
     </div>
     {{> invModal}}
+    {{> settings}}
   </body>
 </html>

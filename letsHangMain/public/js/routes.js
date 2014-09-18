@@ -8,22 +8,32 @@ $(document).ready(function (){
 	});
 	$('#register-submit').click(function (e){
 		e.preventDefault();
-		var regForm = $('#register-form').serialize();
-		console.log(regForm);
-		$.ajax({
-			url: '/register-submit',
-			type: 'POST',
-			data: regForm,
-			success: function(data){
-				if(data.status!='success'){
-					$('.container').append('<h3>account already exists</h3>');
+		if($('#register-password').val()==$('#register-conf-password').val()){
+			$.ajax({
+				url: '/register-submit',
+				type: 'POST',
+				data: {
+					firstName: $('#register-first').val(),
+					lastName: $('#register-last').val(),
+					email: $('#register-email').val(),
+					password: $('#register-password').val()
+				},
+				success: function(data){
+					if(data.status!='success'){
+						$('.container').append('<h3>account already exists</h3>');
+					}
+					else{
+						console.log(data.newUser);
+						localStorage.setItem('user',data.newUser.name);
+						localStorage.setItem('email', data.newUser.emailAddr);
+						window.location.replace('/main');
+					}
 				}
-				else{
-					localStorage.setItem('user',data.newUser);
-					window.location.replace('/main');
-				}
-			}
-		});
+			});
+		}
+		else{
+			$('#register-form').append('<h3>passwords does not match</h3>');
+		}
 	});
 	$('#login-submit').click(function (e){
 		e.preventDefault();
@@ -41,7 +51,8 @@ $(document).ready(function (){
 					$('.container').append('<h3>email or password incorrect</h3>');
 				}
 				else{
-					localStorage.setItem('user',data.newUser);
+					localStorage.setItem('user',data.newUser.name);
+					localStorage.setItem('email',data.newUser.email);
 					window.location.replace('/main');
 				}
 			}
@@ -50,7 +61,7 @@ $(document).ready(function (){
 	$.ajax({
 		url: '/main',
 		type: 'GET',
-		data: {user: localStorage.getItem('user')},
+		data: {email: localStorage.getItem('email')},
 		success: function(data){}
 	});
 	$('#activities').click(function(e){
@@ -88,6 +99,7 @@ $(document).ready(function (){
 	});
 	$('#logout').click(function(e){
 		localStorage.setItem('user',null);
+		localStorage.setItem('email',null);
 		window.location.replace('/');
 	});
 });
