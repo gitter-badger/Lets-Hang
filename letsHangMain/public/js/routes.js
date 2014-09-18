@@ -6,57 +6,15 @@ $(document).ready(function (){
 	$('#register-home').click(function (){
 		window.location.replace('/register');
 	});
-	$('#register-submit').click(function (e){
+	$('#login-submit').click(function(e){
 		e.preventDefault();
-		if($('#register-password').val()==$('#register-conf-password').val()){
-			$.ajax({
-				url: '/register-submit',
-				type: 'POST',
-				data: {
-					firstName: $('#register-first').val(),
-					lastName: $('#register-last').val(),
-					email: $('#register-email').val(),
-					password: $('#register-password').val()
-				},
-				success: function(data){
-					if(data.status!='success'){
-						$('.container').append('<h3>account already exists</h3>');
-					}
-					else{
-						console.log(data.newUser);
-						localStorage.setItem('user',data.newUser.name);
-						localStorage.setItem('email', data.newUser.emailAddr);
-						window.location.replace('/main');
-					}
-				}
-			});
-		}
-		else{
-			$('#register-form').append('<h3>passwords does not match</h3>');
-		}
+		localStorage.setItem('email', $('#login-email').val());
+		$('#login-form').submit();
 	});
-	$('#login-submit').click(function (e){
+	$('#regist-submit').click(function(e){
 		e.preventDefault();
-		var logForm = {
-			emailAddr: $('#login-email').val(),
-			password: $('#login-password').val()
-		};
-		console.log(logForm);
-		$.ajax({
-			url: '/login-submit',
-			type: 'POST',
-			data: logForm,
-			success: function(data){
-				if(data.status!='success'){
-					$('.container').append('<h3>email or password incorrect</h3>');
-				}
-				else{
-					localStorage.setItem('user',data.newUser.name);
-					localStorage.setItem('email',data.newUser.email);
-					window.location.replace('/main');
-				}
-			}
-		});
+		localStorage.setItem('email', $('#register-email').val());
+		$('#register-form').submit();
 	});
 	$.ajax({
 		url: '/main',
@@ -84,9 +42,6 @@ $(document).ready(function (){
 			$('#locations + .hidden-list').toggleClass('unhidden');
 		}
 	});
-	/*$('#messages + .hidden-list li').click(function(e){
-			messageInit(e.target, localStorage.getItem('user'));
-	});*/
 	$('#locations').click(function(e){
 		e.preventDefault();
 		$('#locations + .hidden-list').toggleClass('unhidden');

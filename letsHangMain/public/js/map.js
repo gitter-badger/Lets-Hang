@@ -3,7 +3,7 @@ window.onload = function(){
 	$.ajax({
 		url:'/main/locations',
 		type:'POST',
-		data:{user: localStorage.getItem('user')},
+		data:{email: localStorage.getItem('email')},
 		success:function(data){
 			if(data!==null){
         console.log(data);

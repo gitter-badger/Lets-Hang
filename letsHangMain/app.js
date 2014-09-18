@@ -88,176 +88,142 @@ app.get('/register', function(req,res){
 });
 app.post('/login-submit', passport.authenticate({
   successRedirect: '/main',
-  failureRedirect: 'login'
+  failureRedirect: '/login'
 }));
 app.post('/register-submit', passport.authenticate({
   successRedirect: '/main',
   failureRedirect: '/register'
 }));
 app.get('/main', function(req,res){
-  var uData = null;
-  userCollection.findOne({email: req.body.email}, function(err,uDoc){
+  var User = require('./models/user');
+  User.findOne({'local.email': req.body.email}, function(err, user){
     if(err){
       console.log(err);
     }
     else{
-      uData = uDoc;
-      var aData = null;
-      if(uDoc !== null){ 
-        activitiesCollection.find(uDoc.name, function(err, aDocs){
+      var activities = require('./models/activitiesModel');
+      if(user){ 
+        activities.find({creator:user.id}, function(err, acts){
           if(err){
             console.log(err);
           }
           else{
-            aData = aDocs;
-            var mData = null;
-            messageCollection.find(uDoc.name, function(err,mDocs){
+            var messages = require('./models/messageModel');
+            messages.find({sender:user.id}, function(err,mess){
               if(err){
                 console.log(err);
               }
               else{
-                mData = mDocs;
-                var lData = null;
-                locationCollection.find(uDoc.name, function(err,lDocs){
+                var locations = require('./models/locationModel');
+                locations.find({user: user.id}, function(err,locs){
                   if(err){
                     console.log(err);
                   }
                   else{
-                    lData = lDocs;
                     var dataToSend = {
                       title: 'peeps - main', 
-                      activity: aData, 
-                      messages: mData, 
-                      location: lData,
-                      user: uData
-                    }
+                      activity: acts, 
+                      messages: mess, 
+                      location: locs,
+                      user: user
+                    };
                     res.render('main.hbs', dataToSend);
-                    return lDocs;
+                    return locs;
                   }
                 });
-                return mDocs;
+                return mess;
               }
             });
-            return aDocs;
+            return acts;
           }
         });
       }
       else{
-        res.render('main.hbs');
+        res.redirect('/login');
       }
-      return uDoc;
+      return user;
     }
   });
 });
 app.post('/main/locations', function(req, res){
-  var lData = null;
-  activitiesCollection.findOne({creator:req.body.user}, function(err, docs){
+  var User = require('./models/user');
+  var activities = require('./models/activitiesModel');
+  User.findOne({'local.email': req.body.email}, function(err, user){
     if(err){
       console.log(err);
     }
-    else{
-      lData = docs;
-      res.send(lData);
-      return docs;
+    if(user){
+      activities.findOne({creator: user.id}, function(err, acts){
+        if(err){
+          console.log(err);
+        }
+        else{
+          res.send(acts);
+          return acts;
+        }
+      });
     }
+    return user;
   });
 });
 app.post('/main/invite', function(req,res){
+  var User = require('./models/user');
+  var activities = require('./models/activitiesModel');
   var data = {list: new Array()};
-  activitiesCollection.find({creator:req.body.name}, function(err, docs){
-    if(err){
-      console.log(err);
-    }
-    if(docs !== null){
-      for(var i = 0; i<docs.length; i++){
-        data.list.push(docs[i].invited);
+  User.findOne({'local.email':req.body.email}, function(err, user){
+    activities.find({creator:user.id}, function(err, acts){
+      if(err){
+        console.log(err);
       }
-      res.send(data.list);
-    }
-    else{
-      res.send({});
-    }
+      if(docs !== null){
+        for(var i = 0; i<acts.length; i++){
+          data.list.push(acts[i].invited);
+        }
+        res.send(data.list);
+      }
+      else{
+        res.send({});
+      }
+    });
   });
 });
 app.post('/main/create-activity', function(req, res){
+  var User = require('./models/user');
+  var activity = require('./models/activitiesModel');
   var recData = req.body;
-  var result = null;
-  if(req.body.endDate!==null){
-    if(req.body.endTime!==null){
-      result = {
-        lat: null,
-        lng: null,
-        name: recData.name,
-        creator: recData.user,
-        startDate: recData.startDate,
-        endDate: recData.endDate,
-        startTime: recData.startTime,
-        endTime: recData.endTime,
-        invited: recData.invited
-      };
-    }
-    else{
-      result = {
-        lat: null,
-        lng: null,
-        name: recData.name,
-        creator: recData.user,
-        startDate: recData.startDate,
-        endDate: recData.endDate,
-        startTime: recData.startTime,
-        invited: recData.invited
-      };
-    }
-  }
-  else{
-    if(req.body.endTime!==null){
-      result = {
-        lat: null,
-        lng: null,
-        name: recData.name,
-        creator: recData.user,
-        startDate: recData.startDate,
-        startTime: recData.startTime,
-        endTime: recData.endTime,
-        invited: recData.invited
-      };
-    }
-    else{
-      result = {
-        lat: null,
-        lng: null,
-        name: recData.name,
-        creator: recData.user,
-        startDate: recData.startDate,
-        startTime: recData.startTime,
-        invited: recData.invited
-      };
-    }
-  }
-  rClient.get('https://maps.googleapis.com/maps/api/geocode/json?address='+recData.location+'&key='+googleKey, function(data, response){
-    if(JSON.parse(data).status!='OK'){
-      console.log(JSON.parse(data).status);
-      return;
-    }
-    result.lat = JSON.parse(data).results[0].geometry.location.lat;
-    result.lng = JSON.parse(data).results[0].geometry.location.lng;
-    activitiesCollection.save(result);
-    locationCollection.save({_id: 1, name: recData.location, Lat: result.lat, Long: result.lng, user:result.user, })
-    res.send(result);
-  }); 
+  var result = new activity();
+  User.findOne({'local.email':recData.email}, function(err, user){
+    result.name = recData.name;
+    result.creator = user.id;
+    result.startDate = recData.startDate;
+    result.endDate = recData.endDate;
+    result.startTime = recData.startTime;
+    result.endTime = recData.endTime;
+    result.invited = recData.invited;
+    var mapsURL = 'https://maps.googleapis.com/maps/api/geocode/json?address='+recData.location+'&key='+googleKey;
+    rClient.get(mapsURL, function(data, response){
+      if(JSON.parse(data).status!='OK'){
+        console.log(JSON.parse(data).status);
+        return;
+      }
+      result.lat = JSON.parse(data).results[0].geometry.location.lat;
+      result.lng = JSON.parse(data).results[0].geometry.location.lng;
+      activitiesCollection.save(result);
+      locationCollection.save({_id: 1, name: recData.location, Lat: result.lat, Long: result.lng, user:result.user, })
+      res.send(result);
+    }); 
+  });
 });
 var inviteUser;
 var actInv;
 app.post('/main/invite-out', function(req, res){
-  userCollection.findOne({name: req.body.user}, function(err, doc){
+  var User = require('./models/user');
+  User.findOne({_id: req.body.user}, function(err, doc){
     if(err){
       console.log(err);
     }
     else{
-      inviteUser = doc;
-      actInv = {
-        invited: new Array(inviteUser)
-      };
+      actInv = {invited: new Array(doc)};
     }
   });
 });
@@ -269,6 +235,8 @@ app.post('/main/create-message', function(req,res){
   res.send({name:messAct});
 });
 app.get('/message', function(req, res){
+  var User = require('./models/user');
+  var messages = require('./models/messageModel');
   var sender = messUser;
   var mActivity = messAct;
   messageCollection.find({activity: mActivity}, function(err, docs){

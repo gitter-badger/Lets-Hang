@@ -57,7 +57,7 @@ $('body').ready(function(){
 			type:'POST',
 			data: {
 				name: $('#chat-act-select option:selected').val(),
-				user: localStorage.getItem('user')
+				user: localStorage.getItem('email')
 			},
 			success: function(data){
 				var chatBox = $('<div class="chat-box">'+
