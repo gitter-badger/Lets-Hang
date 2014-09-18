@@ -135,7 +135,7 @@ app.get('/main', function(req,res){
     else{
       uData = uDoc;
       var aData = null;
-      if(uDoc != null){ 
+      if(uDoc !== null){ 
         activitiesCollection.find(uDoc.name, function(err, aDocs){
           if(err){
             console.log(err);
@@ -205,6 +205,9 @@ app.post('/main/invite', function(req,res){
         data.list.push(docs[i].invited);
       }
       res.send(data.list);
+    }
+    else{
+      res.send({});
     }
   });
 });
