@@ -6,23 +6,15 @@ var express = require('express');
 
 var app = express();
 
-var mongojs = require('mongojs');
+var mongoose = require('mongoose');
 
-var db = mongojs('54.191.16.144:27017/peeps'); //54.191.16.144
+var dbConfig = require('./models/config.js');
 
-var userCollection = db.collection('users');
-
-var activitiesCollection = db.collection('activities');
-
-var messageCollection = db.collection('messages');
-
-var locationCollection = db.collection('locations');
+mongoose.connect(dbConfig);
 
 var credCollection = db.collection('creds');
 
-var authom = require('authom');
-
-var bcrypt = require('bcrypt-nodejs');
+var passport = require('authom');
 
 var restClient = require('node-rest-client').Client;
 
@@ -42,6 +34,8 @@ server.listen(80);
 
 var path = require('path');
 
+require('./auth/auth')(passport);
+
 var googleKey = 'AIzaSyBfIApUobHr1J1OYNpBIy9D1AL5cfZadgs';
 
 //*********************************************************
@@ -57,6 +51,11 @@ app.configure(function () {
   app.use(express.static(path.join(__dirname, 'public')));
   app.use(express.json());       // to support JSON-encoded bodies
   app.use(express.urlencoded()); // to support URL-encoded bodies
+  app.use(morgan('dev'));
+  app.use(cookieParser());
+  app.use(bodyParser());
+  app.use(session({secret:'B1_1ubbadoo!?'}));
+  app.use(passport.initialize());
 });
 
 io.configure(function (){
@@ -81,51 +80,14 @@ app.get('/login', function(req,res){
 app.get('/register', function(req,res){
   res.render('register.hbs', {title:'peeps-register'});
 });
-app.post('/login-submit', function(req, res){
-  var user = req.body;
-  console.log(user.emailAddr);
-  userCollection.findOne({emailAddr: user.emailAddr}, function(err, doc){
-    if(err!=null){
-      console.log(err);
-    }
-    else{
-      if(bcrypt.compareSync(user.password, doc.password)){
-        res.send({status:'success', newUser: {name:doc.name,email:doc.email}});
-      }
-      else{
-        res.send({status:'incorrect email or password'});
-      }
-      return doc;
-    }
-  });
-});
-app.post('/register-submit', function(req,res){
-  var user = {
-    name: req.body.firstName,
-    lastName: req.body.lastName,
-    email: req.body.email,
-    password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(8), null),
-    signUpDate: new Date(),
-    lastLogin: new Date()
-  };
-  var acntExists = null; 
-  userCollection.find({email:user.email}, function(err, docs){
-    if(err!==null){
-      console.log(err);
-    }
-    else{
-      acntExists=docs;
-      return docs;
-    }
-  });
-  if(acntExists === null){
-    userCollection.save(user);
-    res.send({status:'success', newUser: {name: user.name, emailAddr: user.email}});
-  }
-  else{
-    res.send({status:'account exists'});
-  }
-});
+app.post('/login-submit', passport.authenticate({
+  successRedirect: '/main',
+  failureRedirect: 'login'
+}));
+app.post('/register-submit', passport.authenticate({
+  successRedirect: '/main',
+  failureRedirect: '/register'
+}));
 app.get('/main', function(req,res){
   var uData = null;
   userCollection.findOne({email: req.body.email}, function(err,uDoc){
@@ -334,7 +296,25 @@ app.get('/message', function(req, res){
     res.render('messenger.hbs', {messages:message});
   });
 });
+app.get('/auth/facebook', passport.authenticate('facebook', {scope: 'email'}));
+app.get('/auth/twitter', passport.authenticate('twitter'));
+app.get('/auth/google', passport.authenticate('google', {scope:['profile', 'email']}));
 app.get('/add/:service', authom.app);
+app.get('/auth/facebook/callback',
+  passport.authenticate('facebook', {
+    successRedirect: '/main',
+    failureRedirect: '/'
+  }));
+app.get('/auth/twitter/callback',
+  passport.authenticate('twitter', {
+    successRedirect: '/main',
+    failureRedirect: '/'
+  }));
+app.get('/auth/google/callback',
+  passport.authenticate('google', {
+    successRedirect: '/main',
+    failureRedirect: '/'
+  }));
 
 //*********************************************************
 //*************************SOCKETS*************************
@@ -366,108 +346,9 @@ io.sockets.on('connection', function(socket){
 //*********************************************************
 //*********************AUTHENTICATION**********************
 //*********************************************************
-
-credCollection.find(function(err, docs){
-  for(var i = 0; i<docs.length; i++){
-    switch(docs[i].name){
-      case 'facebook':
-        authom.createServer({
-          service: 'facebook',
-          id: docs[i].clientID,
-          secret: docs[i].clientSecret,
-          scope: []
-        });
-        break;
-      case 'twitter':
-        authom.createServer({ 
-          service: 'twitter',
-          id: docs[i].clientID,
-          secret: docs[i].clientSecret
-        });
-        break;
-      case 'google':
-        authom.createServer({ 
-          service: 'google',
-          id: docs[i].clientID,
-          secret: docs[i].clientSecret,
-          scope: ""
-        });
-        break;
-    }
+function isLoggedIn(req, res, next){
+  if(req.isAuthenticated()){
+    return next();
   }
-});
-
-authom.on('auth', function(req, res, data){
-  console.log('req: '+req+'\nres: '+res+'\n data: '+data);
-});
-/*function facebookAuthReq(user){
-  var facebookCreds = {
-    service: 'facebook',
-    id: null,
-    secret: null,
-    scope: [],
-    fields: ["name"]
-  };
-  var facebookKey;
-  console.log('facebook auth');
-  credCollection.findOne({name: facebookCreds.service}, function(err, doc){
-    if(err){
-      console.log(err);
-      return;
-    }
-    facebookCreds.id = doc.clientID;
-    facebookCreds.secret = doc.clientSecret;
-    facebookKey = authom.createServer(facebookCreds);
-    console.log(facebookKey);
-    facebookKey.on("auth", function(req, res, data){
-      console.log('auth');
-      console.log('req: '+req+'\n res: '+res+'\n data: '+data);
-      //userCollection.update(user, {facebookID: });
-    });
-  });
+  res.redirect('/');
 }
-function twitterAuthReq(user){
-  var twitterCreds = {
-    service: 'twitter',
-    id: null,
-    secret: null
-  };
-  var twitterKey;
-  console.log('twitter auth');
-  credCollection.findOne({name: twitterCreds.service}, function(err, doc){
-    if(err){
-      console.log(err);
-      return;
-    }
-    twitterCreds.id = doc.clientID;
-    twitterCreds.secret = doc.clientSecret;
-    twitterKey = authom.createServer(twitterCreds);
-    twitterKey.on("auth", function(req, res, data){
-      console.log('req: '+req+'\n res: '+res+'\n data: '+data);
-      //userCollection.update(user, {facebookID: });
-    });
-  });
-}
-function googleAuthReq(user){
-  var googleCreds = {
-    service: 'google',
-    id: null,
-    secret: null,
-    scope: ""
-  };
-  var googleKey;
-  console.log('google auth');
-  credCollection.findOne({name: googleCreds.service}, function(err, doc){
-    if(err){
-      console.log(err);
-      return;
-    }
-    googleCreds.id = doc.clientID;
-    googleCreds.secret = doc.clientSecret;
-    googleKey = authom.createServer(googleCreds);
-    googleKey.on("auth", function(req, res, data){
-      console.log('req: '+req+'\n res: '+res+'\n data: '+data);
-      //userCollection.update(user, {facebookID: });
-    });
-  });
-}*/
