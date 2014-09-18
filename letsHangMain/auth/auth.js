@@ -1,7 +1,7 @@
-var localStrategy = require('passport-local');
-var facebookStrategy = require('passport-facebook');
-var twitterStrategy = require('passport-twitter');
-var googleStrategy = require('passport-google-oauth');
+var localStrategy = require('passport-local').Strategy;
+var facebookStrategy = require('passport-facebook').Strategy;
+var twitterStrategy = require('passport-twitter').Strategy;
+var googleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 var User = require('../models/user');//user model
 var Creds = require('./creds');// auth credentials
@@ -30,7 +30,7 @@ module.exports = function(passport){
 					return done(null, false, {signUpMessage:'User Already Exists'});
 				}
 				else{
-					var newUser - new User();
+					var newUser = new User();
 					newUser.local.email = email;
 					newUser.local.password = newUser.generateHash(password);
 					newUser.local.name = firstName;
@@ -100,7 +100,7 @@ module.exports = function(passport){
 			});
 		});
 	}));
-	passport.use(new TwitterStrategy({
+	passport.use(new twitterStrategy({
 		consumerKey: Creds.twitterAuth.clientID,
 		consumerSecret: Creds.twitterAuth.clientSecret,
 		callbackURL: Creds.twitterAuth.callbackURL
@@ -115,7 +115,7 @@ module.exports = function(passport){
 					return done(null, user);
 				}
 				else{
-					var newUser = new User;
+					var newUser = new User();
 					newUser.twitter.id = profile.id;
 					newUser.twitter.token = token;
 					newUser.twitter.username = profile.username;
@@ -132,7 +132,7 @@ module.exports = function(passport){
 			});
 		});
 	}));
-	passport.use(new GoogleStrategy({
+	passport.use(new googleStrategy({
 		clientID: Creds.googleAuth.clientID,
 		clientSecret: Creds.googleAuth.clientSecret,
 		callbackURL: Creds.googleAuth.callbackURL
@@ -147,7 +147,7 @@ module.exports = function(passport){
 					return done(null, user);
 				}
 				else{
-					var newUser = nes User;
+					var newUser = new User();
 					newUser.google.id = profile.id;
 					newUser.google.token = token;
 					newUser.google.name = profile.displayName;

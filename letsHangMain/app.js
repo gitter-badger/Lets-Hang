@@ -8,13 +8,19 @@ var app = express();
 
 var mongoose = require('mongoose');
 
-var dbConfig = require('./models/config.js');
+var dbConfig = require('./models/config');
 
-mongoose.connect(dbConfig);
+mongoose.connect(dbConfig.url);
 
-var credCollection = db.collection('creds');
+var passport = require('passport');
 
-var passport = require('authom');
+var morgan = require('morgan');
+
+var cookieParser = require('cookie-parser');
+
+var bodyParser = require('body-parser');
+
+var session = require('express-session');
 
 var restClient = require('node-rest-client').Client;
 
@@ -299,7 +305,7 @@ app.get('/message', function(req, res){
 app.get('/auth/facebook', passport.authenticate('facebook', {scope: 'email'}));
 app.get('/auth/twitter', passport.authenticate('twitter'));
 app.get('/auth/google', passport.authenticate('google', {scope:['profile', 'email']}));
-app.get('/add/:service', authom.app);
+//app.get('/add/:service', authom.app);
 app.get('/auth/facebook/callback',
   passport.authenticate('facebook', {
     successRedirect: '/main',
