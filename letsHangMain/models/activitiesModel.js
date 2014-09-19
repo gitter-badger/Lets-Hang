@@ -4,7 +4,7 @@ var activitiesSchema = mongoose.Schema({
 	lat:Number,
 	lng:Number,
 	name:String,
-	creator:Objectid,
+	creator:mongoose.Schema.Types.ObjectId,
 	startDate:Date,
 	endDate:Date,
 	startTime:String,

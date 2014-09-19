@@ -86,64 +86,56 @@ app.get('/login', function(req,res){
 app.get('/register', function(req,res){
   res.render('register.hbs', {title:'peeps-register'});
 });
-app.post('/login-submit', passport.authenticate({
+app.post('/login-submit', passport.authenticate('local-login',{
   successRedirect: '/main',
   failureRedirect: '/login'
 }));
-app.post('/register-submit', passport.authenticate({
+app.post('/register-submit', passport.authenticate('local-signup',{
   successRedirect: '/main',
   failureRedirect: '/register'
 }));
-app.get('/main', function(req,res){
-  var User = require('./models/user');
-  User.findOne({'local.email': req.body.email}, function(err, user){
-    if(err){
-      console.log(err);
-    }
-    else{
-      var activities = require('./models/activitiesModel');
-      if(user){ 
-        activities.find({creator:user.id}, function(err, acts){
+app.get('/main', isLoggedIn, function(req,res){
+  var user = req.user;
+  var activities = require('./models/activitiesModel');
+  if(user){ 
+    activities.find({creator:user.id}, function(err, acts){
+      if(err){
+        console.log(err);
+      }
+      else{
+        var messages = require('./models/messageModel');
+        messages.find({sender:user.id}, function(err,mess){
           if(err){
             console.log(err);
           }
           else{
-            var messages = require('./models/messageModel');
-            messages.find({sender:user.id}, function(err,mess){
+            var locations = require('./models/locationModel');
+            locations.find({user: user.id}, function(err,locs){
               if(err){
                 console.log(err);
               }
               else{
-                var locations = require('./models/locationModel');
-                locations.find({user: user.id}, function(err,locs){
-                  if(err){
-                    console.log(err);
-                  }
-                  else{
-                    var dataToSend = {
-                      title: 'peeps - main', 
-                      activity: acts, 
-                      messages: mess, 
-                      location: locs,
-                      user: user
-                    };
-                    res.render('main.hbs', dataToSend);
-                    return locs;
-                  }
-                });
-                return mess;
+                var dataToSend = {
+                  title: 'peeps - main', 
+                  activity: acts, 
+                  messages: mess, 
+                  location: locs,
+                  user: user
+                };
+                res.render('main.hbs', dataToSend);
+                return locs;
               }
             });
-            return acts;
+            return mess;
           }
         });
+        return acts;
       }
-      else{
+    });
+  }
+  else{
         res.redirect('/login');
-      }
-      return user;
-    }
-  });
+  }
 });
 app.post('/main/locations', function(req, res){
   var User = require('./models/user');
@@ -237,37 +229,41 @@ app.post('/main/create-message', function(req,res){
 app.get('/message', function(req, res){
   var User = require('./models/user');
   var messages = require('./models/messageModel');
+  var activities = require('./models/activitiesModel');
   var sender = messUser;
-  var mActivity = messAct;
-  messageCollection.find({activity: mActivity}, function(err, docs){
-    if(err){
-      console.log(err);
-      return;
-    }
-    var message = new Array();
-    for(var i = 0; i<docs.length; i++){
-      if(docs[i].sender==sender){
-        message[i]={
-          sender: true,
-          content: docs[i].content,
-          activity: docs[i].activity,
-          date: docs[i].date
-        };
-      }
-      else{
-        message[i]={
-          sender: false,
-          content: docs[i].content,
-          activity: docs[i].activity,
-          date: docs[i].date
-        };
-      }
-      if(i==docs.length-1){
+  User.findOne({'local.email':sender}, function(err, user){
+    activities.findOne({name:messAct, creator: user.id}, function(err, cAct){
+      messages.find({activity: cAct.id}, function(err, docs){
+        if(err){
+          console.log(err);
+          return;
+        }
+        var message = new Array();
+        for(var i = 0; i<docs.length; i++){
+          if(docs[i].sender==user.id){
+            message[i]={
+              sender: true,
+              content: docs[i].content,
+              activity: docs[i].activity,
+              date: docs[i].date
+            };
+          }
+          else{
+            message[i]={
+              sender: false,
+              content: docs[i].content,
+              activity: docs[i].activity,
+              date: docs[i].date
+            };
+          }
+          if(i==docs.length-1){
+            res.render('messenger.hbs', {messages:message});
+            return;
+          }
+        }
         res.render('messenger.hbs', {messages:message});
-        return;
-      }
-    }
-    res.render('messenger.hbs', {messages:message});
+      });
+    });
   });
 });
 app.get('/auth/facebook', passport.authenticate('facebook', {scope: 'email'}));
@@ -295,16 +291,19 @@ app.get('/auth/google/callback',
 //*********************************************************
 
 io.sockets.on('connection', function(socket){
+  var User = require('./models/user');
+  var activities = require('./models/activitiesModel');
+  var messages = require('./models/messageModel');
   console.log('socket.io started');
   if(inviteUser!==null){
-    activitiesCollection.find(actInv, function(err, docs){
+    activities.find(actInv, function(err, docs){
       if(err){
         console.log(err);
       }
       else{
         socket.emit('findUser');
         socket.on('foundUser', function(userData){
-          if(userData==actInv[0]){
+          if(userData==actInv.invited.pop()){
             socket.emit('inviteIn', docs);
           }
         });
@@ -312,7 +311,11 @@ io.sockets.on('connection', function(socket){
     });
   }
   socket.on('send', function(msg){
-    messageCollection.save(msg);
+    messages.save(msg, function(err){
+      if(err){
+        console.log(err);
+      }
+    });
     socket.broadcast.emit('recieve',msg);
   });
 });

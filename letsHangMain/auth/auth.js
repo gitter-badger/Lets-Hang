@@ -10,7 +10,7 @@ module.exports = function(passport){
 	passport.serializeUser(function(user, done){
 		done(null, user.id);
 	});
-	passport.deserializeUser(function(err, user){
+	passport.deserializeUser(function(err, done){
 		User.findById(id, function(err, user){
 			done(err, user);
 		});
@@ -20,7 +20,7 @@ module.exports = function(passport){
 		passwordField: 'password',
 		passReqToCallback: true
 	},
-	function(req, email, password, firstName, lastName, done){
+	function(req, email, password, done){
 		process.nextTick(function(){
 			User.findOne({'local.email':email}, function(err,user){
 				if(err){
@@ -33,9 +33,9 @@ module.exports = function(passport){
 					var newUser = new User();
 					newUser.local.email = email;
 					newUser.local.password = newUser.generateHash(password);
-					newUser.local.name = firstName;
-					newUser.local.lastName = lastName;
-					newUser.local.sigUpDate = new Date();
+					newUser.local.name = req.body.firstName;
+					newUser.local.lastName = req.body.lastName;
+					newUser.local.signUpDate = new Date();
 					newUser.local.lastLogin = new Date();
 					newUser.save(function(err){
 						if(err){

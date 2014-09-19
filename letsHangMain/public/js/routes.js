@@ -1,4 +1,10 @@
 "use strict";
+window.onload = function(){
+	if(window.location.pathname=='/'){
+		console.log('email remove');
+		localStorage.removeItem('email');
+	}
+};
 $(document).ready(function (){
 	$('#login-home').click(function (){
 		window.location.replace('/login');
@@ -13,14 +19,12 @@ $(document).ready(function (){
 	});
 	$('#regist-submit').click(function(e){
 		e.preventDefault();
+		if($('#register-password').val()!=$('#register-conf-password').val()){
+			$('#register-form').append('<h3>Passwords do not match</h3>');
+			return;
+		}
 		localStorage.setItem('email', $('#register-email').val());
 		$('#register-form').submit();
-	});
-	$.ajax({
-		url: '/main',
-		type: 'GET',
-		data: {email: localStorage.getItem('email')},
-		success: function(data){}
 	});
 	$('#activities').click(function(e){
 		e.preventDefault();

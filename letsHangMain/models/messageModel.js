@@ -1,9 +1,9 @@
 var mongoose = require('mongoose');
 
 var messageSchema = mongoose.Schema({
-	sender:Objectid,
+	sender:mongoose.Schema.Types.ObjectId,
 	content:String,
-	activity:Objectid,
+	activity:mongoose.Schema.Types.ObjectId,
 	receivers:Array,
 	sendDate:Date
 });
