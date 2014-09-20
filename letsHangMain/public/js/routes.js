@@ -56,9 +56,4 @@ $(document).ready(function (){
 			$('#messages + .hidden-list').toggleClass('unhidden');
 		}
 	});
-	$('#logout').click(function(e){
-		localStorage.setItem('user',null);
-		localStorage.setItem('email',null);
-		window.location.replace('/');
-	});
 });

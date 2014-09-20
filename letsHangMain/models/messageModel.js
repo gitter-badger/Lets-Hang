@@ -8,4 +8,4 @@ var messageSchema = mongoose.Schema({
 	sendDate:Date
 });
 
-module.exports = mongoose.model('message', messageSchema);
+module.exports = mongoose.model('messages', messageSchema);

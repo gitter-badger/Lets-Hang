@@ -12,4 +12,4 @@ var activitiesSchema = mongoose.Schema({
 	invited:Array
 });
 
-module.exports = mongoose.model('activity', activitiesSchema);
+module.exports = mongoose.model('activities', activitiesSchema);

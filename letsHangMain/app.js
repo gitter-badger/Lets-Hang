@@ -285,6 +285,10 @@ app.get('/auth/google/callback',
     successRedirect: '/main',
     failureRedirect: '/'
   }));
+app.get('/logout', function(req,res){
+  req.logout();
+  res.redirect('/');
+});
 
 //*********************************************************
 //*************************SOCKETS*************************
@@ -324,8 +328,12 @@ io.sockets.on('connection', function(socket){
 //*********************AUTHENTICATION**********************
 //*********************************************************
 function isLoggedIn(req, res, next){
+  console.log(req.user);
   if(req.isAuthenticated()){
     return next();
   }
-  res.redirect('/');
+  else{
+    console.log('redirect');
+    res.redirect('/');
+  }
 }

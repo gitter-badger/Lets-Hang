@@ -10,7 +10,7 @@ module.exports = function(passport){
 	passport.serializeUser(function(user, done){
 		done(null, user.id);
 	});
-	passport.deserializeUser(function(err, done){
+	passport.deserializeUser(function(id, done){
 		User.findById(id, function(err, user){
 			done(err, user);
 		});
@@ -42,6 +42,7 @@ module.exports = function(passport){
 							console.log(err);
 						}
 						else{
+							console.log(newUser);
 							return done(null, newUser);
 						}
 					});
@@ -55,6 +56,7 @@ module.exports = function(passport){
 		passReqToCallback: true
 	},
 	function(req, email, password, done){
+		console.log('login');
 		User.findOne({'local.email':email}, function(err, user){
 			if(err){
 				return done(err);
@@ -65,6 +67,7 @@ module.exports = function(passport){
 			if(!user.validPassword(password)){
 				return done(null, false, {loginMessage:'Oops, wrong password'});
 			}
+			console.log(user);
 			return done(null, user);
 		});
 	}));
