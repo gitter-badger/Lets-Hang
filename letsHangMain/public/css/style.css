@@ -8,19 +8,36 @@ body{
 .navbar-static-top{
 	background-color: #FFF;
 }
+.nav *{
+	color: #428B5C;
+}
 .jumbotron{
 	width: 102.7%;
 	margin-top: -22px;
 	margin-left: -1.5%;
+	height: 214px;
+	border-radius: 0px !important;
 }
 .brand-title{
-	margin-left: 39%;
+	margin-left: -11.75%;
+	width: 23.5%;
+	position: absolute;
+	left: 50%;
+	top: -13px;
 }
 .brand-subtitle{
-	margin-left: 27%;
+	margin-left: -23%;
+	width: 46%;
+	position: absolute;
+	left: 50%;
+	top: 60px;
 }
 .login-register-btns{
-	margin-left: 45%;
+	margin-left: -5.55%;
+	width: 11.1%;
+	position: absolute;
+	left: 50%;
+	top: 125px;
 }
 .blurb-row > .col-md-4 > h3{
 	margin-left: 30%;
@@ -234,6 +251,10 @@ p.sender{
 	right: 23px;
 	top: 19px;
 	color: #428B5C;
+	cursor: pointer;
+}
+#settings-cog:hover{
+	color: #0D8;
 }
 #fbUBtn{
 	background-color: #3b5998;

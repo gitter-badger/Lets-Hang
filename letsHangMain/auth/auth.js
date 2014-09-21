@@ -42,7 +42,7 @@ module.exports = function(passport){
 							console.log(err);
 						}
 						else{
-							console.log(newUser);
+							console.log('auth');
 							return done(null, newUser);
 						}
 					});
@@ -68,6 +68,7 @@ module.exports = function(passport){
 				return done(null, false, {loginMessage:'Oops, wrong password'});
 			}
 			console.log(user);
+			console.log('auth');
 			return done(null, user);
 		});
 	}));

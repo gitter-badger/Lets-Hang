@@ -62,6 +62,7 @@ app.configure(function () {
   app.use(bodyParser());
   app.use(session({secret:'B1_1ubbadoo!?'}));
   app.use(passport.initialize());
+  app.use(passport.session());
 });
 
 io.configure(function (){
@@ -96,6 +97,7 @@ app.post('/register-submit', passport.authenticate('local-signup',{
 }));
 app.get('/main', isLoggedIn, function(req,res){
   var user = req.user;
+  console.log(user);
   var activities = require('./models/activitiesModel');
   if(user){ 
     activities.find({creator:user.id}, function(err, acts){
@@ -285,6 +287,26 @@ app.get('/auth/google/callback',
     successRedirect: '/main',
     failureRedirect: '/'
   }));
+app.put('/change-password', function(req, res){
+  var User = require('./models/user');
+  User.find({'local.email': req.body.email}, function(err, user){
+    if(err){
+      console.log(err);
+    }
+    if(user.validPassword(req.body.oldPassword)){
+      user.password = user.generateHash(req.body.newPassword);
+      user.save(function(err){
+        if(err){
+          console.log(err);
+        }
+        res.send({message:'success'});
+      });
+    }
+    else{
+      res.send({message:'Invalid Old Password'});
+    }
+  });
+});
 app.get('/logout', function(req,res){
   req.logout();
   res.redirect('/');
