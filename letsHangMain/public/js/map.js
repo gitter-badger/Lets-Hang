@@ -3,9 +3,9 @@ window.onload = function(){
 	$.ajax({
 		url:'/main/locations',
 		type:'POST',
-		data:{user: localStorage.getItem('user')},
+		data:{email: localStorage.getItem('email')},
 		success:function(data){
-			if(data!==null){
+			if(data){
         console.log(data);
 			  function initialize() {
   				var mapOptions = {

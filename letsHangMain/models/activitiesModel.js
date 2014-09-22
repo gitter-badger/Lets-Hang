@@ -4,7 +4,7 @@ var activitiesSchema = mongoose.Schema({
 	lat:Number,
 	lng:Number,
 	name:String,
-	creator:String,
+	creator:mongoose.Schema.Types.ObjectId,
 	startDate:Date,
 	endDate:Date,
 	startTime:String,
@@ -12,4 +12,4 @@ var activitiesSchema = mongoose.Schema({
 	invited:Array
 });
 
-module.exports = mongoose.model('activity', activitiesSchema);
+module.exports = mongoose.model('activities', activitiesSchema);

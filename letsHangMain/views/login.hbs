@@ -31,12 +31,12 @@
   			</div>
 		</header>
     <div class="container">
-      <form id="login-form" class="input-group">
-        <input type="email" id="login-email" class="form-control" placeholder="Email"></br>
-        <input type="password" id="login-password" class="form-control" placeholder="Password"></br>
-        <input type="button" id="login-submit" class="btn btn-primary" value="Login"></br>
+      <form id="login-form" class="input-group" action="/login-submit" method="POST">
+        <input type="email" id="login-email" class="form-control" name="email" placeholder="Email"></br>
+        <input type="password" id="login-password" class="form-control" name="password" placeholder="Password"></br>
+        <input type="submit" id="login-submit" class="btn btn-primary" value="Login"></br>
       </form>
-      <button id="register-login" class="btn btn-default">Register</button>
+      <a id="register-login" class="btn btn-default" href="/register">Register</a>
       <a href="">Forgot Password</a>
     </div>
   </body>

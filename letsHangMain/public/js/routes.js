@@ -1,4 +1,10 @@
 "use strict";
+window.onload = function(){
+	if(!(window.location.pathname=='/main')){
+		console.log('email remove');
+		localStorage.removeItem('email');
+	}
+};
 $(document).ready(function (){
 	$('#login-home').click(function (){
 		window.location.replace('/login');
@@ -6,63 +12,19 @@ $(document).ready(function (){
 	$('#register-home').click(function (){
 		window.location.replace('/register');
 	});
-	$('#register-submit').click(function (e){
+	$('#login-submit').click(function(e){
 		e.preventDefault();
-		if($('#register-password').val()==$('#register-conf-password').val()){
-			$.ajax({
-				url: '/register-submit',
-				type: 'POST',
-				data: {
-					firstName: $('#register-first').val(),
-					lastName: $('#register-last').val(),
-					email: $('#register-email').val(),
-					password: $('#register-password').val()
-				},
-				success: function(data){
-					if(data.status!='success'){
-						$('.container').append('<h3>account already exists</h3>');
-					}
-					else{
-						console.log(data.newUser);
-						localStorage.setItem('user',data.newUser.name);
-						localStorage.setItem('email', data.newUser.emailAddr);
-						window.location.replace('/main');
-					}
-				}
-			});
-		}
-		else{
-			$('#register-form').append('<h3>passwords does not match</h3>');
-		}
+		localStorage.setItem('email', $('#login-email').val());
+		$('#login-form').submit();
 	});
-	$('#login-submit').click(function (e){
+	$('#regist-submit').click(function(e){
 		e.preventDefault();
-		var logForm = {
-			emailAddr: $('#login-email').val(),
-			password: $('#login-password').val()
-		};
-		console.log(logForm);
-		$.ajax({
-			url: '/login-submit',
-			type: 'POST',
-			data: logForm,
-			success: function(data){
-				if(data.status!='success'){
-					$('.container').append('<h3>email or password incorrect</h3>');
-				}
-				else{
-					localStorage.setItem('user',data.newUser.name);
-					localStorage.setItem('email',data.newUser.email);
-					window.location.replace('/main');
-				}
-			}
-		});
-	});
-	$.ajax({
-		url: '/main',
-		type: 'GET',
-		data: {email: localStorage.getItem('email')},
-		success: function(data){}
+		if($('#register-password').val()!=$('#register-conf-password').val()){
+			$('#register-form').append('<h3>Passwords do not match</h3>');
+			return;
+		}
+		localStorage.setItem('email', $('#register-email').val());
+		$('#register-form').submit();
 	});
 	$('#activities').click(function(e){
 		e.preventDefault();
@@ -84,9 +46,6 @@ $(document).ready(function (){
 			$('#locations + .hidden-list').toggleClass('unhidden');
 		}
 	});
-	/*$('#messages + .hidden-list li').click(function(e){
-			messageInit(e.target, localStorage.getItem('user'));
-	});*/
 	$('#locations').click(function(e){
 		e.preventDefault();
 		$('#locations + .hidden-list').toggleClass('unhidden');
@@ -97,9 +56,49 @@ $(document).ready(function (){
 			$('#messages + .hidden-list').toggleClass('unhidden');
 		}
 	});
-	$('#logout').click(function(e){
-		localStorage.setItem('user',null);
-		localStorage.setItem('email',null);
-		window.location.replace('/');
+	$('#change-password').click(function(e){
+		e.preventDefault();
+		localStorage.setItem('settings', $('#settModal .modal-dialog .modal-content .modal-body').html());
+		$('#settModal .modal-dialog .modal-content .modal-body').html(
+			'<form id="change-pass-form" class="input-group">'+
+			'<input id="old-pass" name="old-pass" class="form-control" type="password" placeholder="Old Password"></br>'+
+			'<input id="new-pass" name="new-pass" class="form-control" type="password" placeholder="New Password"></br>'+
+			'<input id="new-pass-conf" name="new-pass-conf" class="form-control" type="password" placeholder="Confirm New Password"></br>'+
+			'<input id="new-pass-btn" name="new-pass-btn" class="btn btn-success" type="button" value="Submit"></br>'+
+			'</form>'
+		);
+	});
+	$('#new-pass-btn').on('click', function(e){
+		e.preventDefault();
+		if($('#new-pass').val()==$('#new-pass-conf').val()){
+			$.ajax({
+				url:'/change-password',
+				type:'PUT',
+				data:{
+					email: localStorage.getItem('email'),
+					newPassword: $('#new-pass').val(),
+					oldPassword: $('#old-pass').val()
+				},
+				success: function(data){
+					if(data.message=='success'){
+						$('#settModal .modal-dialog .modal-content .modal-body').html(localStorage.getItem('settings'));
+						$('#settModal').modal('hide');
+						localStorage.removeItem('settings');
+					}
+					else{
+						$('#settModal .modal-dialog .modal-content .modal-body').append('<h4>'+data.message+'</h4>');
+					}
+				}
+			});
+		}
+		else{
+			$('#settModal .modal-dialog .modal-content .modal-body').append('<h4>New Password and Confirmation do not Match</h4>');
+		}
+	});
+	$('#settModal .modal-dialog .modal-content .modal-footer #close, #settModal .modal-dialog .modal-content .modal-header .close').click(function(){
+		var settHTML = localStorage.getItem('settings');
+		if(settHTML){
+			$('#settModal .modal-dialog .modal-content .modal-body').html(settHTML);
+		}
 	});
 });

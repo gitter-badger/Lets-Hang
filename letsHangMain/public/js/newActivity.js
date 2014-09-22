@@ -37,12 +37,14 @@ $(document).ready(function(){
 			$.ajax({
 				url: '/main/invite',
 				type: 'POST',
-				data: {activity:'new activity', name: localStorage.getItem('user')},
+				data: {activity:'new activity', email: localStorage.getItem('email')},
 				success: function(data){
 					var conNode = $('<li></li>');
 					for(var i = 0; i<data.length; i++){
-						conNode[0].innerHTML = data[i].p0+' '+'<button class="inviteThis btn btn-primary"><i class="fa fa-plus"></i></button>';
-						conList[0].innerHTML += conNode[0].outerHTML;
+						for(var j = 0; j<data[i].length; j++){
+							conNode[0].innerHTML = data[i][j]+' '+'<button class="inviteThis btn btn-primary"><i class="fa fa-plus"></i></button>';
+							conList[0].innerHTML += conNode[0].outerHTML;
+						}
 					}
 					conCont[0].innerHTML = conList[0].outerHTML;
 					$(e.target).parent().append(conCont);
@@ -125,63 +127,32 @@ $(document).ready(function(){
 	$('#save').click(function(){
 		$('#invModal').modal('hide');
 	});
+	var actData = function(n, l, sD, eD, sT, eT, i, e){
+		this.name = n;
+		this.location = formatLoct(l);
+		this.startDate = sD;
+		this.endDate = eD;
+		this.startTime = sT;
+		this.endTime = eT;
+		this.invited = i;
+		this.email = e;
+	}
 	$('#newActSub').click(function(e){
 		e.preventDefault();
 		e.stopPropagation();
 		if(localStorage.getItem('invited')!==null){
+			var formData = new actData($('#newActName').val(),$('#newActLoct').val(),$('#startDate').val(),null,$('#startTime').val(),null,localStorage.getItem('invited').arr,localStorage.getItem('email'));
 			if($('#endDate').length==0){
-				if($('#endTime').length==0){
-					var formData = {
-						name: $('#newActName').val(),
-						location: $('#newActLoct').val(),
-						startDate: $('#startDate').val(),
-						startTime: $('#startTime').val(),
-						invited: localStorage.getItem('invited').arr,
-						user: localStorage.getItem('user')
-					};
-				}
-				else{
-					var formData = {
-						name: $('#newActName').val(),
-						location: $('#newActLoct').val(),
-						startDate: $('#startDate').val(),
-						startTime: $('#startTime').val(),
-						endTime: $('#endTime').val(),
-						invited: localStorage.getItem('invited').arr,
-						user: localStorage.getItem('user')
-					};
-				}
+				formData.endDate = $('#endDate').val(); 
 			}
-			else{
-				if($('#endTime').length==0){
-					var formData = {
-						name: $('#newActName').val(),
-						location: $('#newActLoct').val(),
-						startDate: $('#startDate').val(),
-						endDate: $('#endDate').val(),
-						startTime: $('#startTime').val(),
-						invited: localStorage.getItem('invited').arr,
-						user: localStorage.getItem('user')
-					};
-				}
-				else{
-					var formData = {
-						name: $('#newActName').val(),
-						location: $('#newActLoct').val(),
-						startDate: $('#startDate').val(),
-						endDate: $('#endDate').val(),
-						startTime: $('#startTime').val(),
-						endTime: $('#endTime').val(),
-						invited: localStorage.getItem('invited').arr,
-						user: localStorage.getItem('user')
-					};
-				}
+			if($('#endTime').length==0){
+				formData.endTime = $('#endTime').val();
 			}
 		}
 		else{
 			alert('No one is invited, please invite people before creating an activity');
+			return;
 		}
-		formData.location = formatLoct(formData.location);
 		console.log(formData.location);
 		$.ajax({
 			url: '/main/create-activity',
@@ -192,33 +163,6 @@ $(document).ready(function(){
 				mapNewActivity(data);
 				sendInvite(data, 0);
 			}
-		});
-	});
-	$('#fbUBtn').bind('mousedown touchstart pointerdown', function(e){
-		e.preventDefault();
-		console.log('facebook');
-		$.ajax({
-			url:'/add/facebook',
-			type:'GET',
-			data:{name: localStorage.getItem('user')}
-		});
-	});
-	$('#twUBtn').bind('mousedown touchstart pointerdown', function(e){
-		e.preventDefault();
-		console.log('twitter');
-		$.ajax({
-			url:'/add/twitter',
-			type:'get',
-			data:{name: localStorage.getItem('user')}
-		});
-	});
-	$('#gUBtn').bind('mousedown touchstart pointerdown', function(e){
-		e.preventDefault();
-		console.log('google');
-		$.ajax({
-			url:'/add/google',
-			type:'GET',
-			data:{name: localStorage.getItem('user')}
 		});
 	});
 });

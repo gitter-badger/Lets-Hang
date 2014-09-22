@@ -4,7 +4,7 @@ var locationSchema = mongoose.Schema({
 	name:String,
 	Lat:Number,
 	Long:Number,
-	user:String
+	user:mongoose.Schema.Types.ObjectId
 });
 
-module.exports = mongoose.model('Location', locationSchema);
+module.exports = mongoose.model('locations', locationSchema);

@@ -31,13 +31,13 @@
   			</div>
 		</header>
     <div class="container">
-      <form id="register-form" class="input-group">
-        <input type="text" id="register-first" class="form-control" placeholder="First Name"></br>
-        <input type="text" id="register-last" class="form-control" placeholder="Last Name"></br>
-        <input type="email" id="register-email" class="form-control" placeholder="Email"></br>
-        <input type="password" id="register-password" class="form-control" placeholder="Password"></br>
+      <form id="register-form" class="input-group" action="/register-submit" method="POST">
+        <input type="text" id="register-first" class="form-control" name="firstName" placeholder="First Name"></br>
+        <input type="text" id="register-last" class="form-control" name="lastName" placeholder="Last Name"></br>
+        <input type="email" id="register-email" class="form-control" name="email" placeholder="Email"></br>
+        <input type="password" id="register-password" class="form-control" name="password" placeholder="Password"></br>
         <input type="password" id="register-conf-password" class="form-control" placeholder="Confirm Password"></br>
-        <input type="button" id="register-submit" class="btn btn-primary" value="Register"></br>
+        <input type="submit" id="register-submit" class="btn btn-primary" value="Register"></br>
       </form>
     </div>
   </body>
