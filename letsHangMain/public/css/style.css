@@ -1,6 +1,6 @@
 html, body, .container{
 	width: 100%;
-	height: 100%;
+	height: 90%;
 }
 body{
 	background-color: #428B5C;
@@ -15,7 +15,7 @@ body{
 	width: 102.7%;
 	margin-top: -22px;
 	margin-left: -1.5%;
-	height: 214px;
+	height: 272px;
 	border-radius: 0px !important;
 }
 .brand-title{
@@ -30,14 +30,15 @@ body{
 	width: 46%;
 	position: absolute;
 	left: 50%;
-	top: 60px;
+	top: 82px;
+	text-align: center;
 }
 .login-register-btns{
 	margin-left: -5.55%;
 	width: 11.1%;
 	position: absolute;
 	left: 50%;
-	top: 125px;
+	top: 178px;
 }
 .blurb-row > .col-md-4 > h3{
 	margin-left: 30%;
@@ -57,10 +58,10 @@ li > .btn-link{
 #login-form input{
 	margin-bottom: 26px;
 }
-#login-form + button{
+#login-form + a{
 	margin: -106px 0 0 47%;
 }
-#login-form + button + a{
+#login-form + a + a{
 	color: #FFF;
 	margin: 0 0 0 -11.5%;
 }
@@ -257,16 +258,44 @@ p.sender{
 	color: #0D8;
 }
 #fbUBtn{
+	width: 100%;
 	background-color: #3b5998;
+	color: #000;
+	cursor: pointer;
+	margin-bottom: 5px;
+}
+#fbUBtn:hover{
+	color: #fff;
 }
 #twUBtn{
+	width: 100%;
 	background-color: #55acee;
+	color: #000;
+	cursor: pointer;
+	margin-bottom: 5px;
+}
+#twUBtn:hover{
+	color: #fff;
 }
 #gUBtn{
+	width: 100%;
 	background-color: #D73D32;
+	color: #000;
+	cursor: pointer;
+	margin-bottom: 5px;
+}
+#gUBtn:hover{
+	color: #fff;
 }
 #liUBtn{
+	width: 100%;
 	background-color: #287BBB;
+	color: #000;
+	cursor: pointer;
+	margin-bottom: 5px;
+}
+#liUBtn:hover{
+	color: #fff;
 }
 #register-form{
 	position: absolute;
@@ -276,4 +305,7 @@ p.sender{
 }
 #register-form *{
 	margin-bottom: 10px;
+}
+.blurb-row{
+	color: #eee;
 }

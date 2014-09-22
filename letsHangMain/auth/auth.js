@@ -75,97 +75,152 @@ module.exports = function(passport){
 	passport.use(new facebookStrategy({
 		clientID: Creds.facebookAuth.clientID,
 		clientSecret: Creds.facebookAuth.clientSecret,
-		callbackURL: Creds.facebookAuth.callbackURL
+		callbackURL: Creds.facebookAuth.callbackURL,
+		passReqToCallback: true
 	},
-	function(token, refreshToken, profile, done){
+	function(req, token, refreshToken, profile, done){
 		process.nextTick(function(){
-			User.findOne({'facebook.id':profile.id}, function(err, user){
-				if(err){
-					return done(err);
-				}
-				if(user){
-					return done(null, user);
-				}
-				else{
-					var newUser = new User();
-					newUser.facebook.id = profile.id;
-					newUser.facebook.token = token;
-					newUser.facebook.name = profile.name.givenName+' '+profile.name.familyName;
-					newUser.facebook.email = profile.emails[0].value;
-					newUser.save(function(err){
-						if(err){
-							console.log(err);
-						}
-						else{
-							return done(null, newUser);
-						}
-					});
-				}
-			});
+			if(!req.user){
+				User.findOne({'facebook.id':profile.id}, function(err, user){
+					if(err){
+						return done(err);
+					}
+					if(user){
+						return done(null, user);
+					}
+					else{
+						var newUser = new User();
+						newUser.facebook.id = profile.id;
+						newUser.facebook.token = token;
+						newUser.facebook.name = profile.name.givenName+' '+profile.name.familyName;
+						newUser.facebook.email = profile.emails[0].value;
+						newUser.save(function(err){
+							if(err){
+								console.log(err);
+							}
+							else{
+								return done(null, newUser);
+							}
+						});
+					}
+				});
+			}
+			else{
+				var user = req.user;
+				user.facebook.id = profile.id;
+				user.facebook.token = token;
+				user.facebook.name = profile.name.givenName+' '+profile.name.familyName;
+				user.facebook.email = profile.emails[0].value;
+				user.save(function(err){
+					if(err){
+						console.log(err);
+						return;
+					}
+					else{
+						return done(null, user);
+					}
+				});
+			}
 		});
 	}));
 	passport.use(new twitterStrategy({
 		consumerKey: Creds.twitterAuth.clientID,
 		consumerSecret: Creds.twitterAuth.clientSecret,
-		callbackURL: Creds.twitterAuth.callbackURL
+		callbackURL: Creds.twitterAuth.callbackURL,
+		passReqToCallback: true
 	},
 	function(token, tokenSecret, profile, done){
 		process.nextTick(function(){
-			User.findOne({'twitter.id':profile.id}, function(err, user){
-				if(err){
-					return done(err);
-				}
-				if(user){
-					return done(null, user);
-				}
-				else{
-					var newUser = new User();
-					newUser.twitter.id = profile.id;
-					newUser.twitter.token = token;
-					newUser.twitter.username = profile.username;
-					newUser.twitter.displayName = profile.displayName;
-					newUser.save(function(err){
-						if(err){
-							console.log(err);
-						}
-						else{
-							return done(null, newUser);
-						}
-					});
-				}
-			});
+			if(!req.user){
+				User.findOne({'twitter.id':profile.id}, function(err, user){
+					if(err){
+						return done(err);
+					}
+					if(user){
+						return done(null, user);
+					}
+					else{
+						var newUser = new User();
+						newUser.twitter.id = profile.id;
+						newUser.twitter.token = token;
+						newUser.twitter.username = profile.username;
+						newUser.twitter.displayName = profile.displayName;
+						newUser.save(function(err){
+							if(err){
+								console.log(err);
+							}
+							else{
+								return done(null, newUser);
+							}
+						});
+					}
+				});
+			}
+			else{
+				var user = req.user;
+				user.twitter.id = profile.id;
+				user.twitter.token = token;
+				user.twitter.username = profile.username;
+				user.twitter.displayName = profile.displayName;
+				user.save(function(err){
+					if(err){
+						console.log(err);
+					}
+					else{
+						return done(null, user);
+					}
+				});
+			}
 		});
 	}));
 	passport.use(new googleStrategy({
 		clientID: Creds.googleAuth.clientID,
 		clientSecret: Creds.googleAuth.clientSecret,
-		callbackURL: Creds.googleAuth.callbackURL
+		callbackURL: Creds.googleAuth.callbackURL,
+		passReqToCallback: true
 	},
 	function(token, refreshToken, profile, done){
 		process.nextTick(function(){
-			User.findOne({'google.id':profile.id}, function(err, user){
-				if(err){
-					return done(err);
-				}
-				if(user){
-					return done(null, user);
-				}
-				else{
-					var newUser = new User();
-					newUser.google.id = profile.id;
-					newUser.google.token = token;
-					newUser.google.name = profile.displayName;
-					newUser.google.email = profile.emails[0].value;
-					newUser.save(function(err){
-						if(err){
-							console.log(err);
-						}
-						else{
-							return done(null, newUser);
-						}
-					});
-				}
-			});
+			if(!req.user){
+				User.findOne({'google.id':profile.id}, function(err, user){
+					if(err){
+						return done(err);
+					}
+					if(user){
+						return done(null, user);
+					}
+					else{
+						var newUser = new User();
+						newUser.google.id = profile.id;
+						newUser.google.token = token;
+						newUser.google.name = profile.displayName;
+						newUser.google.email = profile.emails[0].value;
+						newUser.save(function(err){
+							if(err){
+								console.log(err);
+							}
+							else{
+								return done(null, newUser);
+							}
+						});
+					}
+				});
+			}
+			else{
+				var user = req.user;
+				user.google.id = profile.id;
+				user.google.token = token;
+				user.google.name = profile.displayName;
+				user.google.email = profile.emails[0].value;
+				user.save(function(err){
+					if(err){
+						console.log(err);
+					}
+					else{
+						return done(null, user);
+					}
+				});
+			}
 		});
 	}));
 };

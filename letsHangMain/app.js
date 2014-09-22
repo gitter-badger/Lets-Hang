@@ -32,7 +32,15 @@ var http = require('http');
 
 var server = http.createServer(app);
 
-var io = require('socket.io').listen(server);
+var io = require('socket.io')(server);
+
+var pub = require('redis').createClient(6379, '54.68.95.104', {return_buffers:true});
+
+var sub = require('redis').createClient(6379, '54.68.95.104', {return_buffers:true});
+
+var redis = require('socket.io-redis');
+
+io.adapter(redis({pubClient: pub, subClient: sub}));
 
 //server.listen(3000);
 
@@ -64,12 +72,11 @@ app.configure(function () {
   app.use(passport.initialize());
   app.use(passport.session());
 });
-
-io.configure(function (){
-  io.set('authorization', function (handshakeData, callback) {
-    callback(null, true); // error first callback style 
-  });
+io.set('authorization', function (handshakeData, callback) {
+  callback(null, true); // error first callback style 
 });
+io.set('transports', ['websocket']);
+
 
 //*********************************************************
 //************************ROUTING**************************
@@ -151,9 +158,13 @@ app.post('/main/locations', function(req, res){
         if(err){
           console.log(err);
         }
-        else{
+        if(acts){
           res.send(acts);
           return acts;
+        }
+        else{
+          res.send({});
+          return;
         }
       });
     }
@@ -169,7 +180,7 @@ app.post('/main/invite', function(req,res){
       if(err){
         console.log(err);
       }
-      if(docs !== null){
+      if(acts){
         for(var i = 0; i<acts.length; i++){
           data.list.push(acts[i].invited);
         }
@@ -271,7 +282,6 @@ app.get('/message', function(req, res){
 app.get('/auth/facebook', passport.authenticate('facebook', {scope: 'email'}));
 app.get('/auth/twitter', passport.authenticate('twitter'));
 app.get('/auth/google', passport.authenticate('google', {scope:['profile', 'email']}));
-//app.get('/add/:service', authom.app);
 app.get('/auth/facebook/callback',
   passport.authenticate('facebook', {
     successRedirect: '/main',

@@ -5,7 +5,7 @@ window.onload = function(){
 		type:'POST',
 		data:{email: localStorage.getItem('email')},
 		success:function(data){
-			if(data!==null){
+			if(data){
         console.log(data);
 			  function initialize() {
   				var mapOptions = {

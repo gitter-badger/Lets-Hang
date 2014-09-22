@@ -7,16 +7,16 @@
       </div>
       <div class="modal-body">
         {{#unless user.facebookID}}
-          <button id="fbUBtn" class="btn"><i class="fa fa-facebook"></i> Connect With Facebook</button>
+          <a id="fbUBtn" class="btn" href="/auth/facebook"><i class="fa fa-facebook"></i> Connect With Facebook</a>
         {{/unless}}
         {{#unless user.twitterID}}
-          <button id="twUBtn" class="btn"><i class="fa fa-twitter"></i> Connect With Twitter</button>
+          <a id="twUBtn" class="btn" href="/auth/twitter"><i class="fa fa-twitter"></i> Connect With Twitter</a>
         {{/unless}}
         {{#unless user.googleID}}
-          <button id="gUBtn" class="btn"><i class="fa fa-google-plus"></i> Connect With Google plus</button>
+          <a id="gUBtn" class="btn" href="/auth/google"><i class="fa fa-google-plus"></i> Connect With Google plus</a>
         {{/unless}}
         {{#unless user.linkedInID}}
-          <button id="liUBtn" class="btn"><i class="fa fa-linkedin"></i> Connect With Linked In</button>
+          <a id="liUBtn" class="btn"><i class="fa fa-linkedin"></i> Connect With Linked In</a>
         {{/unless}}
         <a id="change-password" href="javascript:;">Change Password</a>
       </div>
