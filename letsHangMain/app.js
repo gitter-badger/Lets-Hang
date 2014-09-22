@@ -76,7 +76,7 @@ io.set('authorization', function (handshakeData, callback) {
   callback(null, true); // error first callback style 
 });
 io.set('transports', ['websocket']);
-
+console.log('server started');
 
 //*********************************************************
 //************************ROUTING**************************
@@ -347,12 +347,46 @@ io.sockets.on('connection', function(socket){
     });
   }
   socket.on('send', function(msg){
-    messages.save(msg, function(err){
-      if(err){
-        console.log(err);
-      }
+    User.find({'local.email': msg.sender}, function(err, user){
+      activities.findOne({name: msg.name, creator:user.id}, function(err, act){
+        if(err){
+          console.log(err);
+        }
+        if(act){
+          var mess = new messages();
+          mess.sender = user.id;
+          mess.content = msg.content;
+          mess.activity = act.id;
+          mess.receiver = act.invited;
+          mess.sendDate = new Date();
+          mess.save(function(err){
+            if(err){
+              console.log(err);
+            }
+          });
+          socket.broadcast.emit('recieve',msg);
+        }
+        else{
+          activities.findOne({name: msg.name, invited: new Array(user.id)}, function(err, act){
+            if(err){
+              console.log(err);
+            }
+            var mess = new messages();
+            mess.sender = user.id;
+            mess.content = msg.content;
+            mess.activity = act.id;
+            mess.receiver = act.invited.push(act.creator);
+            mess.sendDate = new Date();
+            mess.save(function(err){
+              if(err){
+                console.log(err);
+              }
+            });
+          });
+          socket.broadcast.emit('recieve',msg);
+        }
+      });
     });
-    socket.broadcast.emit('recieve',msg);
   });
 });
 

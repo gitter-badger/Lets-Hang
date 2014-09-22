@@ -13,7 +13,7 @@ function messageInit(user, title){
 	});
 }
 $(document).ready(function(){
-	var messenger = new messageInit(localStorage.getItem('user'), localStorage.getItem('activity'));
+	var messenger = new messageInit(localStorage.getItem('email'), localStorage.getItem('activity'));
 	$('#send').click(function(e){
 		e.preventDefault();
 		console.log('send');
