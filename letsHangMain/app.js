@@ -143,7 +143,7 @@ app.get('/main', isLoggedIn, function(req,res){
     });
   }
   else{
-        res.redirect('/login');
+   res.redirect('/login');
   }
 });
 app.post('/main/locations', function(req, res){
@@ -251,6 +251,7 @@ app.get('/message', function(req, res){
           console.log(err);
           return;
         }
+        sub.subscribe(cAct.id);
         var message = new Array();
         for(var i = 0; i<docs.length; i++){
           if(docs[i].sender==user.id){
@@ -364,6 +365,7 @@ io.sockets.on('connection', function(socket){
               console.log(err);
             }
           });
+          pub.publish(act.id, user.name+'is chatting, '+msg.content+', on'+msg.date);
           socket.broadcast.emit('recieve',msg);
         }
         else{
