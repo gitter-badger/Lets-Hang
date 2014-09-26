@@ -26,7 +26,7 @@ var restClient = require('node-rest-client').Client;
 
 var rClient = new restClient();
 
-var hbs= require('express-hbs');
+var hbs = require('express-hbs');
 
 var http = require('http');
 
@@ -34,17 +34,17 @@ var server = http.createServer(app);
 
 var io = require('socket.io')(server);
 
-var pub = require('redis').createClient(6379, '54.68.95.104', {return_buffers:true});
+var pub = require('redis').createClient(6379, '54.68.156.109', {return_buffers:true});
 
-var sub = require('redis').createClient(6379, '54.68.95.104', {return_buffers:true});
+var sub = require('redis').createClient(6379, '54.68.156.109', {return_buffers:true});
 
 var redis = require('socket.io-redis');
 
 io.adapter(redis({pubClient: pub, subClient: sub}));
 
-//server.listen(3000);
+server.listen(3000);
 
-server.listen(80);
+//server.listen(80);
 
 var path = require('path');
 
@@ -332,7 +332,7 @@ io.sockets.on('connection', function(socket){
   var activities = require('./models/activitiesModel');
   var messages = require('./models/messageModel');
   console.log('socket.io started');
-  if(inviteUser!==null){
+  if(inviteUser){
     activities.find(actInv, function(err, docs){
       if(err){
         console.log(err);
@@ -340,7 +340,7 @@ io.sockets.on('connection', function(socket){
       else{
         socket.emit('findUser');
         socket.on('foundUser', function(userData){
-          if(userData==actInv.invited.pop()){
+          if(userData == actInv.invited.pop()){
             socket.emit('inviteIn', docs);
           }
         });
