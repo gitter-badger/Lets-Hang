@@ -34,9 +34,9 @@ var server = http.createServer(app);
 
 var io = require('socket.io')(server);
 
-var pub = require('redis').createClient(6379, '54.68.156.109', {return_buffers:true});
+var pub = require('redis').createClient(6379, '127.0.0.1', {return_buffers:true});
 
-var sub = require('redis').createClient(6379, '54.68.156.109', {return_buffers:true});
+var sub = require('redis').createClient(6379, '127.0.0.1', {return_buffers:true});
 
 var redis = require('socket.io-redis');
 
