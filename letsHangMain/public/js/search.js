@@ -4,7 +4,7 @@ var search = function(container){
       return search.prototype._singletonInstance;
     }
     search.prototype._singletonInstance = this;
-	this.socket = io.connect('http://localhost:3000');
+	this.socket = io('http://localhost:8080');
 	this.onTextChange = function(target){
 		target.onBlur = this.socket.emit('textChange', target.value);
 	};

@@ -42,7 +42,7 @@ var redis = require('socket.io-redis');
 
 io.adapter(redis({pubClient: pub, subClient: sub}));
 
-server.listen(3000);
+server.listen(8080);
 
 //server.listen(80);
 
