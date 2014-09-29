@@ -4,9 +4,15 @@ var search = function(container){
       return search.prototype._singletonInstance;
     }
     search.prototype._singletonInstance = this;
-	this.socket = io('http://localhost:8080');
-	this.onTextChange = function(target){
-		target.onBlur = this.socket.emit('textChange', target.value);
+	this.socket = io('http://localhost:8080', {'transports': ['websocket', 'polling']});
+	this.onTextChange = function(target, funct){
+		target.onblur = function(){
+			console.log('focus');
+			window.addEventListener('keypress', function(){
+				console.log('kepress');
+				funct;
+			}, false);
+		}
 	};
 	this.socket.on('users-found', function(data){
 		if(document.getElementById('user-cont')){
@@ -23,7 +29,7 @@ var search = function(container){
 					addBtn.innerHTML = '<i class="fa fa-plus"></i>';
 					var userName = document.createElement('p');
 					userName.innerText = data.Users[i].name+' '+data.Users[i].lastName;
-					userInd.innerHTML = userName+addBtn;
+					userInd.innerHTML = userName.outerHTML+addBtn;
 					userList.innerHTML+=userInd;
 				}
 			}
@@ -49,19 +55,19 @@ var search = function(container){
 					addBtn.innerHTML = '<i class="fa fa-plus"></i>';
 					var userName = document.createElement('p');
 					userName.innerText = data.Users[i].name+' '+data.Users[i].lastName;
-					userInd.innerHTML = userName+addBtn;
-					userList.innerHTML+=userInd;
+					userInd.innerHTML = userName.outerHTML+addBtn.outerHTML;
+					userList.innerHTML+=userInd.outerHTML;
 				}
 			}
 			else{
 				userList.innerHTML = '<li>No Users Found</li>';
 			}
 			userCont.innerHTML = userList;
-			container.innerHTML = userCont;
+			container.innerHTML += userCont.outerHTML;
 		}
 	});
 };
 $(document).ready(function(){
 	var uSearch = new search($('#invModal .modal-dialog .modal-content .modal-body')[0]);
-	uSearch.onTextChange($('#user-search-input')[0]);
+	uSearch.onTextChange(document.getElementById('user-search-input'), uSearch.socket.emit('textChange', document.getElementById('user-search-input').value));
 });

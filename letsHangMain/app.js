@@ -350,12 +350,16 @@ io.sockets.on('connection', function(socket){
   socket.on('textChange', function(data){
     var first = data.substring(0, data.indexOf(' '));
     var last = data.substring(data.indexOf(' ')+1);
+    console.log('text change');
     User.find({'local.name':first, 'local.lastName':last}, function(err, users){
       if(err){
         console.log(err);
       }
       if(users){
         socket.emit('users-found', {Users: users});
+      }
+      else{
+        socket.emit('users-found', {});
       }
     });
   });
