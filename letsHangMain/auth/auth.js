@@ -42,7 +42,6 @@ module.exports = function(passport){
 							console.log(err);
 						}
 						else{
-							console.log('auth');
 							return done(null, newUser);
 						}
 					});
@@ -56,7 +55,6 @@ module.exports = function(passport){
 		passReqToCallback: true
 	},
 	function(req, email, password, done){
-		console.log('login');
 		User.findOne({'local.email':email}, function(err, user){
 			if(err){
 				return done(err);
@@ -67,8 +65,6 @@ module.exports = function(passport){
 			if(!user.validPassword(password)){
 				return done(null, false, {loginMessage:'Oops, wrong password'});
 			}
-			console.log(user);
-			console.log('auth');
 			return done(null, user);
 		});
 	}));

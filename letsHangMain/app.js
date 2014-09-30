@@ -104,7 +104,6 @@ app.post('/register-submit', passport.authenticate('local-signup',{
 }));
 app.get('/main', isLoggedIn, function(req,res){
   var user = req.user;
-  console.log(user);
   var activities = require('./models/activitiesModel');
   if(user){ 
     activities.find({creator:user.id}, function(err, acts){
@@ -351,14 +350,16 @@ io.sockets.on('connection', function(socket){
     var first = data.substring(0, data.indexOf(' '));
     var last = data.substring(data.indexOf(' ')+1);
     console.log('text change');
-    User.find({'local.name':first, 'local.lastName':last}, function(err, users){
+    User.find({'local.name': new RegExp('^'+first+'$', 'i'), 'local.lastName': new RegExp('^'+last+'$', 'i')}, function(err, users){
       if(err){
         console.log(err);
       }
       if(users){
+        console.log(users);
         socket.emit('users-found', {Users: users});
       }
       else{
+        console.log(first+' '+last);
         socket.emit('users-found', {});
       }
     });
@@ -412,7 +413,6 @@ io.sockets.on('connection', function(socket){
 //*********************AUTHENTICATION**********************
 //*********************************************************
 function isLoggedIn(req, res, next){
-  console.log(req.user);
   if(req.isAuthenticated()){
     return next();
   }
