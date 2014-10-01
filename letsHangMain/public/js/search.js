@@ -64,7 +64,7 @@ var search = function(container){
 };
 $(document).ready(function(){
 	var uSearch = new search(document.getElementById('user-result'));
-	document.getElementById('user-search-input').addEventListener('keypress', function(){
+	document.getElementById('user-search-input').addEventListener('keyup', function(){
 		uSearch.onTextChange(document.getElementById('user-search-input'));
 	},false);
 });

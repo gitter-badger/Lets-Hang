@@ -347,16 +347,49 @@ io.sockets.on('connection', function(socket){
     });
   }
   socket.on('textChange', function(data){
-    var first = data.substring(0, data.indexOf(' '));
-    var last = data.substring(data.indexOf(' ')+1);
+    var first; 
+    var last;
+    if(data.indexOf(' ')>-1){
+      first = data.substring(0, data.indexOf(' '));
+      last = data.substring(data.indexOf(' ')+1);
+      first.replace(' ','');
+      last.replace(' ','');
+    }
+    else{
+      first = data;
+      last = null;
+      first.replace(' ','');
+    }
+    console.log('first: '+first+' last: '+last);
     console.log('text change');
-    User.find({'local.name': new RegExp('^'+first+'$', 'i'), 'local.lastName': new RegExp('^'+last+'$', 'i')}, function(err, users){
+    User.find({},function(err, users){
       if(err){
         console.log(err);
       }
       if(users){
-        console.log(users);
-        socket.emit('users-found', {Users: users});
+        var result = new Array();
+        for(var i = 0; i<users.length; i++){
+          console.log(users);
+          console.log(users[i].local.name.indexOf('Chr'));
+          if(first){
+            console.log('first');
+            if(last){
+              console.log('last');
+              if(users[i].local.name.indexOf(first)>-1&&users[i].local.lastName.indexOf(last)>-1){
+                console.log(users[i].local.name.indexOf(first)>-1&&users[i].local.lastName.indexOf(last)>-1);
+                console.log(users[i].local.name.indexOf(first));
+                console.log(users[i].local.lastName.indexOf(last));
+                result.push(users[i]);
+                socket.emit('users-found', {Users: result});
+              }
+            }
+            else if(users[i].local.name.indexOf(first)>-1){
+              console.log(users[i].local.lastName.indexOf(first));
+              result.push(users[i]);
+              socket.emit('users-found', {Users: result});
+            }
+          }
+        }
       }
       else{
         console.log(first+' '+last);
