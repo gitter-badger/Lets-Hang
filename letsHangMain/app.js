@@ -26,7 +26,7 @@ var restClient = require('node-rest-client').Client;
 
 var rClient = new restClient();
 
-var hbs= require('express-hbs');
+var hbs = require('express-hbs');
 
 var http = require('http');
 
@@ -34,17 +34,17 @@ var server = http.createServer(app);
 
 var io = require('socket.io')(server);
 
-var pub = require('redis').createClient(6379, '54.68.95.104', {return_buffers:true});
+var pub = require('redis').createClient(6379, '127.0.0.1', {return_buffers:true});
 
-var sub = require('redis').createClient(6379, '54.68.95.104', {return_buffers:true});
+var sub = require('redis').createClient(6379, '127.0.0.1', {return_buffers:true});
 
 var redis = require('socket.io-redis');
 
 io.adapter(redis({pubClient: pub, subClient: sub}));
 
-//server.listen(3000);
+server.listen(8080);
 
-server.listen(80);
+//server.listen(80);
 
 var path = require('path');
 
@@ -76,7 +76,7 @@ io.set('authorization', function (handshakeData, callback) {
   callback(null, true); // error first callback style 
 });
 io.set('transports', ['websocket']);
-
+console.log('server started');
 
 //*********************************************************
 //************************ROUTING**************************
@@ -104,7 +104,6 @@ app.post('/register-submit', passport.authenticate('local-signup',{
 }));
 app.get('/main', isLoggedIn, function(req,res){
   var user = req.user;
-  console.log(user);
   var activities = require('./models/activitiesModel');
   if(user){ 
     activities.find({creator:user.id}, function(err, acts){
@@ -143,7 +142,7 @@ app.get('/main', isLoggedIn, function(req,res){
     });
   }
   else{
-        res.redirect('/login');
+   res.redirect('/login');
   }
 });
 app.post('/main/locations', function(req, res){
@@ -251,6 +250,7 @@ app.get('/message', function(req, res){
           console.log(err);
           return;
         }
+        sub.subscribe(cAct.id);
         var message = new Array();
         for(var i = 0; i<docs.length; i++){
           if(docs[i].sender==user.id){
@@ -331,7 +331,7 @@ io.sockets.on('connection', function(socket){
   var activities = require('./models/activitiesModel');
   var messages = require('./models/messageModel');
   console.log('socket.io started');
-  if(inviteUser!==null){
+  if(inviteUser){
     activities.find(actInv, function(err, docs){
       if(err){
         console.log(err);
@@ -339,20 +339,106 @@ io.sockets.on('connection', function(socket){
       else{
         socket.emit('findUser');
         socket.on('foundUser', function(userData){
-          if(userData==actInv.invited.pop()){
+          if(userData == actInv.invited.pop()){
             socket.emit('inviteIn', docs);
           }
         });
       }
     });
   }
-  socket.on('send', function(msg){
-    messages.save(msg, function(err){
+  socket.on('textChange', function(data){
+    var first; 
+    var last;
+    if(data.indexOf(' ')>-1){
+      first = data.substring(0, data.indexOf(' '));
+      last = data.substring(data.indexOf(' ')+1);
+      first.replace(' ','');
+      last.replace(' ','');
+    }
+    else{
+      first = data;
+      last = null;
+      first.replace(' ','');
+    }
+    console.log('first: '+first+' last: '+last);
+    console.log('text change');
+    User.find({},function(err, users){
       if(err){
         console.log(err);
       }
+      if(users){
+        var result = new Array();
+        for(var i = 0; i<users.length; i++){
+          console.log(users[i].local.name);
+          console.log(users[i].local.name.indexOf('Chr'));
+          if(first){
+            console.log('first '+first);
+            if(last){
+              console.log('last '+last);
+              if(users[i].local.name.indexOf(first)>-1&&users[i].local.lastName.indexOf(last)>-1){
+                console.log(users[i].local.name.indexOf(first)>-1&&users[i].local.lastName.indexOf(last)>-1);
+                console.log(users[i].local.name.indexOf(first));
+                console.log(users[i].local.lastName.indexOf(last));
+                result.push(users[i]);
+                socket.emit('users-found', {users: result});
+              }
+            }
+            else if(users[i].local.name.indexOf(first)>-1){
+              console.log(users[i].local.name.indexOf(first));
+              result.push(users[i]);
+              socket.emit('users-found', {users: result});
+            }
+          }
+        }
+      }
+      else{
+        console.log(first+' '+last);
+        socket.emit('users-found', {});
+      }
     });
-    socket.broadcast.emit('recieve',msg);
+  });
+  socket.on('send', function(msg){
+    User.find({'local.email': msg.sender}, function(err, user){
+      activities.findOne({name: msg.name, creator:user.id}, function(err, act){
+        if(err){
+          console.log(err);
+        }
+        if(act){
+          var mess = new messages();
+          mess.sender = user.id;
+          mess.content = msg.content;
+          mess.activity = act.id;
+          mess.receiver = act.invited;
+          mess.sendDate = new Date();
+          mess.save(function(err){
+            if(err){
+              console.log(err);
+            }
+          });
+          pub.publish(act.id, user.name+'is chatting, '+msg.content+', on'+msg.date);
+          socket.broadcast.emit('recieve',msg);
+        }
+        else{
+          activities.findOne({name: msg.name, invited: new Array(user.id)}, function(err, act){
+            if(err){
+              console.log(err);
+            }
+            var mess = new messages();
+            mess.sender = user.id;
+            mess.content = msg.content;
+            mess.activity = act.id;
+            mess.receiver = act.invited.push(act.creator);
+            mess.sendDate = new Date();
+            mess.save(function(err){
+              if(err){
+                console.log(err);
+              }
+            });
+          });
+          socket.broadcast.emit('recieve',msg);
+        }
+      });
+    });
   });
 });
 
@@ -360,7 +446,6 @@ io.sockets.on('connection', function(socket){
 //*********************AUTHENTICATION**********************
 //*********************************************************
 function isLoggedIn(req, res, next){
-  console.log(req.user);
   if(req.isAuthenticated()){
     return next();
   }

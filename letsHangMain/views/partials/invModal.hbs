@@ -6,11 +6,15 @@
         <h4 class="modal-title">Invite People</h4>
       </div>
       <div class="modal-body">
+        <form id="user-search-form" class="user-search-form input-group" name="user-search-form">
+          <input type="text" class="form-control" id="user-search-input" name="user-search-input" placeholder="Search for Users"></br>
+        </form>
         <button id="localInvBtn" class="btn">Let's Hang With Friends</button>
         <button id="fbInvBtn" class="btn"><i class="fa fa-facebook"></i> Let's Hang With Facebook</button>
         <button id="twInvBtn" class="btn"><i class="fa fa-twitter"></i> Let's Hang With Twitter</button>
         <button id="gInvBtn" class="btn"><i class="fa fa-google-plus"></i> Let's Hang With Google plus</button>
         <button id="liInvBtn" class="btn"><i class="fa fa-linkedin"></i> Let's Hang With Linked In</button>
+        <div id="user-result"></div>
       </div>
       <div class="modal-footer">
         <button type="button" id="close" class="btn btn-default" data-dismiss="modal">Close</button>

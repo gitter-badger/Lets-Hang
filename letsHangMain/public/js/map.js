@@ -6,14 +6,12 @@ window.onload = function(){
 		data:{email: localStorage.getItem('email')},
 		success:function(data){
 			if(data){
-        console.log(data);
 			  function initialize() {
   				var mapOptions = {
     				center: new google.maps.LatLng(data.lat, data.lng),
     				zoom: 8
   				};
   				map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-  				console.log(marker);
   				var contentString = '<div id="content">'+
   				'<div id="prevGroup">'+
   				'<h2>Last Activity:</h2>'+
@@ -41,7 +39,6 @@ window.onload = function(){
             zoom: 8
           };
           map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-          console.log(marker);
           var contentString = '<div id="content">'+
           '<div id="prevGroup">'+
           '<h2>Need to Create an Event</h2>'+

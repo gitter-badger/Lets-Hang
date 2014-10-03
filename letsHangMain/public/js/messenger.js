@@ -1,7 +1,7 @@
 function messageInit(user, title){
 	this.user = user;
 	this.title = title;
-	this.socket = io.connect('http://localhost:3000');
+	this.socket = io('http://localhost:8080', {'transports': ['websocket', 'polling']});
 	this.socket.emit('messageInit', {date:new Date(), users: this.allUsers});
 	this.send = function(msg){
 		this.socket.emit('send', msg);
@@ -13,7 +13,7 @@ function messageInit(user, title){
 	});
 }
 $(document).ready(function(){
-	var messenger = new messageInit(localStorage.getItem('user'), localStorage.getItem('activity'));
+	var messenger = new messageInit(localStorage.getItem('email'), localStorage.getItem('activity'));
 	$('#send').click(function(e){
 		e.preventDefault();
 		console.log('send');

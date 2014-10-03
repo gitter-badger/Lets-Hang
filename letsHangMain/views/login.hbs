@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
 	<head>
+    <meta charset="utf-8">
 		<title>Let's Hang - Login</title>
     <meta name="viewport" content="width=device-width, user-scalable=no">
 		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 		<link rel="stylesheet" href="css/style.css">
-		<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
-		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+		<script src="js/lib/jquery-2.1.1.min.js"></script>
+		<script src="js/lib/bootstrap.min.js"></script>
 		<script src="js/routes.js"></script>
 	</head>
 	<body>
@@ -34,7 +35,7 @@
       <form id="login-form" class="input-group" action="/login-submit" method="POST">
         <input type="email" id="login-email" class="form-control" name="email" placeholder="Email"></br>
         <input type="password" id="login-password" class="form-control" name="password" placeholder="Password"></br>
-        <input type="submit" id="login-submit" class="btn btn-primary" value="Login"></br>
+        <input type="submit" id="login-submit" class="btn btn-success" value="Login"></br>
       </form>
       <a id="register-login" class="btn btn-default" href="/register">Register</a>
       <a href="">Forgot Password</a>
