@@ -6,12 +6,6 @@ window.onload = function(){
 	}
 };
 $(document).ready(function (){
-	$('#login-home').click(function (){
-		window.location.replace('/login');
-	});
-	$('#register-home').click(function (){
-		window.location.replace('/register');
-	});
 	$('#login-submit').click(function(e){
 		e.preventDefault();
 		localStorage.setItem('email', $('#login-email').val());

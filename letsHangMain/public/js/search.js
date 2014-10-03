@@ -17,13 +17,14 @@ var search = function(container){
 			userList.class = 'user-list';
 			userList.name = 'user-list';
 			if(data.users){
+				console.log(data.users.local.name);
 				for(var i = 0; i<data.users.length; i++){
 					var userInd = document.createElement('li');
 					var addBtn = document.createElement('button');
 					addBtn.class = 'inviteThis btn btn-primary'
 					addBtn.innerHTML = '<i class="fa fa-plus"></i>';
 					var userName = document.createElement('p');
-					userName.innerText = data.Users[i].name+' '+data.Users[i].lastName;
+					userName.innerText = data.Users[i].local.name+' '+data.Users[i].lastName;
 					userInd.innerHTML = userName.outerHTML+addBtn.outerHTML;
 					userList.innerHTML+=userInd.outerHTML;
 				}
@@ -43,13 +44,14 @@ var search = function(container){
 			userList.class = 'user-list';
 			userList.name = 'user-list';
 			if(data.users){
+				console.log(data.users.local.name);
 				for(var i = 0; i<data.users.length; i++){
 					var userInd = document.createElement('li');
 					var addBtn = document.createElement('button');
 					addBtn.class = 'inviteThis btn btn-primary'
 					addBtn.innerHTML = '<i class="fa fa-plus"></i>';
 					var userName = document.createElement('p');
-					userName.innerText = data.Users[i].name+' '+data.Users[i].lastName;
+					userName.innerText = data.Users[i].local.name+' '+data.Users[i].lastName;
 					userInd.innerHTML = userName.outerHTML+addBtn.outerHTML;
 					userList.innerHTML+=userInd.outerHTML;
 				}

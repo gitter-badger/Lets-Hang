@@ -369,24 +369,24 @@ io.sockets.on('connection', function(socket){
       if(users){
         var result = new Array();
         for(var i = 0; i<users.length; i++){
-          console.log(users);
+          console.log(users[i].local.name);
           console.log(users[i].local.name.indexOf('Chr'));
           if(first){
-            console.log('first');
+            console.log('first '+first);
             if(last){
-              console.log('last');
+              console.log('last '+last);
               if(users[i].local.name.indexOf(first)>-1&&users[i].local.lastName.indexOf(last)>-1){
                 console.log(users[i].local.name.indexOf(first)>-1&&users[i].local.lastName.indexOf(last)>-1);
                 console.log(users[i].local.name.indexOf(first));
                 console.log(users[i].local.lastName.indexOf(last));
                 result.push(users[i]);
-                socket.emit('users-found', {Users: result});
+                socket.emit('users-found', {users: result});
               }
             }
             else if(users[i].local.name.indexOf(first)>-1){
-              console.log(users[i].local.lastName.indexOf(first));
+              console.log(users[i].local.name.indexOf(first));
               result.push(users[i]);
-              socket.emit('users-found', {Users: result});
+              socket.emit('users-found', {users: result});
             }
           }
         }
