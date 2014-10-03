@@ -38,6 +38,8 @@ var pub = require('redis').createClient(6379, '127.0.0.1', {return_buffers:true}
 
 var sub = require('redis').createClient(6379, '127.0.0.1', {return_buffers:true});
 
+var rStore = require('redis').createClient(6379, '127.0.0.1', {return_buffers:true});
+
 var redis = require('socket.io-redis');
 
 io.adapter(redis({pubClient: pub, subClient: sub}));
@@ -105,7 +107,9 @@ app.post('/register-submit', passport.authenticate('local-signup',{
 app.get('/main', isLoggedIn, function(req,res){
   var user = req.user;
   var activities = require('./models/activitiesModel');
-  if(user){ 
+  if(user){
+    rStore.set('sUserID', req.user.id, redis.print);
+    rStore.get('sUserID', function(err, reply){console.log(reply);});
     activities.find({creator:user.id}, function(err, acts){
       if(err){
         console.log(err);
@@ -368,28 +372,35 @@ io.sockets.on('connection', function(socket){
       }
       if(users){
         var result = new Array();
-        for(var i = 0; i<users.length; i++){
-          console.log(users[i].local.name);
-          console.log(users[i].local.name.indexOf('Chr'));
-          if(first){
-            console.log('first '+first);
-            if(last){
-              console.log('last '+last);
-              if(users[i].local.name.indexOf(first)>-1&&users[i].local.lastName.indexOf(last)>-1){
-                console.log(users[i].local.name.indexOf(first)>-1&&users[i].local.lastName.indexOf(last)>-1);
-                console.log(users[i].local.name.indexOf(first));
-                console.log(users[i].local.lastName.indexOf(last));
-                result.push(users[i]);
-                socket.emit('users-found', {users: result});
+        rStore.get('sUserID', function(err, reply){
+          console.log(reply);
+          for(var i = 0; i<users.length; i++){
+            if(users[i].id!=reply){
+              console.log(users[i].local.name);
+              console.log(users[i].local.name.indexOf('Chr'));
+              if(first){
+                console.log('first '+first);
+                if(last){
+                  console.log('last '+last);
+                  if(users[i].local.name.indexOf(first)>-1&&users[i].local.lastName.indexOf(last)>-1){
+                    console.log(users[i].local.name.indexOf(first)>-1&&users[i].local.lastName.indexOf(last)>-1);
+                    console.log(users[i].local.name.indexOf(first));
+                    console.log(users[i].local.lastName.indexOf(last));
+                    result.push(users[i]);
+                    console.log(result);
+                    socket.emit('users-found', {users: result});
+                  }
+                }
+                else if(users[i].local.name.indexOf(first)>-1){
+                  console.log(users[i].local.name.indexOf(first));
+                  result.push(users[i]);
+                  console.log(result);
+                  socket.emit('users-found', {users: result});
+                }
               }
             }
-            else if(users[i].local.name.indexOf(first)>-1){
-              console.log(users[i].local.name.indexOf(first));
-              result.push(users[i]);
-              socket.emit('users-found', {users: result});
-            }
           }
-        }
+        });
       }
       else{
         console.log(first+' '+last);
