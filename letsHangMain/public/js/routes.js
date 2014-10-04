@@ -1,6 +1,6 @@
 "use strict";
 window.onload = function(){
-	if(!(window.location.pathname=='/main')){
+	if(window.location.pathname!='/main'){
 		console.log('email remove');
 		localStorage.removeItem('email');
 	}
@@ -95,4 +95,11 @@ $(document).ready(function (){
 			$('#settModal .modal-dialog .modal-content .modal-body').html(settHTML);
 		}
 	});
+	var uSearch = new search(document.getElementById('user-result'));
+	document.getElementById('user-search-input').addEventListener('keyup', function(){
+		uSearch.onTextChange(document.getElementById('user-search-input'));
+		if(document.getElementById('user-search-input').value===''){
+			document.getElementById('user-result').innerHTML='';
+		}
+	},false);
 });

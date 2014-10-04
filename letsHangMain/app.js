@@ -38,6 +38,8 @@ var pub = require('redis').createClient(6379, '127.0.0.1', {return_buffers:true}
 
 var sub = require('redis').createClient(6379, '127.0.0.1', {return_buffers:true});
 
+var rStore = require('redis').createClient(6379, '127.0.0.1', {return_buffers:false});
+
 var redis = require('socket.io-redis');
 
 io.adapter(redis({pubClient: pub, subClient: sub}));
@@ -105,7 +107,8 @@ app.post('/register-submit', passport.authenticate('local-signup',{
 app.get('/main', isLoggedIn, function(req,res){
   var user = req.user;
   var activities = require('./models/activitiesModel');
-  if(user){ 
+  if(user){
+    rStore.set('sUserID', req.user.id, redis.print);
     activities.find({creator:user.id}, function(err, acts){
       if(err){
         console.log(err);
@@ -173,7 +176,7 @@ app.post('/main/locations', function(req, res){
 app.post('/main/invite', function(req,res){
   var User = require('./models/user');
   var activities = require('./models/activitiesModel');
-  var data = {list: new Array()};
+  var data = {list: []};
   User.findOne({'local.email':req.body.email}, function(err, user){
     activities.find({creator:user.id}, function(err, acts){
       if(err){
@@ -194,6 +197,7 @@ app.post('/main/invite', function(req,res){
 app.post('/main/create-activity', function(req, res){
   var User = require('./models/user');
   var activity = require('./models/activitiesModel');
+  var location = require('./models/locationModel');
   var recData = req.body;
   var result = new activity();
   User.findOne({'local.email':recData.email}, function(err, user){
@@ -212,8 +216,17 @@ app.post('/main/create-activity', function(req, res){
       }
       result.lat = JSON.parse(data).results[0].geometry.location.lat;
       result.lng = JSON.parse(data).results[0].geometry.location.lng;
-      activitiesCollection.save(result);
-      locationCollection.save({_id: 1, name: recData.location, Lat: result.lat, Long: result.lng, user:result.user, })
+      activitiy.save(result,function(err){
+        if(err){
+          console.log(err);
+        }
+      });
+      var loctRes = {_id: 1, name: recData.location, Lat: result.lat, Long: result.lng, user:result.user};
+      location.save(loctRes,function(err){
+        if(err){
+          console.log(err);
+        }
+      });
       res.send(result);
     }); 
   });
@@ -227,7 +240,7 @@ app.post('/main/invite-out', function(req, res){
       console.log(err);
     }
     else{
-      actInv = {invited: new Array(doc)};
+      actInv = {invited: [doc]};
     }
   });
 });
@@ -251,7 +264,7 @@ app.get('/message', function(req, res){
           return;
         }
         sub.subscribe(cAct.id);
-        var message = new Array();
+        var message = [];
         for(var i = 0; i<docs.length; i++){
           if(docs[i].sender==user.id){
             message[i]={
@@ -367,29 +380,36 @@ io.sockets.on('connection', function(socket){
         console.log(err);
       }
       if(users){
-        var result = new Array();
-        for(var i = 0; i<users.length; i++){
-          console.log(users[i].local.name);
-          console.log(users[i].local.name.indexOf('Chr'));
-          if(first){
-            console.log('first '+first);
-            if(last){
-              console.log('last '+last);
-              if(users[i].local.name.indexOf(first)>-1&&users[i].local.lastName.indexOf(last)>-1){
-                console.log(users[i].local.name.indexOf(first)>-1&&users[i].local.lastName.indexOf(last)>-1);
-                console.log(users[i].local.name.indexOf(first));
-                console.log(users[i].local.lastName.indexOf(last));
-                result.push(users[i]);
-                socket.emit('users-found', {users: result});
+        var result = [];
+        rStore.get('sUserID', function(err, reply){
+          console.log(reply);
+          for(var i = 0; i<users.length; i++){
+            if(users[i].id!=reply){
+              console.log(users[i].local.name);
+              console.log(users[i].local.name.indexOf('Chr'));
+              if(first){
+                console.log('first '+first);
+                if(last){
+                  console.log('last '+last);
+                  if(users[i].local.name.indexOf(first)>-1&&users[i].local.lastName.indexOf(last)>-1){
+                    console.log(users[i].local.name.indexOf(first)>-1&&users[i].local.lastName.indexOf(last)>-1);
+                    console.log(users[i].local.name.indexOf(first));
+                    console.log(users[i].local.lastName.indexOf(last));
+                    result.push(users[i]);
+                    console.log(result);
+                    socket.emit('users-found', {users: result});
+                  }
+                }
+                else if(users[i].local.name.indexOf(first)>-1){
+                  console.log(users[i].local.name.indexOf(first));
+                  result.push(users[i]);
+                  console.log(result);
+                  socket.emit('users-found', {users: result});
+                }
               }
             }
-            else if(users[i].local.name.indexOf(first)>-1){
-              console.log(users[i].local.name.indexOf(first));
-              result.push(users[i]);
-              socket.emit('users-found', {users: result});
-            }
           }
-        }
+        });
       }
       else{
         console.log(first+' '+last);
@@ -419,7 +439,7 @@ io.sockets.on('connection', function(socket){
           socket.broadcast.emit('recieve',msg);
         }
         else{
-          activities.findOne({name: msg.name, invited: new Array(user.id)}, function(err, act){
+          activities.findOne({name: msg.name, invited: [user.id]}, function(err, act){
             if(err){
               console.log(err);
             }
