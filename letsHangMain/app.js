@@ -216,7 +216,7 @@ app.post('/main/create-activity', function(req, res){
       }
       result.lat = JSON.parse(data).results[0].geometry.location.lat;
       result.lng = JSON.parse(data).results[0].geometry.location.lng;
-      activitiy.save(result,function(err){
+      activity.save(result,function(err){
         if(err){
           console.log(err);
         }
