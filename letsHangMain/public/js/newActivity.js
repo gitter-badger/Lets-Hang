@@ -48,79 +48,83 @@ $(document).ready(function(){
 					}
 					conCont[0].innerHTML = conList[0].outerHTML;
 					$(e.target).parent().append(conCont);
-					$('.inviteThis').bind('click',function(e){
-						e.preventDefault();
-						//e.stopPropagation();
-						console.log(e.target);
-						if(e.target==$('.inviteThis')[0]){
-							console.log('click');
-							var invited = $(e.target).parent().parent()[0].innerText.substring(0, $(e.target).parent().parent()[0].innerText.indexOf(' '));
-							console.log(invited);
-							if(!JSON.parse(localStorage.getItem('invited'))){
-								console.log('new');
-								localStorage.setItem('invited', JSON.stringify({arr: new Array(invited)}));
-								e.target.innerHTML = '<i class="fa fa-minus"></i>';
-								$('.inviteThis').toggleClass('minus');
-							}
-							else{
-								var list = JSON.parse(localStorage.getItem('invited')).arr;
-								console.log(list.length);
-								console.log(list.indexOf(invited));
-								if($('.inviteThis').attr('class').indexOf('minus')>=0){
-									list[list.length] = invited;
-									localStorage.setItem('invited', JSON.stringify({arr: list}));
-									e.target.innerHTML = '<i class="fa fa-minus"></i>';
-									$('.inviteThis').toggleClass('minus');
-								}
-								else{
-									console.log('change');
-									delete list[list.indexOf(invited)];
-									localStorage.setItem('invited', JSON.stringify({arr: list}));
-									e.target.innerHTML = '<i class="fa fa-plus"></i>';
-									$('.inviteThis').toggleClass('minus');
-								}
-							}
-						}
-					});
-					$('.inviteThis > .fa').bind('click',function(e){
-						e.preventDefault();
-						//e.stopPropagation();
-						console.log(e.target);
-						if($(e.target).parent()[0]==$('.inviteThis')[0]){
-							console.log('click');
-							var invited = $(e.target).parent().parent().parent()[0].innerText.substring(0, $(e.target).parent().parent().parent()[0].innerText.indexOf(' '));
-							console.log(invited);
-							if(!JSON.parse(localStorage.getItem('invited'))){
-								console.log('new');
-								localStorage.setItem('invited', JSON.stringify({arr: new Array(invited)}));
-								$(e.target).parent()[0].innerHTML = '<i class="fa fa-minus"></i>';
-								$('.inviteThis').toggleClass('minus');
-							}
-							else{
-								var list = JSON.parse(localStorage.getItem('invited')).arr;
-								console.log(list.length);
-								console.log(list.indexOf(invited));
-								if($('.inviteThis').attr('class').indexOf('minus')>=0){
-									list[list.length] = invited;
-									localStorage.setItem('invited', JSON.stringify({arr: list}));
-									$(e.target).parent()[0].innerHTML = '<i class="fa fa-minus"></i>';
-									$('.inviteThis').toggleClass('minus');
-								}
-								else{
-									console.log('change');
-									delete list[list.indexOf(invited)];
-									localStorage.setItem('invited', JSON.stringify({arr: list}));
-									$(e.target).parent()[0].innerHTML = '<i class="fa fa-plus"></i>';
-									$('.inviteThis').toggleClass('minus');
-								}
-							}
-						}
-					});
+					addToInvList();
 				}
 			});
 		}
 		invCount++;
 	});
+	function addToInvList(){
+		console.log('addToInvList');
+		$('.inviteThis').bind('click',function(e){
+			e.preventDefault();
+			//e.stopPropagation();
+			console.log(e.target);
+			if(e.target==$('.inviteThis')[0]){
+				console.log('click');
+				var invited = $(e.target).parent().parent()[0].innerText.substring(0, $(e.target).parent().parent()[0].innerText.indexOf(' '));
+				console.log(invited);
+				if(!JSON.parse(localStorage.getItem('invited'))){
+					console.log('new');
+					localStorage.setItem('invited', JSON.stringify({arr: new Array(invited)}));
+					e.target.innerHTML = '<i class="fa fa-minus"></i>';
+					$('.inviteThis').toggleClass('minus');
+				}
+				else{
+					var list = JSON.parse(localStorage.getItem('invited')).arr;
+					console.log(list.length);
+					console.log(list.indexOf(invited));
+					if($('.inviteThis').attr('class').indexOf('minus')>=0){
+						list[list.length] = invited;
+						localStorage.setItem('invited', JSON.stringify({arr: list}));
+						e.target.innerHTML = '<i class="fa fa-minus"></i>';
+						$('.inviteThis').toggleClass('minus');
+					}
+					else{
+						console.log('change');
+						delete list[list.indexOf(invited)];
+						localStorage.setItem('invited', JSON.stringify({arr: list}));
+						e.target.innerHTML = '<i class="fa fa-plus"></i>';
+						$('.inviteThis').toggleClass('minus');
+					}
+				}
+			}
+		});
+		$('.inviteThis > .fa').bind('click',function(e){
+			e.preventDefault();
+			//e.stopPropagation();
+			console.log(e.target);
+			if($(e.target).parent()[0]==$('.inviteThis')[0]){
+				console.log('click');
+				var invited = $(e.target).parent().parent().parent()[0].innerText.substring(0, $(e.target).parent().parent().parent()[0].innerText.indexOf(' '));
+				console.log(invited);
+				if(!JSON.parse(localStorage.getItem('invited'))){
+					console.log('new');
+					localStorage.setItem('invited', JSON.stringify({arr: new Array(invited)}));
+					$(e.target).parent()[0].innerHTML = '<i class="fa fa-minus"></i>';
+					$('.inviteThis').toggleClass('minus');
+				}
+				else{
+					var list = JSON.parse(localStorage.getItem('invited')).arr;
+					console.log(list.length);
+					console.log(list.indexOf(invited));
+					if($('.inviteThis').attr('class').indexOf('minus')>=0){
+						list[list.length] = invited;
+						localStorage.setItem('invited', JSON.stringify({arr: list}));
+						$(e.target).parent()[0].innerHTML = '<i class="fa fa-minus"></i>';
+						$('.inviteThis').toggleClass('minus');
+					}	
+					else{
+						console.log('change');
+						delete list[list.indexOf(invited)];
+						localStorage.setItem('invited', JSON.stringify({arr: list}));
+						$(e.target).parent()[0].innerHTML = '<i class="fa fa-plus"></i>';
+						$('.inviteThis').toggleClass('minus');
+					}
+				}
+			}
+		});
+	}
 	$('#close, .close').click(function(){
 		localStorage.removeItem('invite');
 	});
@@ -136,7 +140,7 @@ $(document).ready(function(){
 		this.endTime = eT;
 		this.invited = i;
 		this.email = e;
-	}
+	};
 	$('#newActSub').click(function(e){
 		e.preventDefault();
 		e.stopPropagation();

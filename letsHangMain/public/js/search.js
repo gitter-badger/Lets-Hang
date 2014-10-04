@@ -63,11 +63,6 @@ var search = function(container){
 			userCont.innerHTML = userList.outerHTML;
 			container.innerHTML += userCont.outerHTML;
 		}
+		addToInvList();
 	});
 };
-$(document).ready(function(){
-	var uSearch = new search(document.getElementById('user-result'));
-	document.getElementById('user-search-input').addEventListener('keyup', function(){
-		uSearch.onTextChange(document.getElementById('user-search-input'));
-	},false);
-});
