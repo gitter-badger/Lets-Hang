@@ -149,29 +149,23 @@ app.get('/main', isLoggedIn, function(req,res){
   }
 });
 app.post('/main/locations', function(req, res){
-  var User = require('./models/user');
+  var user = req.user;
   var activities = require('./models/activitiesModel');
-  User.findOne({'local.email': req.body.email}, function(err, user){
-    if(err){
-      console.log(err);
-    }
-    if(user){
-      activities.findOne({creator: user.id}, function(err, acts){
-        if(err){
-          console.log(err);
-        }
-        if(acts){
-          res.send(acts);
-          return acts;
-        }
-        else{
-          res.send({});
-          return;
-        }
-      });
-    }
-    return user;
-  });
+  if(user){
+    activities.findOne({creator: user.id}, function(err, acts){
+      if(err){
+        console.log(err);
+      }
+      if(acts){
+        res.send(acts);
+        return acts;
+      }
+      else{
+        res.send({});
+        return;
+      }
+    });
+  }
 });
 app.post('/main/invite', function(req,res){
   var User = require('./models/user');
@@ -216,13 +210,17 @@ app.post('/main/create-activity', function(req, res){
       }
       result.lat = JSON.parse(data).results[0].geometry.location.lat;
       result.lng = JSON.parse(data).results[0].geometry.location.lng;
-      activity.save(result,function(err){
+      result.save(function(err){
         if(err){
           console.log(err);
         }
       });
-      var loctRes = {_id: 1, name: recData.location, Lat: result.lat, Long: result.lng, user:result.user};
-      location.save(loctRes,function(err){
+      var loctRes = new location();
+      loctRes.name = recData.location;
+      loctRes.Lat = result.lat;
+      loctRes.Long = result.lng;
+      loctRes.user = result.creator;
+      loctRes.save(function(err){
         if(err){
           console.log(err);
         }
