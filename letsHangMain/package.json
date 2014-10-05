@@ -3,7 +3,7 @@
     "version": "0.0.1",
     "private": true,
     "dependencies": {
-        "express": "3.3.3",
+        "express": "4.9.5",
         "express-hbs": "*",
         "mongoose": "3.8.1",
         "path": "*",
