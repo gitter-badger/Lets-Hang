@@ -36,7 +36,7 @@
           				<button id="activities" class="btn btn-link">Activities</button>
                   <ul class="hidden-list">
                     {{#each activity}}
-                      <li><h4>{{name}}</h4></li>
+                      <li data-act-id={{id}} data-lat={{lat}} data-lng={{lng}}><h4>{{name}}</h4></li>
                     {{/each}}
                   </ul>
         				</li>
@@ -44,7 +44,7 @@
                   <button id="messages" class="btn btn-link">Messages</button>
                   <ul class="hidden-list">
                     {{#each messages}}
-                      <li><h4>{{name}}</h4><ul><li>{{sender}}, {{activity.invited}}</li></ul></li>
+                      <li data-mess-id={{id}}><h4>{{name}}</h4><ul><li>{{sender}}, {{activity.invited}}</li></ul></li>
                     {{/each}}
                     <button id="new-message" class="btn btn-success">New Message</button>
                   </ul>
@@ -53,7 +53,7 @@
                   <button id="locations" class="btn btn-link">Locations</button>
                   <ul class="hidden-list">
                     {{#each location}}
-                      <li><h4>{{name}}</h4></li>
+                      <li data-loct-id={{id}}><h4>{{name}}</h4></li>
                     {{/each}}
                   </ul>
                 </li>

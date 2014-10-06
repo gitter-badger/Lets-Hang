@@ -45,8 +45,6 @@ function mapNewActivity(activity){
   '<div id="prevGroup">'+
   '<h2>Activity:</h2>'+
   '<h3>'+activity.name+'</h3>'+
-  '<h3>'+activity.startDate+'</h3>'+
-  '<h3>'+activity.startTime+'</h3>'+
   '</div>'+
   '</div>';
   var newInfowindow = new google.maps.InfoWindow({

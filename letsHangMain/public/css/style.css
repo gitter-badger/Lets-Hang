@@ -113,6 +113,7 @@ li > .btn-link{
 }
 #newActOverlay{
 	width: 300px;
+	height: 100%;
 	padding-left:4px;
 	position: absolute;
 	top: 0%;

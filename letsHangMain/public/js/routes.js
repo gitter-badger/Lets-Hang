@@ -102,4 +102,13 @@ $(document).ready(function (){
 			document.getElementById('user-result').innerHTML='';
 		}
 	},false);
+	$('.hidden-list li').click(function(e){
+		e.preventDefault();
+		var act ={
+			lat: e.target.dataset.lat,
+			lng: e.target.dataset.lng,
+			name: e.target.firstChild.innerText
+		};
+		mapNewActivity(act);
+	});
 });

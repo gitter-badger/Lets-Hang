@@ -64,8 +64,6 @@ app.engine('hbs', hbs.express3({
   partialsDir: __dirname + '/views/partials'
 }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.json());       // to support JSON-encoded bodies
-app.use(express.urlencoded()); // to support URL-encoded bodies
 app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(bodyParser());
