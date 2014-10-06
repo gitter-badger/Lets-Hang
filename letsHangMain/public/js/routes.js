@@ -104,6 +104,10 @@ $(document).ready(function (){
 	},false);
 	$('.hidden-list li').click(function(e){
 		e.preventDefault();
+		
+	});
+	$('#show-event').on('mousedown touchstart pointerdown', function(e){
+		e.preventDefault();
 		var act ={
 			lat: e.target.dataset.lat,
 			lng: e.target.dataset.lng,
