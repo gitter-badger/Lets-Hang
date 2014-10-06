@@ -74,25 +74,17 @@ app.use(bodyParser());
 app.use(helmet({xframe: false, hsts: false}));
 app.use(helmet.xframe('sameorigin'));
 app.use(helmet.csp({
-  defaultSrc: ["'self'", 'localhost:8000', 'googleapis.com'],
-  scriptSrc: ["'self'"],
-  imgSrc: ["'self'",'img.com'],
-  connectSrc: ["'self'",'connect.com'],
-  fontSrc: ["'self'",'bootstrapcdn.com'],
-  objectSrc: ["'self'",'object.com'],
-  mediaSrc: ["'self'",'media.com'],
-  frameSrc: ["'self'",'frame.com'],
-  sandbox: ['allow-forms', 'allow-scripts'],
+  defaultSrc: ["'self'", 'http://localhost:8080', 'ws://localhost:8080','https://*.googleapis.com', 'https://*.gstatic.com', 'http://maxcdn.bootstrapcdn.com', "'unsafe-inline'", "'unsafe-eval'"],
   reportUri: '/report-violation',
-  reportOnly: false, // set to true if you only want to report errors
-  setAllHeaders: false, // set to true if you want to set all headers
-  safari5: false // set to true if you want to force buggy CSP in Safari 5
+  reportOnly: false,
+  setAllHeaders: false,
+  safari5: false
 }));
 app.use(session({secret:'B1_1ubbadoo!?'}));
 app.use(passport.initialize());
 app.use(passport.session());
 io.set('authorization', function (handshakeData, callback) {
-  callback(null, true); // error first callback style 
+  callback(null, true);
 });
 io.set('transports', ['websocket']);
 console.log('server started');
