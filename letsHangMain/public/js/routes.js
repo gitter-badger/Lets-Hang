@@ -104,7 +104,9 @@ $(document).ready(function (){
 	},false);
 	$('.hidden-list li').click(function(e){
 		e.preventDefault();
-		
+		var id = e.target.dataset.actId;
+		$('#aboutModal').modal('show');
+		$('#aboutModal .model-dialog .modal-content').html('&nbsp;').load('/main/aboutEvent/'+id);
 	});
 	$('#show-event').on('mousedown touchstart pointerdown', function(e){
 		e.preventDefault();

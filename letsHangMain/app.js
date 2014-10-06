@@ -28,6 +28,8 @@ var rClient = new restClient();
 
 var hbs = require('express-hbs');
 
+var helmet = require('helmet');
+
 var http = require('http');
 
 var server = http.createServer(app);
@@ -54,6 +56,8 @@ require('./auth/auth')(passport);
 
 var googleKey = 'AIzaSyBfIApUobHr1J1OYNpBIy9D1AL5cfZadgs';
 
+var router = express.Router();
+
 //*********************************************************
 //************************SETTINGS*************************
 //*********************************************************
@@ -67,6 +71,23 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(bodyParser());
+app.use(helmet({xframe: false, hsts: false}));
+app.use(helmet.xframe('sameorigin'));
+app.use(helmet.csp({
+  defaultSrc: ["'self'", 'localhost:8000', 'googleapis.com'],
+  scriptSrc: ["'self'"],
+  imgSrc: ["'self'",'img.com'],
+  connectSrc: ["'self'",'connect.com'],
+  fontSrc: ["'self'",'bootstrapcdn.com'],
+  objectSrc: ["'self'",'object.com'],
+  mediaSrc: ["'self'",'media.com'],
+  frameSrc: ["'self'",'frame.com'],
+  sandbox: ['allow-forms', 'allow-scripts'],
+  reportUri: '/report-violation',
+  reportOnly: false, // set to true if you only want to report errors
+  setAllHeaders: false, // set to true if you want to set all headers
+  safari5: false // set to true if you want to force buggy CSP in Safari 5
+}));
 app.use(session({secret:'B1_1ubbadoo!?'}));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -100,7 +121,7 @@ app.post('/register-submit', passport.authenticate('local-signup',{
   successRedirect: '/main',
   failureRedirect: '/register'
 }));
-app.get('/main', isLoggedIn, function(req,res){
+router.get('/', isLoggedIn, function(req,res){
   var user = req.user;
   var activities = require('./models/activitiesModel');
   if(user){
@@ -144,7 +165,7 @@ app.get('/main', isLoggedIn, function(req,res){
    res.redirect('/login');
   }
 });
-app.post('/main/locations', function(req, res){
+router.post('/locations', function(req, res){
   var user = req.user;
   var activities = require('./models/activitiesModel');
   if(user){
@@ -163,7 +184,7 @@ app.post('/main/locations', function(req, res){
     });
   }
 });
-app.post('/main/invite', function(req,res){
+router.post('/invite', function(req,res){
   var User = require('./models/user');
   var activities = require('./models/activitiesModel');
   var data = {list: []};
@@ -184,7 +205,7 @@ app.post('/main/invite', function(req,res){
     });
   });
 });
-app.post('/main/create-activity', function(req, res){
+router.post('/create-activity', function(req, res){
   var User = require('./models/user');
   var activity = require('./models/activitiesModel');
   var location = require('./models/locationModel');
@@ -227,7 +248,7 @@ app.post('/main/create-activity', function(req, res){
 });
 var inviteUser;
 var actInv;
-app.post('/main/invite-out', function(req, res){
+router.post('/invite-out', function(req, res){
   var User = require('./models/user');
   User.findOne({_id: req.body.user}, function(err, doc){
     if(err){
@@ -240,11 +261,28 @@ app.post('/main/invite-out', function(req, res){
 });
 var messUser;
 var messAct;
-app.post('/main/create-message', function(req,res){
+router.post('/create-message', function(req,res){
   messUser = req.body.user;
   messAct = req.body.name;
   res.send({name:messAct});
 });
+router.get('/aboutEvent/:id', function(req, res){
+  var activities = require('./models/activitiesModel');
+  activities.findOne({_id:req.params.id}, function(err, act){
+    if(err){
+      console.log(err);
+    }
+    if(act){
+      if(act.creator==req.user.id){
+        res.render('partials/event.hbs', {activity:act, uCreator: true});
+      }
+      else{
+        res.render('partials/event.hbs', {activity:act, uCreator: false});
+      }
+    }
+  });
+});
+app.use('/main',router);
 app.get('/message', function(req, res){
   var User = require('./models/user');
   var messages = require('./models/messageModel');
@@ -328,6 +366,13 @@ app.get('/logout', function(req,res){
   req.logout();
   res.redirect('/');
 });
+app.route('/report-violation')
+  .get(function(req, res){
+    console.log(req);
+  })
+  .post(function(req, res){
+    console.log(req);
+  });
 
 //*********************************************************
 //*************************SOCKETS*************************
