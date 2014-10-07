@@ -265,6 +265,7 @@ router.get('/aboutEvent/:id', function(req, res){
       console.log(err);
     }
     if(act){
+      console.log(act);
       if(act.creator==req.user.id){
         res.render('partials/event.hbs', {activity:act, uCreator: true});
       }

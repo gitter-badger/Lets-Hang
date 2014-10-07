@@ -106,7 +106,10 @@ $(document).ready(function (){
 		e.preventDefault();
 		var id = e.target.dataset.actId;
 		$('#aboutModal').modal('show');
-		$('#aboutModal .model-dialog .modal-content').html('&nbsp;').load('/main/aboutEvent/'+id);
+		$('#aboutModal .modal-dialog .modal-content').html('&nbsp;').load('/main/aboutEvent/'+id);
+	});
+	$('.hidden-list li *').click(function(e){
+		$('.hidden-list li').click();
 	});
 	$('#show-event').on('mousedown touchstart pointerdown', function(e){
 		e.preventDefault();
@@ -116,5 +119,9 @@ $(document).ready(function (){
 			name: e.target.firstChild.innerText
 		};
 		mapNewActivity(act);
+	});
+	$('.edit').on('click', function(e){
+		e.preventDefault();
+		
 	});
 });
