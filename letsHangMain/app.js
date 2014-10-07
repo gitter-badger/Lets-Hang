@@ -58,6 +58,8 @@ var googleKey = 'AIzaSyBfIApUobHr1J1OYNpBIy9D1AL5cfZadgs';
 
 var router = express.Router();
 
+var authRouter = express.Router();
+
 //*********************************************************
 //************************SETTINGS*************************
 //*********************************************************
@@ -275,7 +277,7 @@ router.get('/aboutEvent/:id', function(req, res){
     }
   });
 });
-app.use('/main',router);
+app.use('/main', router);
 app.get('/message', function(req, res){
   var User = require('./models/user');
   var messages = require('./models/messageModel');
@@ -317,24 +319,25 @@ app.get('/message', function(req, res){
     });
   });
 });
-app.get('/auth/facebook', passport.authenticate('facebook', {scope: 'email'}));
-app.get('/auth/twitter', passport.authenticate('twitter'));
-app.get('/auth/google', passport.authenticate('google', {scope:['profile', 'email']}));
-app.get('/auth/facebook/callback',
+authRouter.get('/facebook', passport.authenticate('facebook', {scope: 'email'}));
+authRouter.get('/twitter', passport.authenticate('twitter'));
+authRouter.get('/google', passport.authenticate('google', {scope:['profile', 'email']}));
+authRouter.get('/facebook/callback',
   passport.authenticate('facebook', {
     successRedirect: '/main',
     failureRedirect: '/'
   }));
-app.get('/auth/twitter/callback',
+authRouter.get('/twitter/callback',
   passport.authenticate('twitter', {
     successRedirect: '/main',
     failureRedirect: '/'
   }));
-app.get('/auth/google/callback',
+authRouter.get('/google/callback',
   passport.authenticate('google', {
     successRedirect: '/main',
     failureRedirect: '/'
   }));
+app.use('/auth', authRouter);
 app.put('/change-password', function(req, res){
   var User = require('./models/user');
   User.find({'local.email': req.body.email}, function(err, user){
