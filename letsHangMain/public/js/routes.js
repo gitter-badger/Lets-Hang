@@ -111,17 +111,34 @@ $(document).ready(function (){
 	$('.hidden-list li *').click(function(e){
 		$('.hidden-list li').click();
 	});
-	$('#show-event').on('mousedown touchstart pointerdown', function(e){
+	$('#show-ev-map').bind('click touchstart pointerdown', function(e){
 		e.preventDefault();
+		console.log('clicky clack');
 		var act ={
-			lat: e.target.dataset.lat,
-			lng: e.target.dataset.lng,
-			name: e.target.firstChild.innerText
+			lat: document.getElementById('evt-title').dataset.lat,
+			lng: document.getElementById('evt-title').dataset.lng,
+			name: document.getElementById('evt-title').firstChild.innerText
 		};
 		mapNewActivity(act);
-	});
-	$('.edit').on('click', function(e){
-		e.preventDefault();
-		
+		$('#aboutModal').modal('hide');
 	});
 });
+function edit(event){
+	var e = event;
+	e.preventDefault();
+	console.log('click');
+	var parent = $(e.target).parent();
+	localStorage.setItem('edit-html', parent);
+	var contentString = '';
+	if(e.target.id.indexOf('date')>-1){
+		contentString = '<input type="date" name="newDate" id="'+e.target.id+'-input" class="form-control"></br>'+
+						'<button id="check" class="glyphicon glyphicon-check"></button>'+
+						'<button id="nope" class="glyphicon glyphicon-x"></button>';
+	}
+	else{
+		contentString = '<input type="time" name="newTime" id="'+e.target.id+'-input" class="form-control"></br>'+
+						'<button id="check" class="glyphicon glyphicon-check"></button>'+
+						'<button id="nope" class="glyphicon glyphicon-x"></button>';
+	}
+	parent.html(contentString);
+}

@@ -8,20 +8,20 @@
       <li>
         Start Date: {{activity.startDate}}
         {{#if uCreator}}
-          <button id="edit-start-date" class="edit glyphicon glyphicon-pencil"></button>
+          <button id="edit-start-date" class="edit glyphicon glyphicon-pencil" onclick="edit(event)"></button>
         {{/if}}
       </li>
       <li>
         End Date: {{activity.endDate}}
         {{#if uCreator}}
-          <button id="edit-end-date" class="edit glyphicon glyphicon-pencil"></button>
+          <button id="edit-end-date" class="edit glyphicon glyphicon-pencil" onclick="edit(event)"></button>
         {{/if}}
       </li>
     {{else}}
       <li>
         Date: {{activity.startDate}}
         {{#if uCreator}}
-          <button id="edit-start-date" class="edit glyphicon glyphicon-pencil"></button>
+          <button id="edit-start-date" class="edit glyphicon glyphicon-pencil" onclick="edit(event)"></button>
         {{/if}}
       </li>
     {{/if}}
@@ -29,20 +29,20 @@
       <li>
         Start Time: {{activity.startTime}}
         {{#if uCreator}}
-          <button id="edit-start-time" class="edit glyphicon glyphicon-pencil"></button>
+          <button id="edit-start-time" class="edit glyphicon glyphicon-pencil" onclick="edit(event)"></button>
         {{/if}}
       </li>
       <li>
         End Time: {{activity.endTime}}
         {{#if uCreator}}
-          <button id="edit-end-time" class="edit glyphicon glyphicon-pencil"></button>
+          <button id="edit-end-time" class="edit glyphicon glyphicon-pencil" onclick="edit(event)"></button>
         {{/if}}
       </li>
     {{else}}
       <li>
         Time: {{activity.startTime}}
         {{#if uCreator}}
-          <button id="edit-start-time" class="edit glyphicon glyphicon-pencil"></button>
+          <button id="edit-start-time" class="edit glyphicon glyphicon-pencil" onclick="edit(event)"></button>
         {{/if}}
       </li>
     {{/if}}
