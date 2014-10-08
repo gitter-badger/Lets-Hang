@@ -132,13 +132,13 @@ function edit(event){
 	var contentString = '';
 	if(e.target.id.indexOf('date')>-1){
 		contentString = '<input type="date" name="newDate" id="'+e.target.id+'-input" class="form-control"></br>'+
-						'<button id="check" class="glyphicon glyphicon-check"></button>'+
-						'<button id="nope" class="glyphicon glyphicon-x"></button>';
+						'<button id="check" class="glyphicon glyphicon-ok" onclick="timeSub(event)"></button>'+
+						'<button id="nope" class="glyphicon glyphicon-remove" onclick="restoreAttr(event)"></button>';
 	}
 	else{
 		contentString = '<input type="time" name="newTime" id="'+e.target.id+'-input" class="form-control"></br>'+
-						'<button id="check" class="glyphicon glyphicon-check"></button>'+
-						'<button id="nope" class="glyphicon glyphicon-x"></button>';
+						'<button id="check" class="glyphicon glyphicon-ok" onclick="timeSub(event)"></button>'+
+						'<button id="nope" class="glyphicon glyphicon-remove" onclick="restoreAttr(event)"></button>';
 	}
 	parent.html(contentString);
 }
