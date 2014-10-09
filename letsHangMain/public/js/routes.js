@@ -128,15 +128,18 @@ function edit(event){
 	e.preventDefault();
 	console.log('click');
 	var parent = $(e.target).parent();
+	if(document.getElementById('check')!==null){
+		$('#check').parent() = localStorage.getItem('edit-html');	
+	}
 	localStorage.setItem('edit-html', parent);
 	var contentString = '';
 	if(e.target.id.indexOf('date')>-1){
-		contentString = '<input type="date" name="newDate" id="'+e.target.id+'-input" class="form-control"></br>'+
+		contentString = '<input type="date" name="newDate" id="'+e.target.id+'-input" class="form-control" value="'+parent[0].dataset.date+'"></br>'+
 						'<button id="check" class="glyphicon glyphicon-ok" onclick="timeSub(event)"></button>'+
 						'<button id="nope" class="glyphicon glyphicon-remove" onclick="restoreAttr(event)"></button>';
 	}
 	else{
-		contentString = '<input type="time" name="newTime" id="'+e.target.id+'-input" class="form-control"></br>'+
+		contentString = '<input type="time" name="newTime" id="'+e.target.id+'-input" class="form-control" value="'+parent[0].dataset.time+'"></br>'+
 						'<button id="check" class="glyphicon glyphicon-ok" onclick="timeSub(event)"></button>'+
 						'<button id="nope" class="glyphicon glyphicon-remove" onclick="restoreAttr(event)"></button>';
 	}

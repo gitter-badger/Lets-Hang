@@ -4,45 +4,31 @@
 </div>
 <div class="modal-body">
   <ul class="event-list-about">
-    {{#if activity.endDate}}
-      <li>
+      <li data-date="{{activity.startDate}}">
         Start Date: {{activity.startDate}}
         {{#if uCreator}}
           <button id="edit-start-date" class="edit glyphicon glyphicon-pencil" onclick="edit(event)"></button>
         {{/if}}
       </li>
-      <li>
+    {{#if activity.endDate}}
+      <li data-date="{{activity.endDate}}">
         End Date: {{activity.endDate}}
         {{#if uCreator}}
           <button id="edit-end-date" class="edit glyphicon glyphicon-pencil" onclick="edit(event)"></button>
         {{/if}}
       </li>
-    {{else}}
-      <li>
-        Date: {{activity.startDate}}
-        {{#if uCreator}}
-          <button id="edit-start-date" class="edit glyphicon glyphicon-pencil" onclick="edit(event)"></button>
-        {{/if}}
-      </li>
     {{/if}}
-    {{#if activity.endTime}}
-      <li>
+      <li data-time="{{activity.startTime}}">
         Start Time: {{activity.startTime}}
         {{#if uCreator}}
           <button id="edit-start-time" class="edit glyphicon glyphicon-pencil" onclick="edit(event)"></button>
         {{/if}}
       </li>
-      <li>
+    {{#if activity.endTime}}
+      <li data-time="{{activity.endTime}}">
         End Time: {{activity.endTime}}
         {{#if uCreator}}
           <button id="edit-end-time" class="edit glyphicon glyphicon-pencil" onclick="edit(event)"></button>
-        {{/if}}
-      </li>
-    {{else}}
-      <li>
-        Time: {{activity.startTime}}
-        {{#if uCreator}}
-          <button id="edit-start-time" class="edit glyphicon glyphicon-pencil" onclick="edit(event)"></button>
         {{/if}}
       </li>
     {{/if}}

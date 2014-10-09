@@ -330,3 +330,25 @@ p.sender{
 	color: #FFF;
 	background-color: #00F46F;
 }
+#check{
+	width: 30px;
+	background-color: #FFF;
+	border-radius: 30px;
+	border-width: 0px;
+	color: #20AD46;
+}
+#check:hover{
+	background-color: #20AD46;
+	color: #FFF;
+}
+#nope{
+	width: 30px;
+	background-color: #FFF;
+	border-radius: 30px;
+	border-width: 0px;
+	color: #FF1014;
+}
+#nope:hover{
+	background-color: #FF1014;
+	color: #FFF;
+}
