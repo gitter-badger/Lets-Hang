@@ -352,3 +352,6 @@ p.sender{
 	background-color: #FF1014;
 	color: #FFF;
 }
+.event-list-about li input{
+	margin-bottom: -17px;
+}
