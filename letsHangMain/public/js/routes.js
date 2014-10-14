@@ -129,10 +129,10 @@ function edit(event){
 	console.log('click');
 	var parent = $(e.target).parent();
 	console.log(parent[0]);
-	if(document.getElementById('check')!==null){
-		$('#check').parent().html(localStorage.getItem('edit-html').html);	
+	if($('#check').length>0){
+		$('#check').parent().html(JSON.parse(localStorage.getItem('edit-html')).html);	
 	}
-	localStorage.setItem('edit-html', {html: parent[0]});
+	localStorage.setItem('edit-html', JSON.stringify({html: parent[0]}));
 	var contentString = '';
 	if(e.target.id.indexOf('date')>-1){
 		contentString = '<input type="date" name="newDate" id="'+e.target.id+'-input" class="form-control" value="'+parent[0].dataset.date+'"></br>'+
