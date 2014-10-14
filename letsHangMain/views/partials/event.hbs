@@ -1,0 +1,43 @@
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+  <h4 id="evt-title" data-lat={{activity.lat}} data-lng={{activity.lng}} class="modal-title">{{activity.name}}</h4>
+</div>
+<div class="modal-body">
+  <ul class="event-list-about">
+      <li data-date="{{activity.startDate}}">
+        Start Date: {{activity.startDate}}
+        {{#if uCreator}}
+          <button id="edit-start-date" class="edit glyphicon glyphicon-pencil" onclick="edit(event)"></button>
+        {{/if}}
+      </li>
+    {{#if activity.endDate}}
+      <li data-date="{{activity.endDate}}">
+        End Date: {{activity.endDate}}
+        {{#if uCreator}}
+          <button id="edit-end-date" class="edit glyphicon glyphicon-pencil" onclick="edit(event)"></button>
+        {{/if}}
+      </li>
+    {{/if}}
+      <li data-time="{{activity.startTime}}">
+        Start Time: {{activity.startTime}}
+        {{#if uCreator}}
+          <button id="edit-start-time" class="edit glyphicon glyphicon-pencil" onclick="edit(event)"></button>
+        {{/if}}
+      </li>
+    {{#if activity.endTime}}
+      <li data-time="{{activity.endTime}}">
+        End Time: {{activity.endTime}}
+        {{#if uCreator}}
+          <button id="edit-end-time" class="edit glyphicon glyphicon-pencil" onclick="edit(event)"></button>
+        {{/if}}
+      </li>
+    {{/if}}
+    <li><button id="show-ev-map" class="btn btn-primary">Show on Map</button></li>
+  </ul>
+</div> 
+<div class="modal-footer">
+  <button type="button" id="close" class="btn btn-default" data-dismiss="modal">Close</button>
+  {{#if uCreator}}
+    <button type="button" id="save" class="btn btn-primary">Save changes</button>
+  {{/if}}
+</div>

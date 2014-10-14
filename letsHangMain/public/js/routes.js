@@ -102,4 +102,48 @@ $(document).ready(function (){
 			document.getElementById('user-result').innerHTML='';
 		}
 	},false);
+	$('.hidden-list li').click(function(e){
+		e.preventDefault();
+		var id = e.target.dataset.actId;
+		$('#aboutModal').modal('show');
+		$('#aboutModal .modal-dialog .modal-content').html('&nbsp;').load('/main/aboutEvent/'+id);
+	});
+	$('.hidden-list li *').click(function(e){
+		$('.hidden-list li').click();
+	});
+	$('#show-ev-map').bind('click touchstart pointerdown', function(e){
+		e.preventDefault();
+		console.log('clicky clack');
+		var act ={
+			lat: document.getElementById('evt-title').dataset.lat,
+			lng: document.getElementById('evt-title').dataset.lng,
+			name: document.getElementById('evt-title').firstChild.innerText
+		};
+		mapNewActivity(act);
+		$('#aboutModal').modal('hide');
+	});
 });
+function edit(event){
+	var e = event;
+	e.preventDefault();
+	console.log('click');
+	var parent = $(e.target).parent();
+	console.log(parent[0]);
+	if($('#check').length>0){
+		$('#check').parent().html(JSON.parse(localStorage.getItem('edit-html')).html);	
+	}
+	console.log({html: parent[0].outerHTML});
+	localStorage.setItem('edit-html', JSON.stringify({html: parent[0].outerHTML}));
+	var contentString = '';
+	if(e.target.id.indexOf('date')>-1){
+		contentString = '<input type="date" name="newDate" id="'+e.target.id+'-input" class="form-control" value="'+parent[0].dataset.date+'"></br>'+
+						'<button id="check" class="glyphicon glyphicon-ok" onclick="timeSub(event)"></button>'+
+						'<button id="nope" class="glyphicon glyphicon-remove" onclick="restoreAttr(event)"></button>';
+	}
+	else{
+		contentString = '<input type="time" name="newTime" id="'+e.target.id+'-input" class="form-control" value="'+parent[0].dataset.time+'"></br>'+
+						'<button id="check" class="glyphicon glyphicon-ok" onclick="timeSub(event)"></button>'+
+						'<button id="nope" class="glyphicon glyphicon-remove" onclick="restoreAttr(event)"></button>';
+	}
+	parent.html(contentString);
+}

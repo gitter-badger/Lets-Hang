@@ -28,6 +28,8 @@ var rClient = new restClient();
 
 var hbs = require('express-hbs');
 
+var helmet = require('helmet');
+
 var http = require('http');
 
 var server = http.createServer(app);
@@ -54,28 +56,37 @@ require('./auth/auth')(passport);
 
 var googleKey = 'AIzaSyBfIApUobHr1J1OYNpBIy9D1AL5cfZadgs';
 
+var router = express.Router();
+
+var authRouter = express.Router();
+
 //*********************************************************
 //************************SETTINGS*************************
 //*********************************************************
 
-app.configure(function () {
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'hbs');
-  app.engine('hbs', hbs.express3({
-    partialsDir: __dirname + '/views/partials'
-  }));
-  app.use(express.static(path.join(__dirname, 'public')));
-  app.use(express.json());       // to support JSON-encoded bodies
-  app.use(express.urlencoded()); // to support URL-encoded bodies
-  app.use(morgan('dev'));
-  app.use(cookieParser());
-  app.use(bodyParser());
-  app.use(session({secret:'B1_1ubbadoo!?'}));
-  app.use(passport.initialize());
-  app.use(passport.session());
-});
+app.set('views', __dirname + '/views');
+app.set('view engine', 'hbs');
+app.engine('hbs', hbs.express3({
+  partialsDir: __dirname + '/views/partials'
+}));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(morgan('dev'));
+app.use(cookieParser());
+app.use(bodyParser());
+app.use(helmet({xframe: false, hsts: false}));
+app.use(helmet.xframe('sameorigin'));
+app.use(helmet.csp({
+  defaultSrc: ["'self'", 'http://localhost:8080', 'ws://localhost:8080','https://*.googleapis.com', 'https://*.gstatic.com', 'http://maxcdn.bootstrapcdn.com', "'unsafe-inline'", "'unsafe-eval'"],
+  reportUri: '/report-violation',
+  reportOnly: false,
+  setAllHeaders: false,
+  safari5: false
+}));
+app.use(session({secret:'B1_1ubbadoo!?'}));
+app.use(passport.initialize());
+app.use(passport.session());
 io.set('authorization', function (handshakeData, callback) {
-  callback(null, true); // error first callback style 
+  callback(null, true);
 });
 io.set('transports', ['websocket']);
 console.log('server started');
@@ -104,7 +115,7 @@ app.post('/register-submit', passport.authenticate('local-signup',{
   successRedirect: '/main',
   failureRedirect: '/register'
 }));
-app.get('/main', isLoggedIn, function(req,res){
+router.get('/', isLoggedIn, function(req,res){
   var user = req.user;
   var activities = require('./models/activitiesModel');
   if(user){
@@ -148,32 +159,26 @@ app.get('/main', isLoggedIn, function(req,res){
    res.redirect('/login');
   }
 });
-app.post('/main/locations', function(req, res){
-  var User = require('./models/user');
+router.post('/locations', function(req, res){
+  var user = req.user;
   var activities = require('./models/activitiesModel');
-  User.findOne({'local.email': req.body.email}, function(err, user){
-    if(err){
-      console.log(err);
-    }
-    if(user){
-      activities.findOne({creator: user.id}, function(err, acts){
-        if(err){
-          console.log(err);
-        }
-        if(acts){
-          res.send(acts);
-          return acts;
-        }
-        else{
-          res.send({});
-          return;
-        }
-      });
-    }
-    return user;
-  });
+  if(user){
+    activities.findOne({creator: user.id}, function(err, acts){
+      if(err){
+        console.log(err);
+      }
+      if(acts){
+        res.send(acts);
+        return acts;
+      }
+      else{
+        res.send({});
+        return;
+      }
+    });
+  }
 });
-app.post('/main/invite', function(req,res){
+router.post('/invite', function(req,res){
   var User = require('./models/user');
   var activities = require('./models/activitiesModel');
   var data = {list: []};
@@ -194,7 +199,7 @@ app.post('/main/invite', function(req,res){
     });
   });
 });
-app.post('/main/create-activity', function(req, res){
+router.post('/create-activity', function(req, res){
   var User = require('./models/user');
   var activity = require('./models/activitiesModel');
   var location = require('./models/locationModel');
@@ -216,13 +221,17 @@ app.post('/main/create-activity', function(req, res){
       }
       result.lat = JSON.parse(data).results[0].geometry.location.lat;
       result.lng = JSON.parse(data).results[0].geometry.location.lng;
-      activitiy.save(result,function(err){
+      result.save(function(err){
         if(err){
           console.log(err);
         }
       });
-      var loctRes = {_id: 1, name: recData.location, Lat: result.lat, Long: result.lng, user:result.user};
-      location.save(loctRes,function(err){
+      var loctRes = new location();
+      loctRes.name = recData.location;
+      loctRes.Lat = result.lat;
+      loctRes.Long = result.lng;
+      loctRes.user = result.creator;
+      loctRes.save(function(err){
         if(err){
           console.log(err);
         }
@@ -233,7 +242,7 @@ app.post('/main/create-activity', function(req, res){
 });
 var inviteUser;
 var actInv;
-app.post('/main/invite-out', function(req, res){
+router.post('/invite-out', function(req, res){
   var User = require('./models/user');
   User.findOne({_id: req.body.user}, function(err, doc){
     if(err){
@@ -246,11 +255,29 @@ app.post('/main/invite-out', function(req, res){
 });
 var messUser;
 var messAct;
-app.post('/main/create-message', function(req,res){
+router.post('/create-message', function(req,res){
   messUser = req.body.user;
   messAct = req.body.name;
   res.send({name:messAct});
 });
+router.get('/aboutEvent/:id', function(req, res){
+  var activities = require('./models/activitiesModel');
+  activities.findOne({_id:req.params.id}, function(err, act){
+    if(err){
+      console.log(err);
+    }
+    if(act){
+      console.log(act);
+      if(act.creator==req.user.id){
+        res.render('partials/event.hbs', {activity:act, uCreator: true});
+      }
+      else{
+        res.render('partials/event.hbs', {activity:act, uCreator: false});
+      }
+    }
+  });
+});
+app.use('/main', router);
 app.get('/message', function(req, res){
   var User = require('./models/user');
   var messages = require('./models/messageModel');
@@ -292,24 +319,25 @@ app.get('/message', function(req, res){
     });
   });
 });
-app.get('/auth/facebook', passport.authenticate('facebook', {scope: 'email'}));
-app.get('/auth/twitter', passport.authenticate('twitter'));
-app.get('/auth/google', passport.authenticate('google', {scope:['profile', 'email']}));
-app.get('/auth/facebook/callback',
+authRouter.get('/facebook', passport.authenticate('facebook', {scope: 'email'}));
+authRouter.get('/twitter', passport.authenticate('twitter'));
+authRouter.get('/google', passport.authenticate('google', {scope:['profile', 'email']}));
+authRouter.get('/facebook/callback',
   passport.authenticate('facebook', {
     successRedirect: '/main',
     failureRedirect: '/'
   }));
-app.get('/auth/twitter/callback',
+authRouter.get('/twitter/callback',
   passport.authenticate('twitter', {
     successRedirect: '/main',
     failureRedirect: '/'
   }));
-app.get('/auth/google/callback',
+authRouter.get('/google/callback',
   passport.authenticate('google', {
     successRedirect: '/main',
     failureRedirect: '/'
   }));
+app.use('/auth', authRouter);
 app.put('/change-password', function(req, res){
   var User = require('./models/user');
   User.find({'local.email': req.body.email}, function(err, user){
@@ -334,6 +362,13 @@ app.get('/logout', function(req,res){
   req.logout();
   res.redirect('/');
 });
+app.route('/report-violation')
+  .get(function(req, res){
+    console.log(req);
+  })
+  .post(function(req, res){
+    console.log(req);
+  });
 
 //*********************************************************
 //*************************SOCKETS*************************

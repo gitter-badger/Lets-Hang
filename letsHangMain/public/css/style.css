@@ -113,6 +113,7 @@ li > .btn-link{
 }
 #newActOverlay{
 	width: 300px;
+	height: 100%;
 	padding-left:4px;
 	position: absolute;
 	top: 0%;
@@ -308,4 +309,49 @@ p.sender{
 }
 .blurb-row{
 	color: #eee;
+}
+.edit{
+	width: 30px !important;
+	height: 30px;
+	position: relative;
+	margin-bottom: 20px;
+	border-radius: 30px;
+	-webkit-border-radius: 30px;
+	-moz-border-radius: 30px;
+	-o-border-radius: 30px;
+	color: #00F46F;
+	background-color: #FFF;
+	border-width: 0px;
+}
+.edit:before{
+	content: '\270f';
+}
+.edit:hover{
+	color: #FFF;
+	background-color: #00F46F;
+}
+#check{
+	width: 30px;
+	background-color: #FFF;
+	border-radius: 30px;
+	border-width: 0px;
+	color: #20AD46;
+}
+#check:hover{
+	background-color: #20AD46;
+	color: #FFF;
+}
+#nope{
+	width: 30px;
+	background-color: #FFF;
+	border-radius: 30px;
+	border-width: 0px;
+	color: #FF1014;
+}
+#nope:hover{
+	background-color: #FF1014;
+	color: #FFF;
+}
+.event-list-about li input{
+	margin-bottom: -17px;
 }
