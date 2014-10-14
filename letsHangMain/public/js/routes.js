@@ -132,7 +132,8 @@ function edit(event){
 	if($('#check').length>0){
 		$('#check').parent().html(JSON.parse(localStorage.getItem('edit-html')).html);	
 	}
-	localStorage.setItem('edit-html', JSON.stringify({html: parent[0]}));
+	console.log({html: parent[0].outerHTML});
+	localStorage.setItem('edit-html', JSON.stringify({html: parent[0].outerHTML}));
 	var contentString = '';
 	if(e.target.id.indexOf('date')>-1){
 		contentString = '<input type="date" name="newDate" id="'+e.target.id+'-input" class="form-control" value="'+parent[0].dataset.date+'"></br>'+
