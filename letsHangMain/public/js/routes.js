@@ -111,17 +111,6 @@ $(document).ready(function (){
 	$('.hidden-list li *').click(function(e){
 		$('.hidden-list li').click();
 	});
-	$('#show-ev-map').bind('click touchstart pointerdown', function(e){
-		e.preventDefault();
-		console.log('clicky clack');
-		var act ={
-			lat: document.getElementById('evt-title').dataset.lat,
-			lng: document.getElementById('evt-title').dataset.lng,
-			name: document.getElementById('evt-title').firstChild.innerText
-		};
-		mapNewActivity(act);
-		$('#aboutModal').modal('hide');
-	});
 });
 function edit(event){
 	var e = event;
@@ -146,4 +135,15 @@ function edit(event){
 						'<button id="nope" class="glyphicon glyphicon-remove" onclick="restoreAttr(event)"></button>';
 	}
 	parent.html(contentString);
+}
+function showOnMap(event){
+	event.preventDefault();
+	console.log('clicky clack');
+	var act = {
+		lat: document.getElementById('evt-title').dataset.lat,
+		lng: document.getElementById('evt-title').dataset.lng,
+		name: document.getElementById('evt-title').innerText
+	};
+	mapNewActivity(act);
+	$('#aboutModal').modal('hide');
 }

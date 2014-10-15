@@ -89,7 +89,7 @@ io.set('authorization', function (handshakeData, callback) {
   callback(null, true);
 });
 io.set('transports', ['websocket']);
-console.log('server started');
+console.log('server started port: 8080');
 
 //*********************************************************
 //************************ROUTING**************************
@@ -137,6 +137,7 @@ router.get('/', isLoggedIn, function(req,res){
                 console.log(err);
               }
               else{
+                locs.map(function(locs){locs.name.split('+').join(' '); console.log(locs.name);});
                 var dataToSend = {
                   title: 'peeps - main', 
                   activity: acts, 
@@ -267,7 +268,6 @@ router.get('/aboutEvent/:id', function(req, res){
       console.log(err);
     }
     if(act){
-      console.log(act);
       if(act.creator==req.user.id){
         res.render('partials/event.hbs', {activity:act, uCreator: true});
       }
@@ -408,8 +408,6 @@ io.sockets.on('connection', function(socket){
       last = null;
       first.replace(' ','');
     }
-    console.log('first: '+first+' last: '+last);
-    console.log('text change');
     User.find({},function(err, users){
       if(err){
         console.log(err);
@@ -417,28 +415,17 @@ io.sockets.on('connection', function(socket){
       if(users){
         var result = [];
         rStore.get('sUserID', function(err, reply){
-          console.log(reply);
           for(var i = 0; i<users.length; i++){
             if(users[i].id!=reply){
-              console.log(users[i].local.name);
-              console.log(users[i].local.name.indexOf('Chr'));
               if(first){
-                console.log('first '+first);
                 if(last){
-                  console.log('last '+last);
                   if(users[i].local.name.indexOf(first)>-1&&users[i].local.lastName.indexOf(last)>-1){
-                    console.log(users[i].local.name.indexOf(first)>-1&&users[i].local.lastName.indexOf(last)>-1);
-                    console.log(users[i].local.name.indexOf(first));
-                    console.log(users[i].local.lastName.indexOf(last));
                     result.push(users[i]);
-                    console.log(result);
                     socket.emit('users-found', {users: result});
                   }
                 }
                 else if(users[i].local.name.indexOf(first)>-1){
-                  console.log(users[i].local.name.indexOf(first));
                   result.push(users[i]);
-                  console.log(result);
                   socket.emit('users-found', {users: result});
                 }
               }
@@ -447,7 +434,6 @@ io.sockets.on('connection', function(socket){
         });
       }
       else{
-        console.log(first+' '+last);
         socket.emit('users-found', {});
       }
     });
