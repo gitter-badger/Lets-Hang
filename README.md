@@ -11,7 +11,9 @@ Main app stack:
 
 -mongodb
 
--express (currently ver 3, once release first priority is to update to ver 4)
+-redis
+
+-express
 
 -google maps api
 
@@ -35,7 +37,7 @@ Calendar app stack:
 
 Coming soon:
 
-www.lets-hang-app.com (expect release mid to late september)
+www.lets-hang-app.com (expect release soon)
 
 lets hang mobile (Cross platform)
 
