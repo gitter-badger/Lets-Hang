@@ -1,7 +1,7 @@
 $('body').ready(function(){
 	function inviteIn(user){
 		this.user = user;
-		this.socket = io('http://localhost:8080', {'transports': ['websocket', 'polling']});
+		this.socket = io('http://localhost:8080', {'transports': ['websocket']});
 		this.socket.on('findUser', function(data){
 			if(this.user!==null){
 				this.socket.emit('foundUser', this.user);

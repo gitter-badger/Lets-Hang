@@ -102,14 +102,17 @@ $(document).ready(function (){
 			document.getElementById('user-result').innerHTML='';
 		}
 	},false);
-	$('.hidden-list li').click(function(e){
+	$('#activities + .hidden-list li').click(function(e){
 		e.preventDefault();
 		var id = e.target.dataset.actId;
 		$('#aboutModal').modal('show');
 		$('#aboutModal .modal-dialog .modal-content').html('&nbsp;').load('/main/aboutEvent/'+id);
 	});
-	$('.hidden-list li *').click(function(e){
+	$('#activities + .hidden-list li *').click(function(e){
 		$('.hidden-list li').click();
+	});
+	$('#locations + .hidden-list li').click(function(e){
+		document.getElementById('newActLoct').value = this.innerText;
 	});
 });
 function edit(event){

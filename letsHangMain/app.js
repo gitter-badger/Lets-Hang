@@ -76,7 +76,7 @@ app.use(bodyParser());
 app.use(helmet({xframe: false, hsts: false}));
 app.use(helmet.xframe('sameorigin'));
 app.use(helmet.csp({
-  defaultSrc: ["'self'", 'http://localhost:8080', 'ws://localhost:8080','https://*.googleapis.com', 'https://*.gstatic.com', 'http://maxcdn.bootstrapcdn.com', "'unsafe-inline'", "'unsafe-eval'"],
+  defaultSrc: ["'self'", 'http://localhost:8080','http://localhost:8080/socketio/*', 'ws://localhost:8080','https://*.googleapis.com', 'https://*.gstatic.com', 'http://maxcdn.bootstrapcdn.com', "'unsafe-inline'", "'unsafe-eval'"],
   reportUri: '/report-violation',
   reportOnly: false,
   setAllHeaders: false,
@@ -137,7 +137,17 @@ router.get('/', isLoggedIn, function(req,res){
                 console.log(err);
               }
               else{
-                locs.map(function(locs){locs.name.split('+').join(' '); console.log(locs.name);});
+                locs.map(function(loc){
+                  if(loc.name.indexOf('+')<0){
+                    return;
+                  }
+                  for(var i = 0; i<loc.name.length; i++){
+                    if(loc.name.charAt(i)=='+'){
+                      loc.name = loc.name.substring(0, i)+' '+loc.name.substring(i+1);
+                    }
+                  }
+                });
+                console.log(locs[0].name);
                 var dataToSend = {
                   title: 'peeps - main', 
                   activity: acts, 
