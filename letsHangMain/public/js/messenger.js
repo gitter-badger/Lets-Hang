@@ -1,7 +1,7 @@
 function messageInit(user, title){
 	this.user = user;
 	this.title = title;
-	this.socket = io('http://localhost:8080', {'transports': ['websocket']});
+	this.socket = io('ws://localhost:8080', {'transports': ['websocket']});
 	this.socket.emit('messageInit', {date:new Date(), users: this.allUsers});
 	this.send = function(msg){
 		this.socket.emit('send', msg);

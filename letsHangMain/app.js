@@ -473,6 +473,11 @@ io.sockets.on('connection', function(socket){
           activities.findOne({name: msg.name, invited: [user.id]}, function(err, act){
             if(err){
               console.log(err);
+              return;
+            }
+            if(act===null){
+              console.log('query not found');
+              return;
             }
             var mess = new messages();
             mess.sender = user.id;
