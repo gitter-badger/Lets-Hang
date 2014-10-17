@@ -30,7 +30,7 @@ window.onload = function(){
 		data:{email: localStorage.getItem('email')},
 		success:function(data){
       console.log(data);
-			if(data!=={}){
+			if(data){
 		    google.maps.event.addDomListener(window, 'load', initialize(data));
 		  }
 		  else{

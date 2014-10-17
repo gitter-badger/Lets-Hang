@@ -74,7 +74,7 @@ $(document).ready(function(){
 		e.preventDefault();
 		e.stopPropagation();
 		if(localStorage.getItem('invited')!==null){
-			var formData = new actData($('#newActName').val(),$('#newActLoct').val(),$('#startDate').val(),null,$('#startTime').val(),null,localStorage.getItem('invited').arr,localStorage.getItem('email'));
+			var formData = new actData($('#newActName').val(),$('#newActLoct').val(),$('#startDate').val(),null,$('#startTime').val(),null,JSON.parse(localStorage.getItem('invited')).arr,localStorage.getItem('email'));
 			if($('#endDate').length==0){
 				formData.endDate = $('#endDate').val(); 
 			}
@@ -149,7 +149,7 @@ function addToInvList(){
 		console.log(e.target);
 		if(e.target==$('.inviteThis')[0]){
 			console.log('click');
-			var invited = $(e.target).parent()[0].innerText.substring(0, $(e.target).parent()[0].innerText.indexOf(' '));
+			var invited = $(e.target)[0].dataset.id;
 			console.log(invited);
 			if(!JSON.parse(localStorage.getItem('invited'))){
 				console.log('new');

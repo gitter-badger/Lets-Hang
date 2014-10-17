@@ -147,7 +147,6 @@ router.get('/', isLoggedIn, function(req,res){
                     }
                   }
                 });
-                console.log(locs[0].name);
                 var dataToSend = {
                   title: 'peeps - main', 
                   activity: acts, 
@@ -183,7 +182,7 @@ router.post('/locations', function(req, res){
         return acts;
       }
       else{
-        res.send({});
+        res.send();
         return;
       }
     });
@@ -200,9 +199,11 @@ router.post('/invite', function(req,res){
       }
       if(acts){
         for(var i = 0; i<acts.length; i++){
+          console.log(acts[i]);
           data.list.push(acts[i].invited);
         }
         res.send(data.list);
+        console.log('data: '+data.list);
       }
       else{
         res.send({});
@@ -242,9 +243,20 @@ router.post('/create-activity', function(req, res){
       loctRes.Lat = result.lat;
       loctRes.Long = result.lng;
       loctRes.user = result.creator;
-      loctRes.save(function(err){
+      location.find({name: loctRes.name}, function(err, docs){
         if(err){
           console.log(err);
+        }
+        if(docs.length>0){
+          console.log('location exists');
+          return;
+        }
+        else{
+          loctRes.save(function(err){
+            if(err){
+              console.log(err);
+            }
+          });
         }
       });
       res.send(result);

@@ -22,6 +22,7 @@ var search = function(container){
 				for(var i = 0; i<data.users.length; i++){
 					var userInd = document.createElement('li');
 					var addBtn = document.createElement('button');
+					addBtn.dataset.id = data.users[i]._id; 
 					addBtn.className = 'inviteThis btn btn-primary';
 					addBtn.innerHTML = '<i class="fa fa-plus"></i>';
 					var userName = document.createElement('p');
@@ -49,6 +50,7 @@ var search = function(container){
 				for(var i = 0; i<data.users.length; i++){
 					var userInd = document.createElement('li');
 					var addBtn = document.createElement('button');
+					addBtn.dataset.id = data.users[i]._id;
 					addBtn.className = 'inviteThis btn btn-primary';
 					addBtn.innerHTML = '<i class="fa fa-plus"></i>';
 					var userName = document.createElement('p');
