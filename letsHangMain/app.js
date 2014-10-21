@@ -267,12 +267,14 @@ var inviteUser;
 var actInv;
 router.post('/invite-out', function(req, res){
   var User = require('./models/user');
-  User.findOne({_id: req.body.user}, function(err, doc){
+  User.findOne({id: req.body.user}, function(err, doc){
     if(err){
       console.log(err);
     }
     else{
+      console.log(doc);
       actInv = {invited: [doc]};
+      inviteUser = req.body.user;
     }
   });
 });
@@ -401,7 +403,7 @@ io.sockets.on('connection', function(socket){
   var activities = require('./models/activitiesModel');
   var messages = require('./models/messageModel');
   console.log('socket.io started');
-  if(inviteUser){
+  while(inviteUser){
     activities.find(actInv, function(err, docs){
       if(err){
         console.log(err);
@@ -409,9 +411,12 @@ io.sockets.on('connection', function(socket){
       else{
         socket.emit('findUser');
         socket.on('foundUser', function(userData){
-          if(userData == actInv.invited.pop()){
-            socket.emit('inviteIn', docs);
-          }
+          users.findOne({'local.email':userData}, function(err, iUser){
+            if(iUser.id == actInv.invited.pop()){
+              socket.emit('inviteIn', docs);
+              inviteUser = null;
+            }
+          });
         });
       }
     });

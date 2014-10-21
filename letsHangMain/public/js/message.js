@@ -1,18 +1,18 @@
+function inviteIn(user){
+	this.user = user;
+	this.socket = io('ws://localhost:8080', {'transports': ['websocket']});
+	this.socket.on('findUser', function(data){
+		if(this.user!==null){
+			this.socket.emit('foundUser', this.user);
+		}
+	});
+	this.socket.on('inviteIn', function(inv){
+		console.log('invited');
+		console.log(inv);
+	});
+}
 $('body').ready(function(){
-	function inviteIn(user){
-		this.user = user;
-		this.socket = io('ws://localhost:8080', {'transports': ['websocket']});
-		this.socket.on('findUser', function(data){
-			if(this.user!==null){
-				this.socket.emit('foundUser', this.user);
-			}
-		});
-		this.socket.on('inviteIn', function(inv){
-			console.log('invited');
-			console.log(inv);
-		});
-	}
-	//var inviteLine = new inviteIn(localStorage.getItem('user'));
+	var inviteLine = new inviteIn(localStorage.getItem('email'));
 	$('#new-message').click(function(e){
 		function activitySelect(){
 			var result;
