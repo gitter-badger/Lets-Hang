@@ -1,4 +1,4 @@
-module.exports = function(io, pub, sub){
+module.exports = function(io, pub, sub, rStore){
     function sessionController(user){
 		this.sub = sub;
 		this.pub = pub;
@@ -41,13 +41,14 @@ module.exports = function(io, pub, sub){
 
 	io.sockets.on('connection', function(socket){
 		console.log('socket.io started');
+		console.log(socket.prototype);
 		console.log(socket.id);
 		socket.on('chat', function(msg){
 			msg = JSON.parse(msg);
-			socket.get('sessionController', function(err, sessionController){
+			rStore.get('sessionController', function(err, sessionController){
 				if(sessionController === null){
 					var newSess = new sessionController(msg.user);
-					newSess.rejoin(socket, msg);
+		  		    newSess.rejoin(socket, msg);
 				}
 				else{
 					var reply = JSON.stringify({action: 'message', user: msg.user, msg: msg.msg});
@@ -58,11 +59,11 @@ module.exports = function(io, pub, sub){
 		socket.on('join', function(data) {
 			var msg = JSON.parse(data);
 			var sessionController = new SessionController(msg.user);
-			socket.set('sessionController', sessionController);
+			rStore.set('sessionController', sessionController);
 			sessionController.subscribe(socket);
 		});
 		socket.on('disconnect', function() { 
-		socket.get('sessionController', function(err, sessionController) {
+			socket.get('sessionController', function(err, sessionController) {
 				if (sessionController === null) return;
 				sessionController.unsubscribe();
 				var leaveMessage = JSON.stringify({action: 'control', user: sessionController.user, msg: ' left the channel' });

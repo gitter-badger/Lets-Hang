@@ -4,7 +4,8 @@ function messageInit(user, title){
 	this.socket = io('ws://localhost:8080', {'transports': ['websocket']});
 	this.socket.emit('messageInit', {date:new Date(), users: this.allUsers});
 	this.send = function(msg){
-		this.socket.emit('send', msg);
+		msg = JSON.stringify(msg)
+		this.socket.emit('chat', msg);
 	};
 	this.socket.on('recieve', function(mData){
 		if(mData.sender!=this.user){
