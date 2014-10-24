@@ -1,47 +1,43 @@
-module.exports = function(io, pub, sub, rStore){
-	function sessionController(user){
+module.exports = function(io, pub, sub){
+    function sessionController(user){
 		this.sub = sub;
 		this.pub = pub;
 		this.user = user;
+		this.subscribe = function(socket) {
+			this.sub.on('message', function(channel, message) {
+				socket.emit(channel, message);
+			});
+			var current = this;
+			this.sub.on('subscribe', function(channel, count) {
+				var joinMessage = JSON.stringify({action: 'control', user: current.user, msg: ' joined the channel' });
+				current.publish(joinMessage);
+			});
+			this.sub.subscribe('chat');
+		};
+		this.rejoin = function(socket, message) {
+			this.sub.on('message', function(channel, message) {
+				socket.emit(channel, message);
+			});
+			var current = this;
+			this.sub.on('subscribe', function(channel, count) {
+				var rejoin = JSON.stringify({action: 'control', user: current.user, msg: ' rejoined the channel' });
+				current.publish(rejoin);
+				var reply = JSON.stringify({action: 'message', user: message.user, msg: message.msg });
+				current.publish(reply);
+			});
+			this.sub.subscribe('chat');
+		};
+		this.unsubscribe = function() {
+			this.sub.unsubscribe('chat');
+		};
+		this.publish = function(message) {
+			this.pub.publish('chat', message);
+		};
+		this.destroyRedis = function() {
+			if (this.sub !== null) this.sub.quit();
+			if (this.pub !== null) this.pub.quit();
+		};
 	}
-	SessionController.prototype.subscribe = function(socket) {
-		this.sub.on('message', function(channel, message) {
-			socket.emit(channel, message);
-		});
-		var current = this;
-		this.sub.on('subscribe', function(channel, count) {
-			var joinMessage = JSON.stringify({action: 'control', user: current.user, msg: ' joined the channel' });
-			current.publish(joinMessage);
-		});
-		this.sub.subscribe('chat');
-	};
-
-	sessionController.prototype.rejoin = function(socket, message) {
-		this.sub.on('message', function(channel, message) {
-			socket.emit(channel, message);
-		});
-		var current = this;
-		this.sub.on('subscribe', function(channel, count) {
-			var rejoin = JSON.stringify({action: 'control', user: current.user, msg: ' rejoined the channel' });
-			current.publish(rejoin);
-			var reply = JSON.stringify({action: 'message', user: message.user, msg: message.msg });
-			current.publish(reply);
-		});
-		this.sub.subscribe('chat');
-	};
-
-	sessionController.prototype.unsubscribe = function() {
-		this.sub.unsubscribe('chat');
-	};
-
-	sessionController.prototype.publish = function(message) {
-		this.pub.publish('chat', message);
-	};
-
-	sessionController.prototype.destroyRedis = function() {
-		if (this.sub !== null) this.sub.quit();
-		if (this.pub !== null) this.pub.quit();
-	};
 
 	io.sockets.on('connection', function(socket){
 		console.log('socket.io started');
@@ -170,4 +166,5 @@ module.exports = function(io, pub, sub, rStore){
 			});
 		});
 	});
+	return sessionController;
 };

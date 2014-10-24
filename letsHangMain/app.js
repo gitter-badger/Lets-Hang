@@ -89,8 +89,9 @@ io.set('authorization', function (handshakeData, callback) {
   callback(null, true);
 });
 io.set('transports', ['websocket']);
-var webSocket = require('./sockets/sockets')(io, pub, sub);
+var webSocket = require('./sockets/sockets.js')(io, pub, sub);
 console.log('server started port: 8080');
+console.log('webSocket: '+ webSocket);
 
 //*********************************************************
 //************************ROUTING**************************
@@ -120,7 +121,7 @@ router.get('/', isLoggedIn, function(req,res){
   var user = req.user;
   var activities = require('./models/activitiesModel');
   if(user){
-    webSocket.sessionController(req.user);
+    webSocket(req.user);
     sub.subscribe(req.user.id);
     activities.find({creator:user.id}, function(err, acts){
       if(err){
