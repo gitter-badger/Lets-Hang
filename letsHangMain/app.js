@@ -120,7 +120,6 @@ router.get('/', isLoggedIn, function(req,res){
   var user = req.user;
   var activities = require('./models/activitiesModel');
   if(user){
-    webSocket(req.user);
     sub.subscribe(req.user.id);
     activities.find({creator:user.id}, function(err, acts){
       if(err){

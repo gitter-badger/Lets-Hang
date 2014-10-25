@@ -45,7 +45,7 @@ module.exports = function(io, pub, sub, rStore){
 		console.log(socket.id);
 		socket.on('chat', function(msg){
 			msg = JSON.parse(msg);
-			rStore.get('sessionController', function(err, sessionController){
+			rStore.get(socket.id, function(err, sessionController){
 				if(sessionController === null){
 					var newSess = new sessionController(msg.user);
 		  		    newSess.rejoin(socket, msg);
@@ -167,5 +167,4 @@ module.exports = function(io, pub, sub, rStore){
 			});
 		});
 	});
-	return sessionController;
 };
