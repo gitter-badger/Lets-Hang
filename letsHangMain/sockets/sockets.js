@@ -1,5 +1,5 @@
 module.exports = function(io, pub, sub, rStore){
-    function sessionController(user){
+    var sessionController = function(user){
 		this.sub = sub;
 		this.pub = pub;
 		this.user = user;
@@ -45,35 +45,36 @@ module.exports = function(io, pub, sub, rStore){
 		console.log(socket.id);
 		socket.on('chat', function(msg){
 			msg = JSON.parse(msg);
-			rStore.get(socket.id, function(err, sessionController){
-				if(sessionController === null){
+			rStore.get('sessionController', function(err, sessionCtrlr){
+				if(sessionCtrlr === null){
 					var newSess = new sessionController(msg.user);
 		  		    newSess.rejoin(socket, msg);
 				}
 				else{
+					console.log(sessionCtrlr.user);
 					var reply = JSON.stringify({action: 'message', user: msg.user, msg: msg.msg});
-					sessionController.publish(reply);
+					sessionCtrlr.publish(reply);
 				}
 			});
 		});
 		socket.on('join', function(data) {
 			var msg = JSON.parse(data);
-			var sessionController = new SessionController(msg.user);
-			rStore.set('sessionController', sessionController);
-			sessionController.subscribe(socket);
+			var sessionCtrlr = new sessionController(msg.user);
+			rStore.set('sessionController', sessionCtrlr);
+			sessionCtrlr.subscribe(socket);
 		});
 		socket.on('disconnect', function() { 
-			socket.get('sessionController', function(err, sessionController) {
-				if (sessionController === null) return;
-				sessionController.unsubscribe();
-				var leaveMessage = JSON.stringify({action: 'control', user: sessionController.user, msg: ' left the channel' });
-				sessionController.publish(leaveMessage);
-				sessionController.destroyRedis();
+			rStore.get('sessionController', function(err, sessionCtrlr) {
+				if (sessionCtrlr === null) return;
+				sessionCtrlr.unsubscribe();
+				var leaveMessage = JSON.stringify({action: 'control', user: sessionCtrlr.user, msg: ' left the channel' });
+				sessionCtrlr.publish(leaveMessage);
+				sessionCtrlr.destroyRedis();
 			});
 		});
-		sub.on('message', function(channel, message){
+		/* sub.on('message', function(channel, message){
 			socket.emit('inviteIn', message);
-		});
+		}); */
 		socket.on('textChange', function(data){
 			var first; 
 			var last;

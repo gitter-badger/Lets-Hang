@@ -2,7 +2,7 @@ function messageInit(user, title){
 	this.user = user;
 	this.title = title;
 	this.socket = io('ws://localhost:8080', {'transports': ['websocket']});
-	this.socket.emit('messageInit', {date:new Date(), users: this.allUsers});
+	this.socket.emit('join', JSON.stringify({date:new Date(), users: this.allUsers}));
 	this.send = function(msg){
 		msg = JSON.stringify(msg)
 		this.socket.emit('chat', msg);
