@@ -1,5 +1,8 @@
+var sessID = 0 ;
 module.exports = function(io, pub, sub, rStore){
     var sessionController = function(user){
+    	this.id = ''+sessID;
+    	sessID = sessID++;
 		this.sub = sub;
 		this.pub = pub;
 		this.user = user;
@@ -41,8 +44,6 @@ module.exports = function(io, pub, sub, rStore){
 
 	io.sockets.on('connection', function(socket){
 		console.log('socket.io started');
-		console.log(socket.prototype);
-		console.log(socket.id);
 		socket.on('chat', function(msg){
 			msg = JSON.parse(msg);
 			rStore.get('sessionController', function(err, sessionCtrlr){
