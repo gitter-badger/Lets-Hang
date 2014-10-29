@@ -1,7 +1,6 @@
 var sessID = 0 ;
 module.exports = function(io, pub, sub, rStore){
     var sessionController = function(user){
-    	this.id = ''+sessID;
 		this.sub = sub;
 		this.pub = pub;
 		this.user = user;
@@ -14,7 +13,9 @@ module.exports = function(io, pub, sub, rStore){
 				var joinMessage = JSON.stringify({action: 'control', user: current.user, msg: ' joined the channel' });
 				current.publish(joinMessage);
 			});
-			this.sub.subscribe('chat');
+			rStore.get('room', function(err, room){
+				this.sub.subscribe('chat-'+room);				
+			});
 		};
 		this.rejoin = function(socket, message) {
 			this.sub.on('message', function(channel, message) {
@@ -31,18 +32,35 @@ module.exports = function(io, pub, sub, rStore){
 				if(err){
 					console.log(err);
 				}
-				this.sub.subscribe(room);
+				this.sub.subscribe('chat'+room);
 			});
 		};
 		this.unsubscribe = function() {
-			this.sub.unsubscribe('chat');
+			rStore.get('room', function(err, room){
+				this.sub.unsubscribe('chat'+room);
+			});
 		};
 		this.publish = function(message) {
-			this.pub.publish('chat', message);
+			rStore.get('room', function(err, room){
+				this.pub.publish('chat'+room, message);
+			});
 		};
 		this.destroyRedis = function() {
 			if (this.sub !== null) this.sub.quit();
 			if (this.pub !== null) this.pub.quit();
+		};
+	}
+
+	var inviteController = function(user){
+		sessionController.call(this, user);
+		this.subscribe = function(socket){
+			this.sub.subscribe('ID: '+user);
+		};
+		this.logon = function(){
+			this.subscribe()
+		};
+		this.invite = function(){
+
 		};
 	}
 
@@ -68,7 +86,7 @@ module.exports = function(io, pub, sub, rStore){
 			socket.join(msg.room);
 			sessionCtrlr = new sessionController(msg.user);
 			rStore.set('room', msg.room);
-			sessionCtrlr.subscribe(socket);
+			sessionCtrlr.subscribe(msg.room);
 		});
 		socket.on('disconnect', function() { 
 			rStore.get('room', function(err, room) {
