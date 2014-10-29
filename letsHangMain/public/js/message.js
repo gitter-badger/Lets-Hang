@@ -18,7 +18,7 @@ $('body').ready(function(){
 			var result;
 			var lParent = $('#activities + .hidden-list').children();
 			for(var i = 0; i<lParent.length; i++){
-				result += '<option value="'+lParent[i].innerText+'">'+lParent[i].innerText+'</option>';
+				result += '<option data-act-id="'+lParent[i].dataset.actId+'" value="'+lParent[i].innerText+'">'+lParent[i].innerText+'</option>';
 			}
 			return result;
 		}
@@ -75,6 +75,7 @@ $('body').ready(function(){
 					console.log(typeof $('div.chat-box')[0]);
 					$('body').append(chatBox[0]);
 					localStorage.setItem('activity', data.name);
+					localStorage.setItem('act-id', $('#chat-act-select option:selected')[0].dataset.actId);
 					$('#messModal').modal('hide');
 				}
 				else{

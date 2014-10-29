@@ -2,7 +2,6 @@ var sessID = 0 ;
 module.exports = function(io, pub, sub, rStore){
     var sessionController = function(user){
     	this.id = ''+sessID;
-    	sessID = sessID++;
 		this.sub = sub;
 		this.pub = pub;
 		this.user = user;
@@ -28,7 +27,12 @@ module.exports = function(io, pub, sub, rStore){
 				var reply = JSON.stringify({action: 'message', user: message.user, msg: message.msg });
 				current.publish(reply);
 			});
-			this.sub.subscribe('chat');
+			rStore.get('room', function(err, room){
+				if(err){
+					console.log(err);
+				}
+				this.sub.subscribe(room);
+			});
 		};
 		this.unsubscribe = function() {
 			this.sub.unsubscribe('chat');
@@ -44,29 +48,31 @@ module.exports = function(io, pub, sub, rStore){
 
 	io.sockets.on('connection', function(socket){
 		console.log('socket.io started');
+		var sessionCtrlr;
 		socket.on('chat', function(msg){
 			msg = JSON.parse(msg);
-			rStore.get('sessionController', function(err, sessionCtrlr){
-				if(sessionCtrlr === null){
-					var newSess = new sessionController(msg.user);
-		  		    newSess.rejoin(socket, msg);
+			rStore.get('room', function(err, room){
+				if(room === null){
+					sessionCtrlr = new sessionController(msg.user);
+		  		    sessionCtrlr.rejoin(socket, msg);
 				}
 				else{
 					console.log(sessionCtrlr.user);
-					var reply = JSON.stringify({action: 'message', user: msg.user, msg: msg.msg});
+					var reply = JSON.stringify({action: 'message', user: msg.sender, msg: msg.content});
 					sessionCtrlr.publish(reply);
 				}
 			});
 		});
 		socket.on('join', function(data) {
 			var msg = JSON.parse(data);
-			var sessionCtrlr = new sessionController(msg.user);
-			rStore.set('sessionController', sessionCtrlr);
+			socket.join(msg.room);
+			sessionCtrlr = new sessionController(msg.user);
+			rStore.set('room', msg.room);
 			sessionCtrlr.subscribe(socket);
 		});
 		socket.on('disconnect', function() { 
-			rStore.get('sessionController', function(err, sessionCtrlr) {
-				if (sessionCtrlr === null) return;
+			rStore.get('room', function(err, room) {
+				if (room === null) return;
 				sessionCtrlr.unsubscribe();
 				var leaveMessage = JSON.stringify({action: 'control', user: sessionCtrlr.user, msg: ' left the channel' });
 				sessionCtrlr.publish(leaveMessage);
@@ -79,6 +85,7 @@ module.exports = function(io, pub, sub, rStore){
 		socket.on('textChange', function(data){
 			var first; 
 			var last;
+			var User = require('../models/user');
 			if(data.indexOf(' ')>-1){
 				first = data.substring(0, data.indexOf(' '));
 				last = data.substring(data.indexOf(' ')+1);

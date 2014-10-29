@@ -121,6 +121,7 @@ router.get('/', isLoggedIn, function(req,res){
   var activities = require('./models/activitiesModel');
   if(user){
     sub.subscribe(req.user.id);
+    rStore.set('sUserID', req.user.id);
     activities.find({creator:user.id}, function(err, acts){
       if(err){
         console.log(err);

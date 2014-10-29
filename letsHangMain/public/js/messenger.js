@@ -1,8 +1,8 @@
-function messageInit(user, title){
+function messageInit(user, title, roomID){
 	this.user = user;
 	this.title = title;
 	this.socket = io('ws://localhost:8080', {'transports': ['websocket']});
-	this.socket.emit('join', JSON.stringify({date:new Date(), users: this.allUsers}));
+	this.socket.emit('join', JSON.stringify({date:new Date(), user: this.user, room: roomID}));
 	this.send = function(msg){
 		msg = JSON.stringify(msg)
 		this.socket.emit('chat', msg);
@@ -14,7 +14,7 @@ function messageInit(user, title){
 	});
 }
 $(document).ready(function(){
-	var messenger = new messageInit(localStorage.getItem('email'), localStorage.getItem('activity'));
+	var messenger = new messageInit(localStorage.getItem('email'), localStorage.getItem('activity'), localStorage.getItem('act-id'));
 	$('#send').click(function(e){
 		e.preventDefault();
 		console.log('send');
