@@ -7,7 +7,7 @@ function messageInit(user, title, roomID){
 		msg = JSON.stringify(msg)
 		this.socket.emit('chat', msg);
 	};
-	this.socket.on('recieve', function(mData){
+	this.socket.on('recieve'+roomID, function(mData){
 		if(mData.sender!=this.user){
 			$('.message-box').append('<p class="reciever">'+msg+'</p>');
 		}

@@ -265,9 +265,9 @@ router.post('/create-activity', function(req, res){
     }); 
   });
 });
-var inviteUser;
-var actInv;
 router.post('/invite-out', function(req, res){
+  var inviteUser;
+  var actInv;
   var User = require('./models/user');
   User.findOne({id: req.body.user}, function(err, doc){
     if(err){
@@ -277,7 +277,7 @@ router.post('/invite-out', function(req, res){
       console.log(doc);
       actInv = {invited: [doc]};
       inviteUser = req.body.user;
-      pub.publish(inviteUser, inviteUser);
+      pub.publish('inviteQue'+inviteUser, {user: inviteUser, /* activity */});
     }
   });
 });

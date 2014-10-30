@@ -6,7 +6,7 @@ module.exports = function(io, pub, sub, rStore){
 		this.user = user;
 		this.subscribe = function(socket) {
 			this.sub.on('message', function(channel, message) {
-				socket.emit(channel, message);
+				socket.emit('recieve'+channel, message);
 			});
 			var current = this;
 			this.sub.on('subscribe', function(channel, count) {
@@ -54,22 +54,32 @@ module.exports = function(io, pub, sub, rStore){
 	var inviteController = function(user){
 		sessionController.call(this, user);
 		this.subscribe = function(socket){
+			this.sub.on('message', function(channel, message) {
+				if(channel.indexOf('ID: ')){
+					socket.emit(channel, message);
+				}
+			});
 			this.sub.subscribe('ID: '+user);
-		};
-		this.logon = function(){
-			this.subscribe()
-		};
-		this.invite = function(){
-
 		};
 	}
 
 	io.sockets.on('connection', function(socket){
 		console.log('socket.io started');
 		var sessionCtrlr;
-		socket.on('chat', function(msg){
-			msg = JSON.parse(msg);
-			rStore.get('room', function(err, room){
+		var inviteCtrlr;
+		rStore.get('inviteQue', function(err, que){
+			if(que===null) return;
+			que = JSON.parse(que);
+			for(var i = 0; i<que.length; i++){
+				if(inviteCtrlr===null){
+					inviteCtrlr = new inviteController(que[0].user);
+				}
+				inviteCtrlr.publish(que[i]);
+			}
+		});
+		rStore.get('room', function(err, room){
+			socket.on('chat'+room, function(msg){
+				msg = JSON.parse(msg);
 				if(room === null){
 					sessionCtrlr = new sessionController(msg.user);
 		  		    sessionCtrlr.rejoin(socket, msg);
@@ -80,26 +90,21 @@ module.exports = function(io, pub, sub, rStore){
 					sessionCtrlr.publish(reply);
 				}
 			});
-		});
-		socket.on('join', function(data) {
-			var msg = JSON.parse(data);
-			socket.join(msg.room);
-			sessionCtrlr = new sessionController(msg.user);
-			rStore.set('room', msg.room);
-			sessionCtrlr.subscribe(msg.room);
-		});
-		socket.on('disconnect', function() { 
-			rStore.get('room', function(err, room) {
-				if (room === null) return;
+			socket.on('join', function(data) {
+				var msg = JSON.parse(data);
+				socket.join(msg.room);
+				sessionCtrlr = new sessionController(msg.user);
+				rStore.set('room', msg.room);
+				sessionCtrlr.subscribe(msg.room);
+			});
+			socket.on('disconnect', function() { 
+				if (room === null || sessionCtrlr === null) return;
 				sessionCtrlr.unsubscribe();
 				var leaveMessage = JSON.stringify({action: 'control', user: sessionCtrlr.user, msg: ' left the channel' });
 				sessionCtrlr.publish(leaveMessage);
 				sessionCtrlr.destroyRedis();
 			});
 		});
-		/* sub.on('message', function(channel, message){
-			socket.emit('inviteIn', message);
-		}); */
 		socket.on('textChange', function(data){
 			var first; 
 			var last;
@@ -129,7 +134,7 @@ module.exports = function(io, pub, sub, rStore){
 										if(users[i].local.name.indexOf(first)>-1&&users[i].local.lastName.indexOf(last)>-1){
 											result.push(users[i]);
 											socket.emit('users-found', {users: result});
-										}
+										}	
 									}
 									else if(users[i].local.name.indexOf(first)>-1){
 										result.push(users[i]);
@@ -142,56 +147,8 @@ module.exports = function(io, pub, sub, rStore){
 				}
 				else{
 					socket.emit('users-found', {});
-     			}
+	    		}
     		});
-		});
-		socket.on('send', function(msg){
-			User.find({'local.email': msg.sender}, function(err, user){
-				activities.findOne({name: msg.name, creator:user.id}, function(err, act){
-					if(err){
-						console.log(err);
-					}
-					if(act){
-						var mess = new messages();
-						mess.sender = user.id;
-						mess.content = msg.content;
-						mess.activity = act.id;
-						mess.receiver = act.invited;
-						mess.sendDate = new Date();
-						mess.save(function(err){
-							if(err){
-								console.log(err);
-							}
-						});
-						pub.publish(act.id, user.name+'is chatting, '+msg.content+', on'+msg.date);
-						socket.broadcast.emit('recieve',msg);
-					}
-					else{
-						activities.findOne({name: msg.name, invited: [user.id]}, function(err, act){
-							if(err){
-								console.log(err);
-								return;
-							}
-							if(act===null){
-								console.log('query not found');
-								return;
-							}
-							var mess = new messages();
-							mess.sender = user.id;
-							mess.content = msg.content;
-							mess.activity = act.id;
-							mess.receiver = act.invited.push(act.creator);
-							mess.sendDate = new Date();
-							mess.save(function(err){
-								if(err){
-									console.log(err);
-								}
-							});
-						});
-						socket.broadcast.emit('recieve',msg);
-					}
-				});
-			});
 		});
 	});
 };
