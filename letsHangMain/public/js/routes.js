@@ -114,6 +114,7 @@ $(document).ready(function (){
 	$('#locations + .hidden-list li').click(function(e){
 		document.getElementById('newActLoct').value = this.innerText;
 	});
+	$()
 });
 function edit(event){
 	var e = event;
@@ -150,3 +151,13 @@ function showOnMap(event){
 	mapNewActivity(act);
 	$('#aboutModal').modal('hide');
 }
+function clockRender(){
+	if($('#startTime[type^=text]')){
+		$('#startTime[type^=text]').parent().addClass('clockpicker');
+	}
+	if($('#addEnd[type^=text]')){
+		$('#addEnd[type^=text]').parent().addClass('clockpicker');
+	}
+	$('.clockpicker').clockpicker();
+}
+clockRender();
