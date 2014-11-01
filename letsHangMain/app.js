@@ -89,7 +89,7 @@ io.set('authorization', function (handshakeData, callback) {
   callback(null, true);
 });
 io.set('transports', ['websocket']);
-var webSocket = require('./sockets/sockets.js')(io, pub, sub, rStore);
+require('./sockets/sockets.js')(io, pub, sub, rStore);
 console.log('server started port: 8080');
 
 //*********************************************************

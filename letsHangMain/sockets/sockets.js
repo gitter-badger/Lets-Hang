@@ -14,7 +14,9 @@ module.exports = function(io, pub, sub, rStore){
 				current.publish(joinMessage);
 			});
 			rStore.get('room', function(err, room){
-				this.sub.subscribe('chat-'+room);				
+				console.log('before');
+				current.sub.subscribe('chat-'+room);
+				console.log('sub');				
 			});
 		};
 		this.rejoin = function(socket, message) {
@@ -41,15 +43,16 @@ module.exports = function(io, pub, sub, rStore){
 			});
 		};
 		this.publish = function(message) {
+			var current = this;
 			rStore.get('room', function(err, room){
-				this.pub.publish('chat'+room, message);
+				current.pub.publish('chat'+room, message);
 			});
 		};
 		this.destroyRedis = function() {
 			if (this.sub !== null) this.sub.quit();
 			if (this.pub !== null) this.pub.quit();
 		};
-	}
+	};
 
 	var inviteController = function(user){
 		sessionController.call(this, user);
@@ -61,12 +64,20 @@ module.exports = function(io, pub, sub, rStore){
 			});
 			this.sub.subscribe('ID: '+user);
 		};
-	}
+	};
 
 	io.sockets.on('connection', function(socket){
 		console.log('socket.io started');
 		var sessionCtrlr;
 		var inviteCtrlr;
+		socket.on('join', function(data) {
+			var msg = JSON.parse(data);
+			socket.join(msg.room);
+			sessionCtrlr = new sessionController(msg.user);
+			rStore.set('room', msg.room);
+			sessionCtrlr.subscribe(msg.room);
+			console.log('join');
+		});
 		rStore.get('inviteQue', function(err, que){
 			if(que===null) return;
 			que = JSON.parse(que);
@@ -89,13 +100,6 @@ module.exports = function(io, pub, sub, rStore){
 					var reply = JSON.stringify({action: 'message', user: msg.sender, msg: msg.content});
 					sessionCtrlr.publish(reply);
 				}
-			});
-			socket.on('join', function(data) {
-				var msg = JSON.parse(data);
-				socket.join(msg.room);
-				sessionCtrlr = new sessionController(msg.user);
-				rStore.set('room', msg.room);
-				sessionCtrlr.subscribe(msg.room);
 			});
 			socket.on('disconnect', function() { 
 				if (room === null || sessionCtrlr === null) return;
