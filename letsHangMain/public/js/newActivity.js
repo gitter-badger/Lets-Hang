@@ -20,12 +20,12 @@ $(document).ready(function(){
 	$('#addDate').click(function(e){
 		e.preventDefault();
 		e.stopPropagation();
-		$(e.target).replaceWith('<input id="endDate" class="form-control" type="date">');
+		$(e.target).replaceWith('<input id="endDate" class="form-control" type="date" placeholder="End Date">');
 	});
 	$('#addEnd').click(function(e){
 		e.preventDefault();
 		e.stopPropagation();
-		$(e.target).replaceWith('<input id="endTime" class="form-control" type="time">');
+		$(e.target).replaceWith('<input id="endTime" class="form-control" type="time" placeholder="End Time">');
 	});
 	var invCount = 0;
 	$('#localInvBtn').click(function(e){

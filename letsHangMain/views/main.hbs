@@ -6,9 +6,11 @@
     <meta name="viewport" content="width=device-width, user-scalable=no">
 		<link rel="stylesheet" href="css/lib/bootstrap.min.css">
     <link rel="stylesheet" href="css/lib/font-awesome.min.css">
+    <link rel="stylesheet" href="css/lib/clockpicker.css">
 		<link rel="stylesheet" href="css/style.css">
 		<script src="js/lib/jquery-2.1.1.min.js"></script>
 		<script src="js/lib/bootstrap.min.js"></script>
+    <script src="js/lib/clockpicker.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBfIApUobHr1J1OYNpBIy9D1AL5cfZadgs"></script>
     <script src="http://localhost:8080/socket.io/socket.io.js"></script>
 		<script src="js/routes.js"></script>
@@ -70,10 +72,14 @@
         <form id="newActForm" class="input-group">
           <input id="newActName" class="form-control" type="text" placeholder="Activity Name">
           <input id="newActLoct" class="form-control" type="text" placeholder="Location">
-          <input id="startDate" class="form-control" type="date">
+          <input id="startDate" class="form-control" type="date" placeholder="Start Date">
           <input id="addDate" class="btn btn-link" type="button" value="More Than One Day">
-          <input id="startTime" class="form-control" type="time">
-          <input id="addEnd" class="btn btn-link" type="button" value="Add End Time">
+          <div>
+            <input id="startTime" class="form-control" type="time" placeholder="Start Time">
+          </div>
+          <div>
+            <input id="addEnd" class="btn btn-link" type="button" value="Add End Time">
+          </div>
           <input id="newActInv" class="btn btn-primary" type="button" value="invite" data-toggle="modal" data-target="#invModal">
           <input id="newActSub" class="btn btn-success" type="submit" value="create">
         </form>

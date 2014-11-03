@@ -152,11 +152,18 @@ function showOnMap(event){
 	$('#aboutModal').modal('hide');
 }
 function clockRender(){
+	console.log('clock');
 	if($('#startTime[type^=text]')){
-		$('#startTime[type^=text]').parent().addClass('clockpicker');
+		console.log('start');
+		var container = $('#startTime[type^=text]').parent();
+		container.addClass('clockpicker');
+		container.append('<span class="input-group-add-on"><span class="glyphicon glyphicon-time"></span></span>');
 	}
 	if($('#addEnd[type^=text]')){
-		$('#addEnd[type^=text]').parent().addClass('clockpicker');
+		console.log('end');
+		var container = $('#addEnd[type^=text]').parent().addClass('clockpicker');
+		container.addClass('clockpicker');
+		container.append('<span class="input-group-add-on"><span class="glyphicon glyphicon-time"></span></span>');
 	}
 	$('.clockpicker').clockpicker();
 }
