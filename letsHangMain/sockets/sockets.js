@@ -34,12 +34,13 @@ module.exports = function(io, pub, sub, rStore){
 				if(err){
 					console.log(err);
 				}
-				this.sub.subscribe('chat'+room);
+				current.sub.subscribe('chat'+room);
 			});
 		};
 		this.unsubscribe = function() {
+			var current = this;
 			rStore.get('room', function(err, room){
-				this.sub.unsubscribe('chat'+room);
+				current.sub.unsubscribe('chat'+room);
 			});
 		};
 		this.publish = function(message) {
@@ -102,10 +103,12 @@ module.exports = function(io, pub, sub, rStore){
 				}
 			});
 			socket.on('disconnect', function() { 
-				if (room === null || sessionCtrlr === null) return;
-				sessionCtrlr.unsubscribe();
+				if (room === null || !sessionCtrlr){
+					return;	
+				} 
 				var leaveMessage = JSON.stringify({action: 'control', user: sessionCtrlr.user, msg: ' left the channel' });
 				sessionCtrlr.publish(leaveMessage);
+				sessionCtrlr.unsubscribe();
 				sessionCtrlr.destroyRedis();
 			});
 		});
