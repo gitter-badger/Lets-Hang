@@ -1,0 +1,14 @@
+<script>
+	function clockRender(){
+		console.log('clock');
+		if($('#startTime')[0].type == 'text'){
+			console.log('start');
+			var container = $('#startTime').parent();
+			container.addClass('clockpicker');
+			container.append('<span class="input-group-add-on"><span class="glyphicon glyphicon-time"></span></span>');
+			console.log('end');
+		}
+		$('.clockpicker').clockpicker();
+	}
+	clockRender();
+</script>

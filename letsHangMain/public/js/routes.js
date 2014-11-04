@@ -151,20 +151,3 @@ function showOnMap(event){
 	mapNewActivity(act);
 	$('#aboutModal').modal('hide');
 }
-function clockRender(){
-	console.log('clock');
-	if($('#startTime[type^=text]')){
-		console.log('start');
-		var container = $('#startTime[type^=text]').parent();
-		container.addClass('clockpicker');
-		container.append('<span class="input-group-add-on"><span class="glyphicon glyphicon-time"></span></span>');
-	}
-	if($('#addEnd[type^=text]')){
-		console.log('end');
-		var container = $('#addEnd[type^=text]').parent().addClass('clockpicker');
-		container.addClass('clockpicker');
-		container.append('<span class="input-group-add-on"><span class="glyphicon glyphicon-time"></span></span>');
-	}
-	$('.clockpicker').clockpicker();
-}
-clockRender();
