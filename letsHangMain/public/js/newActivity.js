@@ -26,6 +26,10 @@ $(document).ready(function(){
 		e.preventDefault();
 		e.stopPropagation();
 		$(e.target).replaceWith('<input id="endTime" class="form-control" type="time" placeholder="End Time">');
+		var container = $('#endTime').parent();
+		container.addClass('clockpicker');
+		container.append('<span class="input-group-add-on"><span class="glyphicon glyphicon-time"></span></span>');
+		console.log('end');
 	});
 	var invCount = 0;
 	$('#localInvBtn').click(function(e){
@@ -95,6 +99,12 @@ $(document).ready(function(){
 				console.log(data);
 				mapNewActivity(data);
 				sendInvite(data, 0);
+				var formInputs = $.makeArray($('#newActForm').children());
+				for(var i = 0; i<formInputs.length; i++){
+					if(formInputs[i].type != 'button' || formInputs[i].type != 'submit'){
+						formInputs[i].value = '';
+					}
+				}
 			}
 		});
 	});
