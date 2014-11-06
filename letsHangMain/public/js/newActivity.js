@@ -46,7 +46,7 @@ $(document).ready(function(){
 					var conNode = $('<li></li>');
 					for(var i = 0; i<data.length; i++){
 						for(var j = 0; j<data[i].length; j++){
-							conNode[0].innerHTML = data[i][j]+' '+'<button class="inviteThis btn btn-primary"><i class="fa fa-plus"></i></button>';
+							conNode[0].innerHTML = data.list[i][j]+' '+'<button class="inviteThis btn btn-primary"><i class="fa fa-plus"></i></button>';
 							conList[0].innerHTML += conNode[0].outerHTML;
 						}
 					}
