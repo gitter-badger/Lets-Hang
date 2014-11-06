@@ -204,7 +204,7 @@ router.post('/invite', function(req,res){
           console.log(acts[i]);
           data.list.push(acts[i].invited);
         }
-        res.send(data.list);
+        res.send(data);
         console.log('data: '+data.list);
       }
       else{
