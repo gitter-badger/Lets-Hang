@@ -372,8 +372,7 @@ app.put('/change-password', function(req, res){
       console.log(err);
     }
     if(user.validPassword(req.body.oldPassword)){
-      user.password = user.generateHash(req.body.newPassword);
-      user.save(function(err){
+      user.update({id: req.user}, {$set: {password: user.generateHash(req.body.newPassword)}}, function(err){
         if(err){
           console.log(err);
         }
