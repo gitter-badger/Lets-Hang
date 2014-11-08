@@ -6,12 +6,12 @@
  */
 
 module.exports = {
-	getAllActivities: function(user){
+	getAllActivities: function(req, res){
 		var acts = [];
 		var send = false;
-		Activity.find({creator: user.id}, function(err, cAct){
+		Activity.find({creator: req.user.id}).exec(function(err, cAct){
 			if(err){
-				return user;
+				return err;
 			}
 			acts.push(cAct);
 			Activity.find({invited: user.id}).exec(function(err, iAct){

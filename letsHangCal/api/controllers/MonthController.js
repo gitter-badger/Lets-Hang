@@ -10,6 +10,9 @@ module.exports = {
 		var acts = [];
 		var send = false;
 		Activity.find({creator: user.id}).exec(function(err, cAct){
+			if(err){
+				return err;
+			}
 			acts.push(cActs);
 			Activity.find({invited: user.id}).exec(function(err, iAct){
 				acts.push(iActs);
