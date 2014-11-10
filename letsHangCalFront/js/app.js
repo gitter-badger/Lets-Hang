@@ -1,2 +1,181 @@
-App = Ember.Application.create();
+App = Ember.Application.create({
+	LOG_TRANSITIONS: true
+});
 
+App.Router.reopen({
+	rootURL: '/calendar/'
+});
+
+App.Router.map(function(){
+	this.route('year');
+	this.route('month');
+	this.route('day');
+});
+
+App.Day = Ember.Object.extend({
+	init: function(){
+		var daynow = {
+			name: this.get('name'),
+			date: new Date()
+		};
+	}
+});
+
+App.Month = Ember.Object.extend({
+	init: function(){
+		var days = [];
+		switch(this.get('number')){
+			case 1:
+				this.set('name','January');
+				for(var i = 0; i<31; i++){
+					days.push(App.Day.create({
+						number: i,
+						date: new Date()
+					}));
+				}
+				break;
+			case 2:
+				this.set('name','Febuary');
+				for(var i = 0; i<28; i++){
+					days.push(App.Day.create({
+						number: i
+					}));
+				}
+				break;
+			case 3:
+				this.set('name', 'March');
+				for(var i = 0; i<31; i++){
+					days.push(App.Day.create({
+						number: i
+					}));
+				}
+				break;
+			case 4:
+				this.set('name', 'April');
+				for(var i = 0; i<30; i++){
+					days.push(App.Day.create({
+						number: i
+					}));
+				}
+				break;
+			case 5:
+				this.set('name', 'May');
+				for(var i = 0; i<31; i++){
+					days.push(App.Day.create({
+						number: i
+					}));
+				}
+				break;
+			case 6:
+				this.set('name', 'June');
+				for(var i = 0; i<30; i++){
+					days.push(App.Day.create({
+						number: i
+					}));
+				}
+				break;
+			case 7:
+				this.set('name', 'July');
+				for(var i = 0; i<31; i++){
+					days.push(App.Day.create({
+						number: i
+					}));
+				}
+				break;
+			case 8:
+				this.set('name', 'August');
+				for(var i = 0; i<31; i++){
+					days.push(App.Day.create({
+						number: i
+					}));
+				}
+				break;
+			case 9:
+				this.set('name', 'September');
+				for(var i = 0; i<30; i++){
+					days.push(App.Day.create({
+						number: i
+					}));
+				}
+				break;
+			case 10:
+				this.set('name', 'October');
+				for(var i = 0; i<31; i++){
+					days.push(App.Day.create({
+						number: i
+					}));
+				}
+				break;
+			case 11:
+				this.set('name', 'November');
+				for(var i = 0; i<30; i++){
+					days.push(App.Day.create({
+						number: i
+					}));
+				}
+				break;
+			case 12:
+				this.set('name', 'December');
+				for(var i = 0; i<31; i++){
+					days.push(App.Day.create({
+						number: i
+					}));
+				}
+				break;
+			case 13:
+				this.set('name', 'Febuary');
+				for(var i = 0; i<29; i++){
+					days.push(App.Day.create({
+						number: i
+					}));
+				}
+				break;
+		}
+	}
+});
+
+App.Year = Ember.Object.extend({
+	init: function(){
+		var months = [];
+		var isLeap = false;
+		for(var i = 0; i<12; i++){
+			months.push(App.Month.create({
+				number: i+1,
+				year: this.get('yearNow')
+			}));
+		}
+		if(this.get('yearNow')%4 === 0){
+			isLeap = true;
+			if(this.get('yearNow')%100 === 0){
+				isLeap = !isLeap;
+				if(this.get('yearNow')%400 === 0){
+					isLeap = !isLeap
+				}
+			}
+		}
+		if(isLeap){
+			months.splice(1);
+			months.push(App.Month.create({
+				number: 13,
+				year: this.get('yearNow')
+			}));
+		}
+	}
+});
+
+App.calendar = Ember.Object.extend({
+	init: function(){
+		var years = [];
+		for(var i =0; i<5; i++){
+			years.push(App.Year.create({
+				yearNow: new Date().getFullYear()+i
+			}));
+		}
+	}
+});
+
+App.indexRoute = Ember.Route.extend({
+	setupController: function(controller){
+		controller.set('title', 'calendar');
+	}
+});
