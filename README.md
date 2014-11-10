@@ -31,7 +31,7 @@ Calendar app stack:
 
 -emberjs (on seperate http server)
 
--Django (REST api)
+-Sailsjs (REST api)
 
 -mongodb
 
