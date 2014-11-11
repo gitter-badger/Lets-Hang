@@ -12,12 +12,17 @@ App.Router.map(function(){
 	this.route('day');
 });
 
+var ActivityAdapter = DS.Adapter.extend({
+
+});
+
+App.Activity = DS.model.extend({
+	
+});
+
 App.Day = Ember.Object.extend({
 	init: function(){
-		var daynow = {
-			name: this.get('name'),
-			date: new Date()
-		};
+		
 	}
 });
 
@@ -30,7 +35,7 @@ App.Month = Ember.Object.extend({
 				for(var i = 0; i<31; i++){
 					days.push(App.Day.create({
 						number: i,
-						date: new Date()
+						date: new Date(this.get('year'), this.get('number'), i+1)
 					}));
 				}
 				break;
@@ -38,7 +43,8 @@ App.Month = Ember.Object.extend({
 				this.set('name','Febuary');
 				for(var i = 0; i<28; i++){
 					days.push(App.Day.create({
-						number: i
+						number: i,
+						date: new Date(this.get('year'), this.get('number'), i+1)
 					}));
 				}
 				break;
@@ -46,7 +52,8 @@ App.Month = Ember.Object.extend({
 				this.set('name', 'March');
 				for(var i = 0; i<31; i++){
 					days.push(App.Day.create({
-						number: i
+						number: i,
+						date: new Date(this.get('year'), this.get('number'), i+1)
 					}));
 				}
 				break;
@@ -54,7 +61,8 @@ App.Month = Ember.Object.extend({
 				this.set('name', 'April');
 				for(var i = 0; i<30; i++){
 					days.push(App.Day.create({
-						number: i
+						number: i,
+						date: new Date(this.get('year'), this.get('number'), i+1)
 					}));
 				}
 				break;
@@ -62,7 +70,8 @@ App.Month = Ember.Object.extend({
 				this.set('name', 'May');
 				for(var i = 0; i<31; i++){
 					days.push(App.Day.create({
-						number: i
+						number: i,
+						date: new Date(this.get('year'), this.get('number'), i+1)
 					}));
 				}
 				break;
@@ -70,7 +79,8 @@ App.Month = Ember.Object.extend({
 				this.set('name', 'June');
 				for(var i = 0; i<30; i++){
 					days.push(App.Day.create({
-						number: i
+						number: i,
+						date: new Date(this.get('year'), this.get('number'), i+1)
 					}));
 				}
 				break;
@@ -78,7 +88,8 @@ App.Month = Ember.Object.extend({
 				this.set('name', 'July');
 				for(var i = 0; i<31; i++){
 					days.push(App.Day.create({
-						number: i
+						number: i,
+						date: new Date(this.get('year'), this.get('number'), i+1)
 					}));
 				}
 				break;
@@ -86,7 +97,8 @@ App.Month = Ember.Object.extend({
 				this.set('name', 'August');
 				for(var i = 0; i<31; i++){
 					days.push(App.Day.create({
-						number: i
+						number: i,
+						date: new Date(this.get('year'), this.get('number'), i+1)
 					}));
 				}
 				break;
@@ -94,7 +106,8 @@ App.Month = Ember.Object.extend({
 				this.set('name', 'September');
 				for(var i = 0; i<30; i++){
 					days.push(App.Day.create({
-						number: i
+						number: i,
+						date: new Date(this.get('year'), this.get('number'), i+1)
 					}));
 				}
 				break;
@@ -102,7 +115,8 @@ App.Month = Ember.Object.extend({
 				this.set('name', 'October');
 				for(var i = 0; i<31; i++){
 					days.push(App.Day.create({
-						number: i
+						number: i,
+						date: new Date(this.get('year'), this.get('number'), i+1)
 					}));
 				}
 				break;
@@ -110,7 +124,8 @@ App.Month = Ember.Object.extend({
 				this.set('name', 'November');
 				for(var i = 0; i<30; i++){
 					days.push(App.Day.create({
-						number: i
+						number: i,
+						date: new Date(this.get('year'), this.get('number'), i+1)
 					}));
 				}
 				break;
@@ -118,7 +133,8 @@ App.Month = Ember.Object.extend({
 				this.set('name', 'December');
 				for(var i = 0; i<31; i++){
 					days.push(App.Day.create({
-						number: i
+						number: i,
+						date: new Date(this.get('year'), this.get('number'), i+1)
 					}));
 				}
 				break;
@@ -126,7 +142,8 @@ App.Month = Ember.Object.extend({
 				this.set('name', 'Febuary');
 				for(var i = 0; i<29; i++){
 					days.push(App.Day.create({
-						number: i
+						number: i,
+						date: new Date(this.get('year'), this.get('number'), i+1)
 					}));
 				}
 				break;
