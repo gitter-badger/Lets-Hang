@@ -8,7 +8,18 @@
 module.exports = {
 
   attributes: {
-
+  	local: {
+  		type: 'json'
+  	},
+  	facebook: {
+  		type: 'json'
+  	},
+  	twitter: {
+  		type: 'json'
+  	},
+  	google: {
+  		type: 'json'
+  	}
   }
 };
 

@@ -32,10 +32,10 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
 
-  '/': {
-    controller: 'DayController.index'
-  }
-
+  'get /api/year': 'YearController.getAllActivities',
+  'get /api/month/:month': 'MonthController.getAllActivities',
+  'get /api/day/:day': 'DayController.getAllActivities' 
+  
   /***************************************************************************
   *                                                                          *
   * Custom routes here...                                                    *
