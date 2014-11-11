@@ -12,12 +12,42 @@ App.Router.map(function(){
 	this.route('day');
 });
 
-var ActivityAdapter = DS.Adapter.extend({
+var ActivityAdapter = DS.RESTAdapter.extend({
+	host: 'http://127.0.0.1:1337',
+	namespace: 'api'
+});
 
+DS.ArrayTransform = DS.Transform.extend({
+  deserialize: function(serialized) {
+    return (Ember.typeOf(serialized) == "array") ? serialized : [];
+  },
+
+  serialize: function(deserialized) {
+    var type = Ember.typeOf(deserialized);
+    if (type == 'array') {
+        return deserialized
+    } 
+    else if (type == 'string') {
+        return deserialized.split(',').map(function(item) {
+            return jQuery.trim(item);
+        });
+    } 
+    else {
+        return [];
+    }
+  }
 });
 
 App.Activity = DS.model.extend({
-	
+	lat: DS.attr('number'),
+	lng: DS.attr('number'),
+	name: DS.attr('string'),
+	creator: DS.attr('number'),
+	startDate: DS.attr('date'),
+	endDate: DS.attr('date'),
+	startTime: DS.attr('string'),
+	endTime: DS.attr('string'),
+	invited: Ds.attr('array')
 });
 
 App.Day = Ember.Object.extend({
