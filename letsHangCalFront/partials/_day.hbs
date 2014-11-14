@@ -1,0 +1,12 @@
+<div class="container">
+	<div class="d-title">
+		<h1>{{dayNow.name}}&nbsp;{{dayNow.date}}</h1>
+	</div>
+	<div class="cal-month-container">
+		{{#each act in activities}}
+			<div class="day-col">
+				{{act}}
+			</div>
+		{{/each}}
+	</div>		
+</div>

@@ -4,11 +4,13 @@ $(function(){
 	});
 
 	App.Router.reopen({
-		rootURL: '/calendar/'
+		rootURL: '/' //change to /calendar/ when connecting to backend
 	});
 
 	App.Router.map(function(){
-		this.route('year');
+		this.resource('years', function(){
+			this.route('view', {path: '/:year'});
+		});
 		this.route('month');
 		this.route('day');
 	});
@@ -18,11 +20,14 @@ $(function(){
 		namespace: 'api'
 	});
 
+	App.store = DS.Store.create({
+		adapter: ActivityAdapter
+	});
+
 	DS.ArrayTransform = DS.Transform.extend({
 		deserialize: function(serialized) {
     		return (Ember.typeOf(serialized) == "array") ? serialized : [];
   		},
-
 		serialize: function(deserialized) {
     		var type = Ember.typeOf(deserialized);
     		if (type == 'array') {
