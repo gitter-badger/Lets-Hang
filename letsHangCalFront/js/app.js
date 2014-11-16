@@ -238,3 +238,8 @@ $(function(){
 		}
 	});
 });
+
+App.IndexView = Ember.View.extend({
+	templateName: 'application',
+	name: 'calendar'
+});
