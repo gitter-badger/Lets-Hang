@@ -29,7 +29,7 @@ Main app stack:
 
 Calendar app stack:
 
--emberjs (on seperate http server)
+-angularjs (on seperate http server)
 
 -Sailsjs (REST api)
 
