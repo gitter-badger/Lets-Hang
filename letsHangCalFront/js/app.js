@@ -5,19 +5,19 @@ app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', functio
 	$stateProvider
 		.state('calendar', {
 			url: '/calendar',
-			template: '../partials/indexCal.html'
+			template: '/partials/indexCal.html'
 		})
 		.state('year', {
 			url: '/calendar/:year',
-			template: '../partials/year.html'
+			template: '/partials/year.html'
 		})
 		.state('month', {
 			url: '/calendar/:year/:month',
-			template: '../partials/month.html'
+			template: '/partials/month.html'
 		})
 		.state('day', {
 			url: '/calendar/:year/:month/:day',
-			template: '../partials/day.html'
+			template: '/partials/day.html'
 		});
 	$locationProvider
 		.html5Mode(true)
