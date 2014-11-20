@@ -1,3 +1,9 @@
+window.env = {
+	dev: {
+		backendCalURI: 'http://127.0.0.1:1337',
+		mainAppURI: 'http://127.0.0.1:8080'
+	}
+};
 var app = angular.module('app', ['ui.router']);
 
 app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider){
