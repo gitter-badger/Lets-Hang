@@ -1,4 +1,4 @@
-angular.module('dayService', [])
+angular.module('DayService', [])
 	.factory('Days', function($http){
 		return {
 			get: function(){

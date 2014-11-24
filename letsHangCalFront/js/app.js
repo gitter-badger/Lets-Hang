@@ -4,51 +4,28 @@ window.env = {
 		mainAppURI: 'http://127.0.0.1:8080'
 	}
 };
-var app = angular.module('app', [
-	'ui.router',
-	'yearService',
-	'monthService',
-	'dayService',
-	'activityService',
-	'yearController',
-	'monthController',
-	'dayController',
-	'activityController'
-]);
+var app = angular.module('app', ['ui.router']);
 
 app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider){
 	$urlRouterProvider.otherwise('/calendar');
 	$stateProvider
 		.state('calendar', {
-			url: '/',
-			template: 'partials/indexCal.html',
-			controller: 'calendarController'
+			url: '/calendar',
+			template: '/partials/indexCal.html'
 		})
 		.state('year', {
-			url: '/:year',
-			template: 'partials/year.html',
-			controller: 'yearController'
+			url: '/calendar/:year',
+			template: '/partials/year.html'
 		})
 		.state('month', {
-			url: '/:year/:month',
-			template: 'partials/month.html',
-			controller: 'monthController'
+			url: '/calendar/:year/:month',
+			template: '/partials/month.html'
 		})
 		.state('day', {
-			url: '/:year/:month/:day',
-			template: 'partials/day.html',
-			controller: 'dayController'
+			url: '/calendar/:year/:month/:day',
+			template: '/partials/day.html'
 		});
 	$locationProvider
-		.html5Mode(false)
+		.html5Mode(true)
 		.hashPrefix('!');
-}]);
-
-
-app.controller('calendarController', ['$scope', function($scope){
-	$scope.years = [
-		new Date().getFullYear(),
-		new Date(new Date().getFullYear()+1).getFullYear,
-		new Date(new Date().getFullYear()+2).getFullYear()
-	];
 }]);
