@@ -26,6 +26,15 @@ app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', functio
 			template: '/partials/day.html'
 		});
 	$locationProvider
-		.html5Mode(true)
+		.html5Mode(false)
 		.hashPrefix('!');
+}]);
+
+app.controller('calendarController', ['$scope', function($scope){
+	var currentYear = new Date().getFullYear();
+	$scope.years = [
+		currentYear,
+		currentYear+1,
+		currentYear+2
+	];
 }]);
