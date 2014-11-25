@@ -1,4 +1,4 @@
-angular.module('dayController', [])
+angular.module('dayController', ['dayService'])
 	.controller('mainController', function($scope, $http, Days){
 		$scope.formData = {};
 

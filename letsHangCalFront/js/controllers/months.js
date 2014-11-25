@@ -1,4 +1,4 @@
-angular.module('monthController', [])
+angular.module('monthController', ['monthService'])
 	.controller('mainController', function($scope, $http, Months){
 		$scope.formData = {};
 
