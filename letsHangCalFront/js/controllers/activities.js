@@ -1,4 +1,4 @@
-angular.module('activityController', [])
+angular.module('activityController', ['activityService'])
 	.controller('mainController', function($scope, $http, Activities){
 		$scope.formData = {};
 
