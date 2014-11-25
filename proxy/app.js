@@ -15,8 +15,12 @@ var proxy = httpProxy.createProxyServer({
 
 var server = http.createServer(function(req, res){
 	if(req.url=='/calendar'){
+		req.url = '/';
 		proxy.web(req, res, {target: devURLS.calendar});
 		return;
 	}
 	proxy.web(req, res, {target: devURLS.main});
 });
+
+server.listen(8090);
+console.log('proxy listening on 8090');
