@@ -17,39 +17,33 @@ app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', functio
 	//$urlRouterProvider.otherwise('/calendar');
 	$stateProvider
 		.state('calendar', {
-			url: '/',
-			template: '<ui-view/>'
-		})
-		.state('calendar.calendar', {
 			url: '/calendar',
 			templateURL: '/partials/indexCal.html',
-			controller: 'calendarController'
+			controller: calendarController
 		})
-		.state('calendar.year', {
+		.state('year', {
 			url: '/calendar/:year',
 			templateURL: '/partials/year.html',
-			controller: 'yearController'
+			controller: yearController
 		})
-		.state('calendar.month', {
+		.state('month', {
 			url: '/calendar/:year/:month',
 			templateURL: '/partials/month.html',
-			controller: 'monthController'
+			controller: monthController
 		})
-		.state('calendar.day', {
+		.state('day', {
 			url: '/calendar/:year/:month/:day',
 			templateURL: '/partials/day.html',
-			controller: 'dayController'
+			controller: dayController
 		});
 	$locationProvider
 		.html5Mode(false)
 		.hashPrefix('!');
 }]);
 
-app.controller('calendarController', ['$scope', function($scope){
-	var currentYear = new Date().getFullYear();
-	$scope.years = [
-		currentYear,
-		currentYear+1,
-		currentYear+2
-	];
+app.run(['$rootScope', function($rootScope){
+	$rootScope.userEmail = window.localStorage.getItem('email');
+	if(!$rootScope.userEmail){
+		$rootScope.userEmail = 'placeholder@dummy.com';
+	}
 }]);

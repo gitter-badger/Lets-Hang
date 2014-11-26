@@ -1,5 +1,5 @@
 angular.module('dayController', ['dayService'])
-	.controller('mainController', function($scope, $http, Days){
+	.controller('mainController', ['$scope', '$http', function($scope, $http, Days){
 		$scope.formData = {};
 
 		Days.get()
@@ -9,4 +9,4 @@ angular.module('dayController', ['dayService'])
 			.error(function(data){
 				$scope.message = 'COULD NOT CONNECT TO SERVER!!!';
 			});
-	});
+	}]);

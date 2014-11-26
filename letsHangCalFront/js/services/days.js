@@ -1,8 +1,8 @@
-angular.module('DayService', [])
-	.factory('Days', function($http){
+angular.module('dayService', [])
+	.factory('Days', ['$http', function($http){
 		return {
 			get: function(){
 				return $http.get(window.env.dev.backendCalURI+'/api/days');
 			}
 		};
-	});
+	}]);

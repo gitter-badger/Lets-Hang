@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="app">
   <head>
     <meta charset="utf-8">
     <title>Let's Hang - Main</title>
@@ -17,10 +17,12 @@
     <script type="text/javascript" src="js/controllers/days.js"></script>
     <script type="text/javascript" src="js/controllers/months.js"></script>
     <script type="text/javascript" src="js/controllers/years.js"></script>
+    <script type="text/javascript" src="js/controllers/calendar.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
     <base href="/calendar">
   </head>
-  <body ng-app>
+  <body>
+    <input type="hidden" value="{{userEmail}}">
     <header class="navbar navbar-static-top bs-docs-nav" id="top" role="banner">
         <div class="container">
           <div class="navbar-header">
@@ -44,7 +46,10 @@
         </div>
     </header>
     <div class="container">
-      <div ui-view></div>
+      <a ui-sref="calendar" ui-sref-active="active">calendar</a>
+      <a ui-sref="year" ui-sref-active="active">year</a>
+      <ui-view>
+      </ui-view>
     </div>
   </body>
 </html>

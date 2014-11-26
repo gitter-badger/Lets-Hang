@@ -1,5 +1,5 @@
 angular.module('activityService', [])
-	.factory('Activity', function($http){
+	.factory('Activity', ['$http', function($http){
 		return {
 			create: function(){
 				return $http.post(window.env.dev.backendCalURI+'/api/activities');
@@ -11,4 +11,4 @@ angular.module('activityService', [])
 				return $http.delete(window.env.dev.backendCalURI+'/api/activities');
 			}
 		};
-	})
+	}]);

@@ -1,5 +1,5 @@
 angular.module('monthController', ['monthService'])
-	.controller('mainController', function($scope, $http, Months){
+	.controller('mainController', ['$scope', '$http', function($scope, $http, Months){
 		$scope.formData = {};
 
 		Months.get()
@@ -9,4 +9,4 @@ angular.module('monthController', ['monthService'])
 			.error(function(data){
 				$scope.message = 'COULD NOT CONNECT TO SERVER!!!';
 			});
-	});
+	}]);

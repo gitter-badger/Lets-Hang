@@ -1,8 +1,8 @@
 angular.module('monthService', [])
-	.factory('Months', function($http){
+	.factory('Months', ['$http',function($http){
 		return {
 			get: function(){
 				return $http.get(window.env.dev.backendCalURI+'/api/months');
 			}
 		};
-	});
+	}]);
